@@ -1,0 +1,119 @@
+{
+  "purpose": "Weather granularity validation only; never a launch-ready activity dataset.",
+  "verifiedOn": "2026-09-11",
+  "verificationScope": "Desk verification of named geographic points using map/geographic sources. No field verification, access, route safety, shade, surface, or activity suitability claims. Source precision is retained and is not positional accuracy.",
+  "locations": [
+    {
+      "id": "sports-city",
+      "name": "Al-Hussein Youth City / Sports City",
+      "latitude": 31.98305,
+      "longitude": 35.90458,
+      "context": "Park point within the Sports City complex; urban recreation setting.",
+      "verification": {
+        "status": "source-checked geographic probe",
+        "coordinateSource": "https://mapcarta.com/W972338370",
+        "feature": "OSM way 972338370; leisure=park",
+        "crosscheck": "https://tripomatic.com/en/poi/king-hussein-sports-city-poi%3A30111",
+        "note": "Independent complex reference at 31.985718,35.903725; different point within the same complex."
+      }
+    },
+    {
+      "id": "king-hussein-park",
+      "name": "King Hussein Park",
+      "latitude": 31.98635,
+      "longitude": 35.82661,
+      "context": "Mapped park/forest representative point in western Amman.",
+      "verification": {
+        "status": "source-checked geographic probe",
+        "coordinateSource": "https://mapcarta.com/W153915077",
+        "feature": "OSM way 153915077; leisure=park, landuse=forest",
+        "crosscheck": "https://www.wikidata.org/wiki/Q867789",
+        "note": "Wikidata park point 31.986,35.828 corroborates the park, not an identical centroid."
+      }
+    },
+    {
+      "id": "dabouq",
+      "name": "Dabouq",
+      "latitude": 31.98806,
+      "longitude": 35.8113,
+      "context": "Locality reference point in western Amman; not an activity-area entrance.",
+      "verification": {
+        "status": "source-checked geographic probe",
+        "coordinateSource": "https://mapcarta.com/de/N2859219638",
+        "feature": "OSM node 2859219638; place=town",
+        "crosscheck": "https://mapcarta.com/es/W277741642",
+        "note": "Mapped neighborhood representative point 31.98572,35.8096 corroborates locality; boundaries and representative points differ."
+      }
+    },
+    {
+      "id": "abdoun-corridor",
+      "name": "Abdoun Corridor",
+      "latitude": 31.9288004,
+      "longitude": 35.8819216,
+      "context": "Named road reference in southern Abdoun; not a verified pedestrian route.",
+      "verification": {
+        "status": "source-checked geographic probe",
+        "coordinateSource": "https://elevation.maplogs.com/poi/abdoun_corridor_amman_jordan.365963.html",
+        "feature": "Maplogs named road coordinate",
+        "crosscheck": "https://www.waze.com/en-GB/live-map/directions/jo/amman-governorate/amman/abdoun-corridor?to=place.ChIJDWRee9GmHBUR5AH3_kDX5gE",
+        "note": "Waze confirms named road in Amman; does not independently expose the exact coordinate. Do not confuse with Abdoun Bridge."
+      }
+    },
+    {
+      "id": "weibdeh",
+      "name": "Jabal Al-Weibdeh",
+      "latitude": 31.96187,
+      "longitude": 35.91722,
+      "context": "Central urban residential-area representative point; not a specific trail.",
+      "verification": {
+        "status": "source-checked geographic probe",
+        "coordinateSource": "https://mapcarta.com/34497592",
+        "feature": "OSM way 381723561; landuse=residential",
+        "crosscheck": "https://www.wikidata.org/wiki/Q12204766",
+        "note": "Confirms neighborhood identity; map point is not a surveyed entrance."
+      }
+    },
+    {
+      "id": "marj-al-hamam",
+      "name": "Marj Al-Hamam",
+      "latitude": 31.9017,
+      "longitude": 35.8517,
+      "context": "Southwestern suburb representative point; not a specific activity area.",
+      "verification": {
+        "status": "source-checked geographic probe",
+        "coordinateSource": "https://mapcarta.com/38962252/Map",
+        "feature": "OSM node 4064715581; place=suburb",
+        "crosscheck": "https://www.geodatos.net/en/coordinates/jordan/marj-al-hamam",
+        "note": "Alternative gazetteer point 31.90274,35.84645; locality points differ by about 0.5 km."
+      }
+    },
+    {
+      "id": "naour",
+      "name": "Naour",
+      "latitude": 31.87436,
+      "longitude": 35.82467,
+      "context": "Southwestern peripheral locality reference; not a verified running route.",
+      "verification": {
+        "status": "source-checked geographic probe",
+        "coordinateSource": "https://mapcarta.com/12841126",
+        "feature": "GeoNames 247724; Jordan, not Naour in Morocco",
+        "crosscheck": "https://www.geodatos.net/en/coordinates/jordan/naur",
+        "note": "Exact coordinate agrees; both may inherit the same gazetteer, so not independent surveying."
+      }
+    },
+    {
+      "id": "amman-national-park",
+      "name": "Amman National Park",
+      "latitude": 31.8662,
+      "longitude": 35.8812,
+      "context": "Southern park reference point; entrance and usable activity area unverified.",
+      "verification": {
+        "status": "source-checked geographic probe",
+        "coordinateSource": "https://latitude.to/map/jo/jordan/natural-parks/1/amman-national-park",
+        "feature": "Named park geographic listing",
+        "crosscheck": "https://jo.near-place.com/amman-national-park-15-amman",
+        "note": "Alternative park pin 31.8687916,35.8807368 approximately 0.29 km north; not an exact-coordinate corroboration."
+      }
+    }
+  ]
+}
