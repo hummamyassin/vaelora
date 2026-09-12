@@ -52,18 +52,22 @@ export function AmmanMap({ matches, selectedAreaId, onSelect }: AmmanMapProps) {
       markersRef.current.set(match.area.id, marker);
       bounds.extend([match.area.longitude, match.area.latitude]);
     }
-    if (matches.length > 1) map.fitBounds(bounds, { padding: 70, maxZoom: 12.5, duration: 700 });
-    if (matches.length === 1) map.easeTo({ center: [matches[0].area.longitude, matches[0].area.latitude], zoom: 13, duration: 700 });
+    const duration = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 700;
+    if (matches.length > 1) map.fitBounds(bounds, { padding: 70, maxZoom: 12.5, duration });
+    if (matches.length === 1) map.easeTo({ center: [matches[0].area.longitude, matches[0].area.latitude], zoom: 13, duration });
   }, [matches]);
 
   useEffect(() => {
     const map = mapRef.current;
     const match = matches.find(item => item.area.id === selectedAreaId);
     if (!map || !match) return;
-    for (const [id, marker] of markersRef.current) marker.getElement().classList.toggle("is-selected", id === selectedAreaId);
+    for (const [id, marker] of markersRef.current) {
+      marker.getElement().classList.toggle("is-selected", id === selectedAreaId);
+      marker.getElement().setAttribute("aria-pressed", String(id === selectedAreaId));
+    }
     if (previousSelectedRef.current === null) { previousSelectedRef.current = selectedAreaId; return; }
     previousSelectedRef.current = selectedAreaId;
-    map.easeTo({ center: [match.area.longitude, match.area.latitude], zoom: Math.max(map.getZoom(), 12.5), duration: 550 });
+    map.easeTo({ center: [match.area.longitude, match.area.latitude], zoom: Math.max(map.getZoom(), 12.5), duration: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 700 });
   }, [selectedAreaId, matches]);
 
   return <div className="map-shell" aria-label="Map of recommended activity areas in Greater Amman"><div ref={containerRef} className="map-canvas" /><div className="map-caption"><span className="map-caption-dot" />Real reviewed area coordinates</div></div>;

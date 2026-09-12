@@ -114,6 +114,16 @@ test("Groq adapter uses local tool calls, returns tool output, and keeps request
   const third = bodies[2].messages as Record<string, unknown>[];
   assert.equal(third.length, 2); assert.deepEqual(third[1], { role: "user", content: "walk today" });
 });
+test("Groq tool-only replies may omit content but never contain prose", async () => {
+  for (const content of [undefined, null, "", "Invented recommendation"]) {
+    const model = createGroqModel({ apiKey: "test-placeholder", model: "test-model", fetch: async () => Response.json({ choices: [{ message: {
+      role: "assistant", ...(content === undefined ? {} : { content }),
+      tool_calls: [{ id: "tool-1", type: "function", function: { name: recommendationTool.name, arguments: JSON.stringify(intent) } }],
+    } }] }) });
+    if (content === "Invented recommendation") await assert.rejects(model.extract("run tomorrow", evaluationClock));
+    else assert.deepEqual((await model.extract("run tomorrow", evaluationClock)).arguments, intent);
+  }
+});
 test("Groq adapter and provider selection fail closed without leaking credentials", async () => {
   for (const raw of [{}, { choices: [] }, { choices: [{ message: { role: "assistant", content: "prose", tool_calls: [] } }] }, { choices: [{ message: { role: "assistant", content: null, tool_calls: [{ id: "x", type: "function", function: { name: recommendationTool.name, arguments: "bad" } }] } }] }]) {
     const model = createGroqModel({ apiKey: "secret-placeholder", model: "test", fetch: async () => Response.json(raw) });

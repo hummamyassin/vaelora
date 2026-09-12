@@ -35,7 +35,7 @@ export function createGroqModel(options: { apiKey: string; model: string; fetch?
       ]);
       if (!isObject(raw) || !Array.isArray(raw.choices) || raw.choices.length !== 1 || !isObject(raw.choices[0])) throw new Error("Invalid model response");
       const message = raw.choices[0].message;
-      if (!isObject(message) || message.role !== "assistant" || (message.content !== null && message.content !== "") || !Array.isArray(message.tool_calls) || message.tool_calls.length !== 1) throw new Error("Invalid model response");
+      if (!isObject(message) || message.role !== "assistant" || (message.content !== undefined && message.content !== null && message.content !== "") || !Array.isArray(message.tool_calls) || message.tool_calls.length !== 1) throw new Error("Invalid model response");
       const toolCall = message.tool_calls[0];
       if (!isObject(toolCall) || toolCall.type !== "function" || typeof toolCall.id !== "string" || !isObject(toolCall.function) ||
           toolCall.function.name !== tool.name || typeof toolCall.function.arguments !== "string" || toolCall.function.arguments.length > 12000) throw new Error("Invalid model tool call");
