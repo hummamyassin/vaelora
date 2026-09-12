@@ -6,7 +6,9 @@ framework-independent domain/recommendation foundation, and an evidence-reviewed
 Amman activity dataset (11 selected areas; five support running, all support walking).
 See the [dataset review and limitations](docs/research/activity-areas/README.md).
 A live deterministic weather pipeline and a single-turn AI tool-calling agent are
-implemented. Comfort policy remains provisional; the page is still a placeholder.
+implemented. The responsive V1 interface now connects the recommendation endpoint to
+intent controls, Top Matches, an hourly timeline, and a MapLibre/OpenStreetMap map.
+Comfort policy remains provisional.
 See [AI agent, configuration and evaluation](docs/ai-agent.md).
 
 ## Local development
@@ -48,12 +50,14 @@ test dependencies are required. The production build checks TypeScript types.
 
 On this Windows setup, Turbopack currently fails to spawn its CSS worker with
 `Access is denied (os error 5)`, including outside the execution sandbox. The
-supported fallback `npm run build -- --webpack` produces the production build;
-the default build command remains unchanged.
+supported fallbacks `npm run dev -- --webpack` and `npm run build -- --webpack`
+run successfully; the default commands remain unchanged.
 
 ## Structure and boundaries
 
-- `src/app/`: App Router routes, root layout, and global styles.
+- `src/app/`: App Router routes, API routes, root layout, and global design tokens.
+- `src/components/`: responsive intent, recommendation, detail, timeline, trace, AI,
+  and MapLibre map UI. The browser receives only API-returned production coordinates.
 - `src/domain/`: activity types and pure filtering, environmental categorization,
   best-time, and Top Matches functions. See [domain foundation](docs/domain-foundation.md).
 - `tests/domain/`: synthetic, offline engine tests.
@@ -71,7 +75,8 @@ the default build command remains unchanged.
 - `AGENTS.md`: product scope and contributor guidance, preserved from planning.
 
 `src/server/ai/` contains the agent, provider adapter, intent/tool contracts and grounded
-renderer; `src/app/api/agent/` is its HTTP boundary. UI remains future work. Domain logic remains
+renderer; `src/app/api/agent/` is its HTTP boundary. The Ask VAELORA interface reports
+an explicit unavailable state when provider configuration is absent. Domain logic remains
 independent of UI, AI, and weather providers. See the
 [weather integration](docs/weather-integration.md) for the live server pipeline.
 

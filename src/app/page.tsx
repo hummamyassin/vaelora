@@ -1,10 +1,10 @@
+import { VaeloraApp } from "../components/vaelora-app";
+import { v1WeatherPolicy } from "../server/recommendations/policy";
+
 export default function Home() {
-  return (
-    <main className="mx-auto max-w-3xl px-6 py-16">
-      <h1 className="text-3xl font-semibold">VAELORA</h1>
-      <p className="mt-4 text-gray-600">
-        Project foundation. Product features will be developed incrementally.
-      </p>
-    </main>
-  );
+  const policy = {
+    running: { maxPreferredWind: v1WeatherPolicy.activities.running.windKmh.preferred[1], maxPreferredHeat: v1WeatherPolicy.activities.running.temperatureC.preferred[1] },
+    walking: { maxPreferredWind: v1WeatherPolicy.activities.walking.windKmh.preferred[1], maxPreferredHeat: v1WeatherPolicy.activities.walking.temperatureC.preferred[1] },
+  };
+  return <VaeloraApp policy={policy} />;
 }

@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test tests/domain/*.test.ts tests/data/*.test.ts tests/server/*.test.ts scripts/weather-granularity.test.mjs",
+    "test": "node --test tests/domain/*.test.ts tests/data/*.test.ts tests/server/*.test.ts tests/ui/*.test.ts scripts/weather-granularity.test.mjs",
     "smoke:weather": "node scripts/weather-pipeline-smoke.ts",
     "eval:agent": "node scripts/agent-evaluation.ts",
     "smoke:agent": "node --env-file-if-exists=.env.local scripts/agent-evaluation.ts --live",
@@ -16,6 +16,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "lucide-react": "^1.45.0",
+    "maplibre-gl": "^6.9.0",
     "next": "^16.3.4",
     "react": "^19.3.0",
     "react-dom": "^19.3.0"
