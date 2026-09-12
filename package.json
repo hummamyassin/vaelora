@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test tests/domain/*.test.ts tests/data/*.test.ts scripts/weather-granularity.test.mjs",
+    "test": "node --test tests/domain/*.test.ts tests/data/*.test.ts tests/server/*.test.ts scripts/weather-granularity.test.mjs",
+    "smoke:weather": "node scripts/weather-pipeline-smoke.ts",
     "validate:data": "node scripts/validate-activity-areas.ts",
     "dev": "next dev",
     "build": "next build",

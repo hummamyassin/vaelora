@@ -33,6 +33,7 @@ node "$env:TEMP\vaelora-npm-tooling\package\bin\npm-cli.js" run dev
 - `npm run lint`: run ESLint; warnings fail the check.
 - `npm test`: run offline domain, dataset and preserved weather-validation tests.
 - `npm run validate:data`: validate production records and the research decision crosswalk.
+- `npm run smoke:weather`: make the controlled live Open-Meteo pipeline check and save its evidence.
 - `npm run typecheck`: check TypeScript without emitting files.
 - `npm run build`: create and type-check the production build.
 - `npm start`: serve an existing production build.
@@ -54,16 +55,20 @@ the default build command remains unchanged.
 - `src/data/activity-areas.ts`: selected production activity areas and source notes.
 - `docs/research/activity-areas/`: evidence policy, 35 research proposals and decisions.
 - `tests/data/`: dataset integrity and real-data eligibility tests.
+- `src/server/weather/`: server-only Open-Meteo transport, validation, normalization and cache.
+- `src/server/recommendations/`: typed request, policy, pipeline and HTTP boundaries.
+- `src/app/api/recommendations/`: Node.js `POST /api/recommendations` route for future consumers.
+- `tests/server/`: mocked weather, pipeline and API integration tests; no live calls.
 - `next.config.ts`: Next.js configuration.
 - `tsconfig.json`: strict TypeScript and the `@/*` alias for `src/*`.
 - `eslint.config.mjs`: Next.js and TypeScript lint rules.
 - `postcss.config.mjs`: Tailwind CSS integration.
 - `AGENTS.md`: product scope and contributor guidance, preserved from planning.
 
-Add directories only as implementation needs them: `src/components/` for reusable UI,
-`src/services/weather/` for weather access,
-and `src/ai/` for orchestration. These remain future boundaries. Domain logic must
-remain independent of UI and AI providers.
+Add directories only as implementation needs them: `src/components/` for reusable UI
+and `src/ai/` for orchestration. These remain future boundaries. Domain logic remains
+independent of UI, AI, and weather providers. See the
+[weather integration](docs/weather-integration.md) for the live server pipeline.
 
 Use two-space indentation and descriptive TypeScript names. Keep changes focused and
 report validation in pull requests. Never commit secrets; `.env` and `.env.*` are ignored

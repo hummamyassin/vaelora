@@ -1,0 +1,102 @@
+{
+  "evaluatedAt": "2026-09-12T06:25:51.769Z",
+  "networkRequests": 11,
+  "scenarios": [
+    {
+      "label": "Running tonight",
+      "status": "complete",
+      "eligible": 5,
+      "providerErrors": 0,
+      "topMatches": [
+        {
+          "id": "king-hussein-park",
+          "name": "King Hussein Park",
+          "severity": 1,
+          "windows": [
+            "2026-09-12T18:00–2026-09-12T19:00",
+            "2026-09-12T19:00–2026-09-12T20:00",
+            "2026-09-12T20:00–2026-09-12T21:00",
+            "2026-09-12T21:00–2026-09-12T22:00",
+            "2026-09-12T22:00–2026-09-12T23:00",
+            "2026-09-12T23:00–2026-09-13T00:00"
+          ]
+        },
+        {
+          "id": "sports-city",
+          "name": "Al-Hussein Youth City / Sports City",
+          "severity": 1,
+          "windows": [
+            "2026-09-12T18:00–2026-09-12T19:00",
+            "2026-09-12T19:00–2026-09-12T20:00",
+            "2026-09-12T20:00–2026-09-12T21:00",
+            "2026-09-12T21:00–2026-09-12T22:00",
+            "2026-09-12T22:00–2026-09-12T23:00",
+            "2026-09-12T23:00–2026-09-13T00:00"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Walking tomorrow morning",
+      "status": "complete",
+      "eligible": 11,
+      "providerErrors": 0,
+      "topMatches": [
+        {
+          "id": "al-nashama-park",
+          "name": "Al-Nashama Public Park",
+          "severity": 0,
+          "windows": [
+            "2026-09-13T08:00–2026-09-13T09:00"
+          ]
+        },
+        {
+          "id": "king-abdullah-ii-park",
+          "name": "King Abdullah II Park (Al-Muqabalain)",
+          "severity": 0,
+          "windows": [
+            "2026-09-13T07:00–2026-09-13T08:00",
+            "2026-09-13T08:00–2026-09-13T09:00"
+          ]
+        },
+        {
+          "id": "king-hussein-park",
+          "name": "King Hussein Park",
+          "severity": 0,
+          "windows": [
+            "2026-09-13T08:00–2026-09-13T09:00"
+          ]
+        },
+        {
+          "id": "sports-city",
+          "name": "Al-Hussein Youth City / Sports City",
+          "severity": 0,
+          "windows": [
+            "2026-09-13T06:00–2026-09-13T07:00",
+            "2026-09-13T07:00–2026-09-13T08:00",
+            "2026-09-13T08:00–2026-09-13T09:00"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Running tomorrow evening, flat terrain",
+      "status": "complete",
+      "eligible": 1,
+      "providerErrors": 0,
+      "topMatches": [
+        {
+          "id": "sports-city",
+          "name": "Al-Hussein Youth City / Sports City",
+          "severity": 1,
+          "windows": [
+            "2026-09-13T17:00–2026-09-13T18:00",
+            "2026-09-13T18:00–2026-09-13T19:00",
+            "2026-09-13T19:00–2026-09-13T20:00",
+            "2026-09-13T20:00–2026-09-13T21:00"
+          ]
+        }
+      ]
+    }
+  ]
+}
