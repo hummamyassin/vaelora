@@ -1,4 +1,5 @@
 import type { Activity, UiPolicy } from "./types";
+import { forecastHours } from "../lib/geography.ts";
 
 export type TimePreset = "now" | "tonight" | "tomorrow-morning" | "tomorrow-evening";
 export type Preference = "flat" | "paved" | "park" | "lowWind" | "avoidHeat";
@@ -16,7 +17,7 @@ function tomorrow(date: string) {
 }
 
 /** Browser intent adapter only. Domain validation and ranking remain authoritative. */
-export function buildUiRecommendationRequest(activity: Activity, preset: TimePreset, preferences: ReadonlySet<Preference>, policy: UiPolicy, now = new Date()) {
+export function buildUiRecommendationRequest(activity: Activity, preset: TimePreset, preferences: ReadonlySet<Preference>, policy: UiPolicy, now = new Date(), minutes = 60) {
   const local = ammanNow(now);
   let date = local.date, startHour = 18, endHour = 24;
   if (preset === "now") {
@@ -33,7 +34,7 @@ export function buildUiRecommendationRequest(activity: Activity, preset: TimePre
     weatherLimits.maxApparentTemperatureC = policy[activity].maxPreferredHeat;
   }
   return {
-    activity, date, startHour, endHour, durationHours: 1,
+    activity, date, startHour, endHour, durationHours: forecastHours(minutes),
     ...(preferences.has("flat") ? { terrain: "flat" as const } : {}),
     ...(preferences.has("paved") ? { surface: "paved" as const } : {}),
     ...(preferences.has("park") ? { environment: "park" as const } : {}),

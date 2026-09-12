@@ -21,10 +21,10 @@ export function createAgentHandler(getAgent: () => ReturnType<typeof createOutdo
       body += decoder.decode();
       let input: unknown;
       try { input = JSON.parse(body); } catch { return reply({ error: "Invalid JSON" }, 400); }
-      if (!isObject(input) || Object.keys(input).length !== 1 || typeof input.prompt !== "string" || !input.prompt.trim() || input.prompt.length > 2000) return reply({ error: "Expected only a nonempty prompt of at most 2000 characters" }, 400);
+      if (!isObject(input) || Object.keys(input).some(k => k !== "prompt" && k !== "locale") || (input.locale !== undefined && input.locale !== "ar" && input.locale !== "en") || typeof input.prompt !== "string" || !input.prompt.trim() || input.prompt.length > 2000) return reply({ error: "Expected a nonempty prompt and optional supported locale" }, 400);
       const agent = getAgent();
       if (!agent) return reply({ error: "AI provider is not configured" }, 503);
-      const result = await agent(input.prompt);
+      const result = await agent(input.prompt, input.locale === "ar" ? "ar" : "en");
       return reply(result, result.status === "model-error" || result.status === "service-error" || (result.status === "answered" && result.result.status === "weather-unavailable") ? 503 : result.status === "invalid-request" ? 400 : 200);
     } catch { return reply({ error: "Agent service unavailable" }, 503); }
     finally { reader.releaseLock(); }

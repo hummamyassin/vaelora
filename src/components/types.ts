@@ -50,11 +50,12 @@ export interface RecommendationView {
   status: "complete" | "partial" | "weather-unavailable" | "no-eligible-areas";
   evaluatedAt: string;
   timezone: "Asia/Amman";
-  request: { activity: Activity; date: string; startHour: number; endHour: number; durationHours: number };
+  request: { activity: Activity; date: string; startHour: number; endHour: number; durationHours: number; terrain?: string; surface?: string; environment?: string; weatherLimits?: { maxWindKmh?: number; maxTemperatureC?: number; maxApparentTemperatureC?: number } };
   policy: { id: string; provisional: boolean };
   topMatches: MatchView[];
   weather: WeatherView[];
   warnings: string[];
+  hourlyAssessments?: Array<{ areaId: string; hours: Array<{ time: string; severity: number | null; eligible: boolean }> }>;
   trace: Array<{ action: string; detail?: string; count?: number }>;
 }
 

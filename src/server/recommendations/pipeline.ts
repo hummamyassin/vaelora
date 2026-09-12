@@ -37,6 +37,7 @@ export function createRecommendationPipeline(options: { provider?: WeatherProvid
       status, evaluatedAt: now.toISOString(), timezone: "Asia/Amman" as const, request,
       policy: { id: scorer.id, provisional: true, ...structuredClone(v1RecommendationPolicy) },
       ...result, weather,
+      hourlyAssessments: weather.flatMap(w => w.result.ok ? [{ areaId: w.areaId, hours: w.result.hourly.map(hour => ({ time: hour.time, ...scorer.evaluate(request.activity, hour, request.weatherLimits) })) }] : []),
       warnings: ["Provisional comfort policy; not a safety assessment.", "Opening hours, live closures, route duration and accessibility are not verified by this pipeline; retain each area's access caveats.", "AQI is not assessed; nearby grid forecasts do not measure park microclimates."],
       trace: [
         { action: "activity-detected", detail: request.activity },
