@@ -1,6 +1,6 @@
 import { createOutdoorAgent } from "../../../server/ai/agent.ts";
 import { createAgentHandler } from "../../../server/ai/http.ts";
-import { configuredModel } from "../../../server/ai/openai.ts";
+import { configuredModel } from "../../../server/ai/provider.ts";
 import { createRecommendationPipeline } from "../../../server/recommendations/pipeline.ts";
 
 export const runtime = "nodejs";

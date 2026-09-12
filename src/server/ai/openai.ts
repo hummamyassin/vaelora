@@ -50,7 +50,3 @@ export function createOpenAIModel(options: { apiKey: string; model: string; fetc
     },
   };
 }
-export function configuredModel() {
-  const apiKey = process.env.OPENAI_API_KEY, model = process.env.VAELORA_AI_MODEL;
-  return apiKey?.trim() && model?.trim() ? createOpenAIModel({ apiKey, model }) : null;
-}

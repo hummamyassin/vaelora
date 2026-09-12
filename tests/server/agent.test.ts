@@ -3,7 +3,9 @@ import test from "node:test";
 import cases from "../../docs/evaluation/agent/cases.json" with { type: "json" };
 import { parseIntent, resolveIntent } from "../../src/server/ai/intent.ts";
 import { createOutdoorAgent, validatePresentation } from "../../src/server/ai/agent.ts";
+import { createGroqModel } from "../../src/server/ai/groq.ts";
 import { createOpenAIModel } from "../../src/server/ai/openai.ts";
+import { configuredModel } from "../../src/server/ai/provider.ts";
 import { createAgentHandler } from "../../src/server/ai/http.ts";
 import { recommendationTool, presentationTool } from "../../src/server/ai/contracts.ts";
 import { evaluateAgent, evaluationClock, evaluationPipeline, replayModel } from "../../scripts/agent-evaluation.ts";
@@ -89,6 +91,45 @@ test("OpenAI adapter rejects refusal, incomplete output, multiple calls, bad JSO
   for (const fetcher of [async () => new Response("secret-placeholder", { status: 429 }), () => new Promise<Response>(() => {})]) {
     const model = createOpenAIModel({ apiKey: "secret-placeholder", model: "test", fetch: fetcher, timeoutMs: 10 });
     await assert.rejects(model.extract("test", evaluationClock), error => error instanceof Error && !error.message.includes("secret-placeholder"));
+  }
+});
+test("Groq adapter uses local tool calls, returns tool output, and keeps requests isolated", async () => {
+  const bodies: Record<string, unknown>[] = [];
+  const model = createGroqModel({ apiKey: "test-placeholder", model: "test-model", fetch: async (_, init) => {
+    const body = JSON.parse(String(init?.body)); bodies.push(body);
+    const tool = body.tools[0].function.name;
+    return Response.json({ choices: [{ message: { role: "assistant", content: null, tool_calls: [{ id: tool === recommendationTool.name ? "g1" : "g2", type: "function", function: { name: tool, arguments: JSON.stringify(tool === recommendationTool.name ? intent : { areaIds: [] }) } }] } }] });
+  } });
+  const call = await model.extract("run tomorrow", evaluationClock);
+  const result = await evaluationPipeline()({ activity: "running", date: "2026-09-13", startHour: 6, endHour: 22, durationHours: 1, weatherLimits: { maxTemperatureC: -20 } });
+  await model.present(call, result);
+  await model.extract("walk today", evaluationClock);
+  assert.equal(bodies.length, 3);
+  for (const body of bodies) {
+    assert.equal(body.store, false); assert.equal(body.parallel_tool_calls, false); assert.equal(body.temperature, 0);
+    assert.deepEqual(body.tool_choice, { type: "function", function: { name: (body.tools as { function: { name: string } }[])[0].function.name } });
+  }
+  const second = bodies[1].messages as Record<string, unknown>[];
+  assert.equal(second.at(-1)?.role, "tool"); assert.equal(second.at(-1)?.tool_call_id, "g1");
+  const third = bodies[2].messages as Record<string, unknown>[];
+  assert.equal(third.length, 2); assert.deepEqual(third[1], { role: "user", content: "walk today" });
+});
+test("Groq adapter and provider selection fail closed without leaking credentials", async () => {
+  for (const raw of [{}, { choices: [] }, { choices: [{ message: { role: "assistant", content: "prose", tool_calls: [] } }] }, { choices: [{ message: { role: "assistant", content: null, tool_calls: [{ id: "x", type: "function", function: { name: recommendationTool.name, arguments: "bad" } }] } }] }]) {
+    const model = createGroqModel({ apiKey: "secret-placeholder", model: "test", fetch: async () => Response.json(raw) });
+    await assert.rejects(model.extract("test", evaluationClock), error => error instanceof Error && /AI provider unavailable/.test(error.message) && !error.message.includes("secret-placeholder"));
+  }
+  const saved = { provider: process.env.VAELORA_AI_PROVIDER, groq: process.env.GROQ_API_KEY, openai: process.env.OPENAI_API_KEY, model: process.env.VAELORA_AI_MODEL };
+  try {
+    process.env.VAELORA_AI_PROVIDER = "groq"; process.env.GROQ_API_KEY = "test-placeholder"; process.env.VAELORA_AI_MODEL = "test-model";
+    assert.ok(configuredModel());
+    process.env.GROQ_API_KEY = "invalid-\u0422"; assert.equal(configuredModel(), null);
+    delete process.env.GROQ_API_KEY; assert.equal(configuredModel(), null);
+    process.env.VAELORA_AI_PROVIDER = "unsupported"; assert.equal(configuredModel(), null);
+  } finally {
+    for (const [key, value] of [["VAELORA_AI_PROVIDER", saved.provider], ["GROQ_API_KEY", saved.groq], ["OPENAI_API_KEY", saved.openai], ["VAELORA_AI_MODEL", saved.model]] as const) {
+      if (value === undefined) delete process.env[key]; else process.env[key] = value;
+    }
   }
 });
 test("HTTP boundary validates input, limits body, and handles absent credentials without model calls", async () => {

@@ -3,7 +3,7 @@ import { pathToFileURL } from "node:url";
 import { writeFile } from "node:fs/promises";
 import cases from "../docs/evaluation/agent/cases.json" with { type: "json" };
 import { createOutdoorAgent, renderRecommendation } from "../src/server/ai/agent.ts";
-import { configuredModel } from "../src/server/ai/openai.ts";
+import { configuredModel } from "../src/server/ai/provider.ts";
 import { recommendationTool, presentationTool, type RecommendationModel } from "../src/server/ai/contracts.ts";
 import { createRecommendationPipeline } from "../src/server/recommendations/pipeline.ts";
 import { createOpenMeteoAdapter } from "../src/server/weather/open-meteo.ts";
@@ -83,7 +83,7 @@ export async function evaluateAgent(model?: RecommendationModel, limit = cases.l
 }
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const live = process.argv.includes("--live"), model = live ? configuredModel() : null;
-  if (live && !model) console.log("Live-model verification pending: OPENAI_API_KEY and VAELORA_AI_MODEL are not configured.");
+  if (live && !model) console.log("Live-model verification pending: the selected AI provider is not fully configured.");
   else {
     const report = await evaluateAgent(model ?? undefined, live && !process.argv.includes("--all") ? 3 : cases.length);
     if (process.argv.includes("--save")) await writeFile(new URL(`../docs/evaluation/agent/${live ? "live-summary" : "summary"}.json`, import.meta.url), JSON.stringify(report, null, 2) + "\n");

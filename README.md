@@ -20,8 +20,9 @@ npm ci
 npm run dev
 ```
 
-Open http://localhost:3000. The placeholder page needs no configuration. The optional
-AI endpoint requires the server-only variables documented in `.env.example`.
+Open http://localhost:3000. The recommendation interface needs no AI configuration.
+The optional AI endpoint supports OpenAI or Groq through the server-only variables
+documented in `.env.example`.
 
 On the initial setup machine, npm was absent from PATH. npm 12.0.2 was downloaded
 to temporary tooling storage. Until npm is installed on PATH, PowerShell can run

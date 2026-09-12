@@ -86,17 +86,24 @@ continuation, reasoning, raw response bodies, API keys or private exception mess
 ## Provider and configuration
 
 `src/server/ai/contracts.ts` defines the vendor-neutral `RecommendationModel` interface.
-`openai.ts` is the only OpenAI-specific module. It uses fetch and the Responses API's
-strict function tools, sends actual `function_call_output`, disables parallel tool
-calls and storage, and carries only this request's ephemeral context. Each call has
-a 30-second timeout and a 2,500-output-token limit. There are no retries or SDK additions.
-The implementation follows the [official function-calling documentation](https://developers.openai.com/api/docs/guides/function-calling).
+`openai.ts` uses OpenAI's Responses API. `groq.ts` uses Groq's Chat Completions local
+tool-calling format. Both adapters use fetch, disable storage and parallel tool calls,
+carry only this request's ephemeral context, and have a 30-second timeout and a bounded
+output limit. `provider.ts` selects the adapter from server-only environment variables;
+there are no retries, SDK additions, or client-side credentials.
 
-Copy `.env.example` to ignored `.env.local` and set `OPENAI_API_KEY` and
-`VAELORA_AI_MODEL` to an accessible Responses API model supporting strict function
-calling. There is no implicit model choice. Never prefix keys with `NEXT_PUBLIC_`.
-Next.js loads `.env.local`; the smoke command explicitly loads that file. Environment
-credentials were checked by presence only; none were available during this phase.
+The OpenAI adapter uses strict function tools and actual `function_call_output`. The
+Groq adapter forces one named local function per request, sends the authoritative result
+back as a `tool` message, and relies on VAELORA's existing runtime validators because
+strict constrained tool schemas are not available for every Groq model. Model prose is
+still never published. See the official [Groq local tool-calling documentation](https://console.groq.com/docs/tool-use/local-tool-calling)
+and [OpenAI function-calling documentation](https://developers.openai.com/api/docs/guides/function-calling).
+
+Copy `.env.example` to ignored `.env.local`. Set `VAELORA_AI_PROVIDER` to `openai` or
+`groq`, set `VAELORA_AI_MODEL` explicitly, and provide only the matching server-side key.
+There is no implicit model choice. Never prefix keys with `NEXT_PUBLIC_`. Next.js loads
+`.env.local`; the smoke command explicitly loads it. Empty or non-ASCII credentials and
+unknown providers fail closed as unconfigured without attempting a request.
 
 ## Reproducible evaluation
 
@@ -120,17 +127,18 @@ The live mode uses the fixed historical clock for repeatability; it is not a cur
 weather smoke test. Saved replay results are in `docs/evaluation/agent/summary.json`.
 
 Replay success demonstrates orchestration and contract behavior, **not model language
-understanding accuracy**. Live-model verification remains pending. The suite can run
+understanding accuracy**. The suite can run
 the same assertions against a configured model later, without changing the engine.
 
 ## Validation on 12 September 2026
 
-Dataset validation passed (35 researched, 11 selected). All 62 tests passed, including
-28/28 offline evaluation replays. TypeScript and lint passed. The production build
-passed using the repository's documented Windows fallback, `npm run build -- --webpack`,
-and includes `/api/agent` and `/api/recommendations`. The controlled model smoke command
-skipped successfully because configuration was absent; no paid model requests ran.
-No dependencies were added and the deterministic domain/data/weather files were unchanged.
+Dataset validation passed (35 researched, 11 selected). All 66 tests passed, including
+the OpenAI and Groq adapter boundaries, and 28/28 offline evaluation replays passed.
+TypeScript and lint passed. The production build passed using the repository's documented
+Windows fallback, `npm run build -- --webpack`, and includes `/api/agent` and
+`/api/recommendations`. Groq live verification still requires a valid local credential;
+malformed credentials fail closed before network I/O. No dependencies were added and the
+deterministic domain/data/weather files were unchanged.
 
 ## Limits before public release
 
