@@ -6,6 +6,8 @@
   "scripts": {
     "test": "node --test tests/domain/*.test.ts tests/data/*.test.ts tests/server/*.test.ts scripts/weather-granularity.test.mjs",
     "smoke:weather": "node scripts/weather-pipeline-smoke.ts",
+    "eval:agent": "node scripts/agent-evaluation.ts",
+    "smoke:agent": "node --env-file-if-exists=.env.local scripts/agent-evaluation.ts --live",
     "validate:data": "node scripts/validate-activity-areas.ts",
     "dev": "next dev",
     "build": "next build",

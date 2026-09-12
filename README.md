@@ -5,7 +5,9 @@ This repository contains a placeholder page, an isolated weather validation, a
 framework-independent domain/recommendation foundation, and an evidence-reviewed Greater
 Amman activity dataset (11 selected areas; five support running, all support walking).
 See the [dataset review and limitations](docs/research/activity-areas/README.md).
-No production scoring policy or user-facing recommendation feature is enabled.
+A live deterministic weather pipeline and a single-turn AI tool-calling agent are
+implemented. Comfort policy remains provisional; the page is still a placeholder.
+See [AI agent, configuration and evaluation](docs/ai-agent.md).
 
 ## Local development
 
@@ -16,7 +18,8 @@ npm ci
 npm run dev
 ```
 
-Open http://localhost:3000. No environment variables or external services are required.
+Open http://localhost:3000. The placeholder page needs no configuration. The optional
+AI endpoint requires the server-only variables documented in `.env.example`.
 
 On the initial setup machine, npm was absent from PATH. npm 12.0.2 was downloaded
 to temporary tooling storage. Until npm is installed on PATH, PowerShell can run
@@ -31,9 +34,11 @@ node "$env:TEMP\vaelora-npm-tooling\package\bin\npm-cli.js" run dev
 - `npm ci`: install dependencies from the committed lockfile.
 - `npm run dev`: start the local development server.
 - `npm run lint`: run ESLint; warnings fail the check.
-- `npm test`: run offline domain, dataset and preserved weather-validation tests.
+- `npm test`: run offline domain, dataset, weather integration and AI-agent tests.
 - `npm run validate:data`: validate production records and the research decision crosswalk.
 - `npm run smoke:weather`: make the controlled live Open-Meteo pipeline check and save its evidence.
+- `npm run eval:agent`: run 28 offline agent evaluation replays with synthetic weather.
+- `npm run smoke:agent`: run three controlled live-model cases if configured; otherwise skip.
 - `npm run typecheck`: check TypeScript without emitting files.
 - `npm run build`: create and type-check the production build.
 - `npm start`: serve an existing production build.
@@ -65,8 +70,8 @@ the default build command remains unchanged.
 - `postcss.config.mjs`: Tailwind CSS integration.
 - `AGENTS.md`: product scope and contributor guidance, preserved from planning.
 
-Add directories only as implementation needs them: `src/components/` for reusable UI
-and `src/ai/` for orchestration. These remain future boundaries. Domain logic remains
+`src/server/ai/` contains the agent, provider adapter, intent/tool contracts and grounded
+renderer; `src/app/api/agent/` is its HTTP boundary. UI remains future work. Domain logic remains
 independent of UI, AI, and weather providers. See the
 [weather integration](docs/weather-integration.md) for the live server pipeline.
 

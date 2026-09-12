@@ -1,0 +1,373 @@
+{
+  "mode": "mock-replay-synthetic-weather",
+  "clock": "2026-09-12T00:00:00.000Z",
+  "note": "Replay validates contracts and orchestration, not language-model extraction accuracy. Live-model verification pending.",
+  "total": 28,
+  "passed": 28,
+  "results": [
+    {
+      "id": "run",
+      "passed": true,
+      "metrics": {
+        "activity": true,
+        "time": true,
+        "constraints": true,
+        "toolContract": true,
+        "locations": true,
+        "scores": true,
+        "grounding": true
+      }
+    },
+    {
+      "id": "walk",
+      "passed": true,
+      "metrics": {
+        "activity": true,
+        "time": true,
+        "constraints": true,
+        "toolContract": true,
+        "locations": true,
+        "scores": true,
+        "grounding": true
+      }
+    },
+    {
+      "id": "after",
+      "passed": true,
+      "metrics": {
+        "activity": true,
+        "time": true,
+        "constraints": true,
+        "toolContract": true,
+        "locations": true,
+        "scores": true,
+        "grounding": true
+      }
+    },
+    {
+      "id": "before",
+      "passed": true,
+      "metrics": {
+        "activity": true,
+        "time": true,
+        "constraints": true,
+        "toolContract": true,
+        "locations": true,
+        "scores": true,
+        "grounding": true
+      }
+    },
+    {
+      "id": "morning",
+      "passed": true,
+      "metrics": {
+        "activity": true,
+        "time": true,
+        "constraints": true,
+        "toolContract": true,
+        "locations": true,
+        "scores": true,
+        "grounding": true
+      }
+    },
+    {
+      "id": "tonight",
+      "passed": true,
+      "metrics": {
+        "activity": true,
+        "time": true,
+        "constraints": true,
+        "toolContract": true,
+        "locations": true,
+        "scores": true,
+        "grounding": true
+      }
+    },
+    {
+      "id": "flat",
+      "passed": true,
+      "metrics": {
+        "activity": true,
+        "time": true,
+        "constraints": true,
+        "toolContract": true,
+        "locations": true,
+        "scores": true,
+        "grounding": true
+      }
+    },
+    {
+      "id": "hilly",
+      "passed": true,
+      "metrics": {
+        "activity": true,
+        "time": true,
+        "constraints": true,
+        "toolContract": true,
+        "locations": true,
+        "scores": true,
+        "grounding": true
+      }
+    },
+    {
+      "id": "paved",
+      "passed": true,
+      "metrics": {
+        "activity": true,
+        "time": true,
+        "constraints": true,
+        "toolContract": true,
+        "locations": true,
+        "scores": true,
+        "grounding": true
+      }
+    },
+    {
+      "id": "park",
+      "passed": true,
+      "metrics": {
+        "activity": true,
+        "time": true,
+        "constraints": true,
+        "toolContract": true,
+        "locations": true,
+        "scores": true,
+        "grounding": true
+      }
+    },
+    {
+      "id": "wind",
+      "passed": true,
+      "metrics": {
+        "activity": true,
+        "time": true,
+        "constraints": true,
+        "toolContract": true,
+        "locations": true,
+        "scores": true,
+        "grounding": true
+      }
+    },
+    {
+      "id": "walking-wind",
+      "passed": true,
+      "metrics": {
+        "activity": true,
+        "time": true,
+        "constraints": true,
+        "toolContract": true,
+        "locations": true,
+        "scores": true,
+        "grounding": true
+      }
+    },
+    {
+      "id": "heat",
+      "passed": true,
+      "metrics": {
+        "activity": true,
+        "time": true,
+        "constraints": true,
+        "toolContract": true,
+        "locations": true,
+        "scores": true,
+        "grounding": true
+      }
+    },
+    {
+      "id": "numeric",
+      "passed": true,
+      "metrics": {
+        "activity": true,
+        "time": true,
+        "constraints": true,
+        "toolContract": true,
+        "locations": true,
+        "scores": true,
+        "grounding": true
+      }
+    },
+    {
+      "id": "combined",
+      "passed": true,
+      "metrics": {
+        "activity": true,
+        "time": true,
+        "constraints": true,
+        "toolContract": true,
+        "locations": true,
+        "scores": true,
+        "grounding": true
+      }
+    },
+    {
+      "id": "duration",
+      "passed": true,
+      "metrics": {
+        "activity": true,
+        "time": true,
+        "constraints": true,
+        "toolContract": true,
+        "locations": true,
+        "scores": true,
+        "grounding": true
+      }
+    },
+    {
+      "id": "hiking",
+      "passed": true,
+      "metrics": {
+        "activity": true,
+        "time": null,
+        "constraints": true,
+        "toolContract": true,
+        "locations": true,
+        "scores": true,
+        "grounding": true
+      }
+    },
+    {
+      "id": "distance",
+      "passed": true,
+      "metrics": {
+        "activity": true,
+        "time": null,
+        "constraints": true,
+        "toolContract": true,
+        "locations": true,
+        "scores": true,
+        "grounding": true
+      }
+    },
+    {
+      "id": "future",
+      "passed": true,
+      "metrics": {
+        "activity": true,
+        "time": null,
+        "constraints": true,
+        "toolContract": true,
+        "locations": true,
+        "scores": true,
+        "grounding": true
+      }
+    },
+    {
+      "id": "conflict",
+      "passed": true,
+      "metrics": {
+        "activity": true,
+        "time": null,
+        "constraints": true,
+        "toolContract": true,
+        "locations": true,
+        "scores": true,
+        "grounding": true
+      }
+    },
+    {
+      "id": "backwards",
+      "passed": true,
+      "metrics": {
+        "activity": true,
+        "time": null,
+        "constraints": true,
+        "toolContract": true,
+        "locations": true,
+        "scores": true,
+        "grounding": true
+      }
+    },
+    {
+      "id": "ambiguous",
+      "passed": true,
+      "metrics": {
+        "activity": true,
+        "time": null,
+        "constraints": true,
+        "toolContract": true,
+        "locations": true,
+        "scores": true,
+        "grounding": true
+      }
+    },
+    {
+      "id": "bare-clock",
+      "passed": true,
+      "metrics": {
+        "activity": true,
+        "time": null,
+        "constraints": true,
+        "toolContract": true,
+        "locations": true,
+        "scores": true,
+        "grounding": true
+      }
+    },
+    {
+      "id": "fractional",
+      "passed": true,
+      "metrics": {
+        "activity": true,
+        "time": null,
+        "constraints": true,
+        "toolContract": true,
+        "locations": true,
+        "scores": true,
+        "grounding": true
+      }
+    },
+    {
+      "id": "access",
+      "passed": true,
+      "metrics": {
+        "activity": true,
+        "time": null,
+        "constraints": true,
+        "toolContract": true,
+        "locations": true,
+        "scores": true,
+        "grounding": true
+      }
+    },
+    {
+      "id": "injection",
+      "passed": true,
+      "metrics": {
+        "activity": true,
+        "time": null,
+        "constraints": true,
+        "toolContract": true,
+        "locations": true,
+        "scores": true,
+        "grounding": true
+      }
+    },
+    {
+      "id": "missing-day",
+      "passed": true,
+      "metrics": {
+        "activity": true,
+        "time": null,
+        "constraints": true,
+        "toolContract": true,
+        "locations": true,
+        "scores": true,
+        "grounding": true
+      }
+    },
+    {
+      "id": "empty",
+      "passed": true,
+      "metrics": {
+        "activity": null,
+        "time": null,
+        "constraints": null,
+        "toolContract": true,
+        "locations": null,
+        "scores": null,
+        "grounding": null
+      }
+    }
+  ]
+}
