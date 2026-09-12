@@ -1,0 +1,1007 @@
+{
+  "reviewedOn": "2026-09-12",
+  "method": "Desk research only; 30 original proposals re-reviewed and five targeted running leads added. 35 research proposals are not 35 distinct qualifying sites. Production crosswalk preserves narrowed and merged identities. Source independence, access and attribute limitations documented per selection; no field inspection or live opening guarantee.",
+  "areas": [
+    {
+      "id": "sports-city",
+      "name": "Al-Hussein Youth City / Sports City",
+      "decision": "production",
+      "productionId": "sports-city",
+      "verificationStatus": "verified",
+      "canonicalKey": "https://mapcarta.com/W972338370",
+      "coordinateReference": {
+        "latitude": 31.98305,
+        "longitude": 35.90458,
+        "url": "https://mapcarta.com/W972338370"
+      },
+      "scopeReview": "Named site in Sports City / Al-Abdali, within central/western urban Amman; identity and geographic source reviewed together. This is a manual scope determination, not a polygon containment result.",
+      "reviewedOn": "2026-09-12",
+      "reviewSummary": "Selected bounded scope: Wooded pedestrian exercise area within Sports City; excludes stadiums and other controlled sports facilities.",
+      "qualification": "Activity/terrain/surface: running guide describes a flat wooded pedestrian path with dirt and asphalt. Walking fit is inferred from the pedestrian path, not from stadium access. Independent public activity corroboration: Jordan Tourism Board item 51 recommends walking, jogging and running on the Sports City forest track. Brochure text reviewed; no field inspection.",
+      "accessReview": "Public wooded pedestrian paths only; stadiums and controlled sports facilities excluded. Current gate hours not established.",
+      "attributeReview": "Environment: park; terrain: flat; surface: dirt, paved. Explicit source notes in production evidence distinguish observations from inferences. Unknowns do not satisfy hard preferences.",
+      "limitations": "Public wooded pedestrian paths only; stadiums and controlled sports facilities excluded. Current gate hours not established."
+    },
+    {
+      "id": "king-hussein-park",
+      "name": "King Hussein Park",
+      "decision": "production",
+      "productionId": "king-hussein-park",
+      "verificationStatus": "verified",
+      "canonicalKey": "https://mapcarta.com/W153915077",
+      "coordinateReference": {
+        "latitude": 31.98635,
+        "longitude": 35.82661,
+        "url": "https://mapcarta.com/W153915077"
+      },
+      "scopeReview": "Named site in Al-Hussein Public Parks / west Amman, within central/western urban Amman; identity and geographic source reviewed together. This is a manual scope determination, not a polygon containment result.",
+      "reviewedOn": "2026-09-12",
+      "reviewSummary": "Selected bounded scope: Public park paths for running and walking; excludes the guide's optional Dabouq street extension.",
+      "qualification": "Activity/surface: local-club-informed guide documents running on asphalt/concrete park paths. Its erroneous east-of-city wording and route distances are not adopted. Public use: Jordan Tourism Board recommends leisure visits to Al-Hussein Park. Independent corroboration of public use, not a running or terrain audit.",
+      "accessReview": "General public park paths only; opening conditions may change. Optional Dabouq road extension excluded.",
+      "attributeReview": "Environment: park; terrain: unknown; surface: paved. Explicit source notes in production evidence distinguish observations from inferences. Unknowns do not satisfy hard preferences.",
+      "limitations": "General public park paths only; opening conditions may change. Optional Dabouq road extension excluded."
+    },
+    {
+      "id": "rainbow-street",
+      "name": "Rainbow Street",
+      "decision": "production",
+      "productionId": "rainbow-street",
+      "verificationStatus": "verified",
+      "canonicalKey": "https://en.wikipedia.org/wiki/Rainbow_Street",
+      "coordinateReference": {
+        "latitude": 31.95062,
+        "longitude": 35.92311,
+        "url": "https://en.wikipedia.org/wiki/Rainbow_Street"
+      },
+      "scopeReview": "Named site in Jabal Amman, within central/western urban Amman; identity and geographic source reviewed together. This is a manual scope determination, not a polygon containment result.",
+      "reviewedOn": "2026-09-12",
+      "reviewSummary": "Selected bounded scope: Urban leisure walking along Rainbow Street; traffic and commercial activity limit uninterrupted exercise. Excludes wider Jabal Amman.",
+      "qualification": "Activity: Jordan Tourism Board explicitly recommends strolling Rainbow Street. Independent activity evidence: residents promenade here; narrow street also carries traffic. No running suitability established.",
+      "accessReview": "Public urban street; traffic and commercial crowds limit continuous exercise. No running or route-wide slope/surface assessment.",
+      "attributeReview": "Environment: urban; terrain: unknown; surface: unknown. Explicit source notes in production evidence distinguish observations from inferences. Unknowns do not satisfy hard preferences.",
+      "limitations": "Public urban street; traffic and commercial crowds limit continuous exercise. No running or route-wide slope/surface assessment."
+    },
+    {
+      "id": "wakalat-street",
+      "name": "Wakalat Street",
+      "decision": "production",
+      "productionId": "wakalat-street",
+      "verificationStatus": "verified",
+      "canonicalKey": "https://trek.zone/en/jordan/places/137529/wakalat-street-amman",
+      "coordinateReference": {
+        "latitude": 31.95667,
+        "longitude": 35.86083,
+        "url": "https://trek.zone/en/jordan/places/137529/wakalat-street-amman"
+      },
+      "scopeReview": "Named site in Sweifieh, within central/western urban Amman; identity and geographic source reviewed together. This is a manual scope determination, not a polygon containment result.",
+      "reviewedOn": "2026-09-12",
+      "reviewSummary": "Selected bounded scope: Shopping-street leisure walking in Sweifieh; no continuous running route or minimum exercise distance established.",
+      "qualification": "Activity: Jordan Tourism Board recommends walking along Wakalat's outdoor shopping area. Independent firsthand public-space study, 2011: pedestrian and commercial uses on Wakalat. Historical observations corroborate leisure walking; no running loop claimed. Surface: tourism brochure describes Wakalat as a paved pedestrian street. Indexed brochure text reviewed.",
+      "accessReview": "Public pedestrian shopping street; commercial crowds and short extent limit exercise. No running or measured slope evidence.",
+      "attributeReview": "Environment: urban; terrain: unknown; surface: paved. Explicit source notes in production evidence distinguish observations from inferences. Unknowns do not satisfy hard preferences.",
+      "limitations": "Public pedestrian shopping street; commercial crowds and short extent limit exercise. No running or measured slope evidence."
+    },
+    {
+      "id": "abdali-boulevard",
+      "name": "Al-Abdali Boulevard",
+      "decision": "production",
+      "productionId": "abdali-boulevard",
+      "verificationStatus": "verified",
+      "canonicalKey": "https://www.wikidata.org/wiki/Q22948741",
+      "coordinateReference": {
+        "latitude": 31.96457,
+        "longitude": 35.90487,
+        "url": "https://www.wikidata.org/wiki/Q22948741"
+      },
+      "scopeReview": "Named site in Al-Abdali, within central/western urban Amman; identity and geographic source reviewed together. This is a manual scope determination, not a polygon containment result.",
+      "reviewedOn": "2026-09-12",
+      "reviewSummary": "Selected bounded scope: Managed pedestrian shopping promenade for leisure walking. Check operator access conditions and events; not a running track.",
+      "qualification": "Activity/identity: developer describes The Boulevard as a pedestrian walkway for shopping and leisure. This is operator evidence, not an independent inspection. Independent travel reporting, 11 March 2025: section 9 describes the Boulevard open-air pedestrian promenade. Leisure walking only; surrounding roads excluded.",
+      "accessReview": "Managed publicly visitable promenade; operator events/access conditions apply. No guaranteed unrestricted hours or running route.",
+      "attributeReview": "Environment: urban; terrain: unknown; surface: unknown. Explicit source notes in production evidence distinguish observations from inferences. Unknowns do not satisfy hard preferences.",
+      "limitations": "Managed publicly visitable promenade; operator events/access conditions apply. No guaranteed unrestricted hours or running route."
+    },
+    {
+      "id": "japanese-park-abdoun",
+      "name": "Japanese Park (Abdoun)",
+      "decision": "production",
+      "productionId": "japanese-park-abdoun",
+      "verificationStatus": "verified",
+      "canonicalKey": "https://mapcarta.com/W487905529",
+      "coordinateReference": {
+        "latitude": 31.93639,
+        "longitude": 35.8901,
+        "url": "https://mapcarta.com/W487905529"
+      },
+      "scopeReview": "Named site in Abdoun, within central/western urban Amman; identity and geographic source reviewed together. This is a manual scope determination, not a polygon containment result.",
+      "reviewedOn": "2026-09-12",
+      "reviewSummary": "Selected bounded scope: Small ornamental public garden for leisurely exploration; no evidence of an exercise loop. Distinct from the National Gallery's Japanese garden feature.",
+      "qualification": "Public use/environment: CSBE documents Abdoun's public Japanese garden. Limited leisure walking is an interpretation of visitable garden paths, not evidence of a training route. Independent municipal account confirms inauguration as a public garden in Abdoun; historical opening evidence does not establish present hours.",
+      "accessReview": "Small public ornamental garden; historical opening evidence, no current hours or exercise loop established.",
+      "attributeReview": "Environment: park; terrain: unknown; surface: unknown. Explicit source notes in production evidence distinguish observations from inferences. Unknowns do not satisfy hard preferences.",
+      "limitations": "Small public ornamental garden; historical opening evidence, no current hours or exercise loop established."
+    },
+    {
+      "id": "national-gallery-park",
+      "name": "Jordan National Gallery of Fine Arts Park",
+      "decision": "production",
+      "productionId": "national-gallery-park",
+      "verificationStatus": "verified",
+      "canonicalKey": "https://www.mypacer.com/parks/196344/jordan-national-gallery-of-fine-arts-park-amman",
+      "coordinateReference": {
+        "latitude": 31.95844,
+        "longitude": 35.91517,
+        "url": "https://www.mypacer.com/parks/196344/jordan-national-gallery-of-fine-arts-park-amman"
+      },
+      "scopeReview": "Named site in Jabal Al-Weibdeh, within central/western urban Amman; identity and geographic source reviewed together. This is a manual scope determination, not a polygon containment result.",
+      "reviewedOn": "2026-09-12",
+      "reviewSummary": "Selected bounded scope: Public sculpture garden with stone paths and level changes. Operator lists park hours 09:00–14:30; confirm opening days and access before a visit.",
+      "qualification": "Firsthand design/public-use evidence: public garden paths retain stone paving; multiple levels and gates. Includes its internal Japanese garden, not a second location. Operator corroboration: park visiting hours 09:00–14:30. Gallery closed Tuesdays, Fridays and official holidays; application of closure days/admission fees to park needs confirmation.",
+      "accessReview": "Operator lists park hours 09:00-14:30; confirm days and park-specific admission. Multiple levels; slope classification unknown.",
+      "attributeReview": "Environment: park; terrain: unknown; surface: paved. Explicit source notes in production evidence distinguish observations from inferences. Unknowns do not satisfy hard preferences.",
+      "limitations": "Operator lists park hours 09:00-14:30; confirm days and park-specific admission. Multiple levels; slope classification unknown."
+    },
+    {
+      "id": "hashemite-plaza",
+      "name": "Hashemite Plaza",
+      "decision": "production",
+      "productionId": "hashemite-plaza",
+      "verificationStatus": "supported",
+      "canonicalKey": "https://mapcarta.com/W651678324",
+      "coordinateReference": {
+        "latitude": 31.95241,
+        "longitude": 35.93917,
+        "url": "https://mapcarta.com/W651678324"
+      },
+      "scopeReview": "Named site in Downtown / Al-Balad, within central/western urban Amman; identity and geographic source reviewed together. This is a manual scope determination, not a polygon containment result.",
+      "reviewedOn": "2026-09-12",
+      "reviewSummary": "Selected bounded scope: Public pedestrian plaza beside the Roman Theatre for leisure walking; excludes paid archaeological interiors and wider downtown streets.",
+      "qualification": "Public-use evidence: 2021 field-research inventory includes Hashemite Plaza. Indexed PDF excerpt reviewed; full PDF retrieval failed. No detailed surface claim taken from it. Activity corroboration: directory lists open walking paths; generic directory alone would be insufficient.",
+      "accessReview": "Public pedestrian square; excludes paid archaeology and surrounding traffic streets. No running evidence; exact paving/slope unassessed.",
+      "attributeReview": "Environment: urban; terrain: unknown; surface: unknown. Explicit source notes in production evidence distinguish observations from inferences. Unknowns do not satisfy hard preferences.",
+      "limitations": "Public pedestrian square; excludes paid archaeology and surrounding traffic streets. No running evidence; exact paving/slope unassessed."
+    },
+    {
+      "id": "dabouq",
+      "name": "Dabouq",
+      "slug": "dabouq",
+      "latitude": null,
+      "longitude": null,
+      "district": "Dabouq",
+      "supportedActivities": [],
+      "environment": "unknown",
+      "terrain": "unknown",
+      "surfaces": [
+        "unknown"
+      ],
+      "suitability": {
+        "running": "unknown",
+        "walking": "unknown"
+      },
+      "verificationStatus": "candidate",
+      "description": "Running is documented at neighborhood scale, but a bounded standalone activity area and representative point remain unresolved. Do not duplicate King Hussein Park's optional road extension.",
+      "evidence": [
+        {
+          "url": "https://greatruns.com/amman-jordan-al-hussein-park-and-dabouq/",
+          "note": "Guide describes street extensions and club runs; does not justify treating the entire district as one homogeneous area."
+        },
+        {
+          "url": "https://greatruns.com/amman-jordan-al-hussein-park-and-dabouq/",
+          "note": "Guide names Al-Hijaz, Al-Shab and Saeed Kheir sidewalk circuit, but its linked map covers King Hussein Park. Standalone circuit point/geometry not resolved; do not reuse park pin or whole-district centroid."
+        }
+      ],
+      "decision": "candidate",
+      "productionId": null,
+      "reviewedOn": "2026-09-12",
+      "reviewSummary": "Guide names Al-Hijaz, Al-Shab and Saeed Kheir sidewalk circuit, but its linked map covers King Hussein Park. Standalone circuit point/geometry not resolved; do not reuse park pin or whole-district centroid."
+    },
+    {
+      "id": "abdoun-corridor",
+      "name": "Abdoun Corridor",
+      "slug": "abdoun-corridor",
+      "latitude": 31.9288004,
+      "longitude": 35.8819216,
+      "district": "Abdoun",
+      "supportedActivities": [],
+      "environment": "urban",
+      "terrain": "unknown",
+      "surfaces": [
+        "unknown"
+      ],
+      "suitability": {
+        "running": "unknown",
+        "walking": "unknown"
+      },
+      "verificationStatus": "candidate",
+      "description": "Named road exists; verify which pedestrian segment is continuous, public and useful for exercise before promotion.",
+      "evidence": [
+        {
+          "url": "https://elevation.maplogs.com/poi/abdoun_corridor_amman_jordan.365963.html",
+          "note": "Named road geographic reference used in preserved weather POC, not evidence of a walking/running facility."
+        },
+        {
+          "url": "https://media.ammancity.gov.jo/Ar/NewsDetails/الامانة_تنظم_نشاط_رياضي_في_ممشى_عمان_بمناسبة_يوم_المدينة_",
+          "note": "Municipal March 2023 walking event establishes a 1,500 m walkway on Prince Hussein bin Abdullah II Street; 2026 reporting describes light jogging. Existing road coordinate does not identify the walkway. Exact pedestrian segment pin remains unresolved."
+        },
+        {
+          "url": "https://jfranews.com.jo/article/533051",
+          "note": "2026 reporting describes walkway users including light jogging; activity lead only, no verified pedestrian-segment coordinate."
+        }
+      ],
+      "decision": "candidate",
+      "productionId": null,
+      "reviewedOn": "2026-09-12",
+      "reviewSummary": "Municipal March 2023 walking event establishes a 1,500 m walkway on Prince Hussein bin Abdullah II Street; 2026 reporting describes light jogging. Existing road coordinate does not identify the walkway. Exact pedestrian segment pin remains unresolved."
+    },
+    {
+      "id": "deir-ghbar",
+      "name": "Deir Ghbar / proposed walking-path area",
+      "slug": "deir-ghbar",
+      "latitude": null,
+      "longitude": null,
+      "district": "Deir Ghbar",
+      "supportedActivities": [],
+      "environment": "urban",
+      "terrain": "unknown",
+      "surfaces": [
+        "unknown"
+      ],
+      "suitability": {
+        "running": "unknown",
+        "walking": "unknown"
+      },
+      "verificationStatus": "candidate",
+      "description": "Narrow the district to a named path with checked endpoints. District-wide walkability findings cannot establish every sidewalk's suitability.",
+      "evidence": [
+        {
+          "url": "https://www.mdpi.com/2075-5309/15/12/1999",
+          "note": "Primary walkability study reports variable pavement, width and obstacles across Deir Ghbar."
+        }
+      ],
+      "decision": "candidate",
+      "productionId": null,
+      "reviewedOn": "2026-09-12",
+      "reviewSummary": "Narrow the district to a named path with checked endpoints. District-wide walkability findings cannot establish every sidewalk's suitability."
+    },
+    {
+      "id": "jabal-al-weibdeh",
+      "name": "Jabal Al-Weibdeh (broad proposal)",
+      "slug": "jabal-al-weibdeh",
+      "latitude": null,
+      "longitude": null,
+      "district": "Jabal Al-Weibdeh",
+      "supportedActivities": [],
+      "environment": "urban",
+      "terrain": "unknown",
+      "surfaces": [
+        "unknown"
+      ],
+      "suitability": {
+        "running": "unknown",
+        "walking": "unknown"
+      },
+      "verificationStatus": "candidate",
+      "description": "Replace the broad proposal with the National Gallery Park. This scopes the research to one identifiable public space; the whole district is not an alias of that park.",
+      "evidence": [
+        {
+          "url": "https://www.csbe.org/the-national-gallery-of-fine-arts-park",
+          "note": "Documents the former Jabal al-Luweibdeh Park's identity and public use."
+        }
+      ],
+      "decision": "merged",
+      "productionId": "national-gallery-park",
+      "reviewedOn": "2026-09-12",
+      "reviewSummary": "Replace the broad proposal with the National Gallery Park. This scopes the research to one identifiable public space; the whole district is not an alias of that park."
+    },
+    {
+      "id": "khalda",
+      "name": "Khalda (district-level proposal)",
+      "slug": "khalda",
+      "latitude": null,
+      "longitude": null,
+      "district": "Khalda",
+      "supportedActivities": [],
+      "environment": "unknown",
+      "terrain": "unknown",
+      "surfaces": [
+        "unknown"
+      ],
+      "suitability": {
+        "running": "unknown",
+        "walking": "unknown"
+      },
+      "verificationStatus": "candidate",
+      "description": "Reject this formulation: no named activity area or defensible activity-area coordinate. A specifically identified park can be researched separately.",
+      "evidence": [
+        {
+          "url": "https://yopki.com/explore/us/amman/khalda/park-khalda",
+          "note": "Generic park/district listing is insufficient identification and activity evidence."
+        }
+      ],
+      "decision": "rejected",
+      "productionId": null,
+      "reviewedOn": "2026-09-12",
+      "reviewSummary": "Reject this formulation: no named activity area or defensible activity-area coordinate. A specifically identified park can be researched separately."
+    },
+    {
+      "id": "marj-al-hamam",
+      "name": "Al-Nashama Public Park",
+      "verificationStatus": "verified",
+      "decision": "production",
+      "productionId": "al-nashama-park",
+      "reviewedOn": "2026-09-12",
+      "originalProposal": {
+        "name": "Marj Al-Hamam (park search)",
+        "description": "Municipal park announcements need matching to an exact named, open site and usable paths.",
+        "evidence": [
+          {
+            "url": "https://royanews.com/en/Amman-Municipality-plans-6-new-parks-and-gardens-in-2026-and/",
+            "note": "Indexed report mentions new parks including Marj Al-Hamam; announcement alone does not verify a specific usable area."
+          }
+        ]
+      },
+      "canonicalKey": "https://www.trip.com/travel-guide/attraction/amman/al-nashama-park-136890032/",
+      "coordinateReference": {
+        "latitude": 31.88989,
+        "longitude": 35.84405,
+        "url": "https://www.trip.com/travel-guide/attraction/amman/al-nashama-park-136890032/"
+      },
+      "scopeReview": "Named municipal park in Marj Al-Hamam / Al-Salam Street; coordinates matched to the named site. Original broader proposal narrowed to this park only. Manual scope review, not polygon containment.",
+      "reviewSummary": "Selected bounded scope: Public walking track in Marj Al-Hamam; light jogging only because of sharp turns and family traffic. Rubber track resurfacing completed August 2026. Excludes reservable courts and remaining Royal Village land.",
+      "qualification": "Firsthand reporting, 7 July 2026: free public park; observed walking and light jogging. Sharp turns and family use limit speed. Former Royal Village site, not the whole residential district. Municipal completion statement, August 2026: rubber layer installed on the walking track and park ready to receive visitors. Supersedes August maintenance closures. Indexed article reviewed; track length is not adopted.",
+      "accessReview": "Free public park walking track; booked courts excluded. Light jogging, not fast training. August resurfacing completed; current hours not guaranteed.",
+      "attributeReview": "Environment: park; terrain: unknown; surface: track. Explicit source notes in production evidence distinguish observations from inferences. Unknowns do not satisfy hard preferences.",
+      "limitations": "Free public park walking track; booked courts excluded. Light jogging, not fast training. August resurfacing completed; current hours not guaranteed."
+    },
+    {
+      "id": "amman-national-park",
+      "name": "Amman National Park",
+      "slug": "amman-national-park",
+      "latitude": 31.8662,
+      "longitude": 35.8812,
+      "district": "Al-Muqabalain / south Amman",
+      "supportedActivities": [],
+      "environment": "woodland",
+      "terrain": "unknown",
+      "surfaces": [
+        "unknown"
+      ],
+      "suitability": {
+        "running": "unknown",
+        "walking": "unknown"
+      },
+      "verificationStatus": "candidate",
+      "description": "Existing park identity is supported, but announced new tracks must not be treated as open. Confirm current paths, access and precise activity subarea.",
+      "evidence": [
+        {
+          "url": "https://petra.gov.jo/ar/index.php/en/news/gam-to-develop-three-new-tracks-at-amman-national-park",
+          "note": "Petra describes tracks to be developed, not a completion inspection."
+        },
+        {
+          "url": "https://latitude.to/map/jo/jordan/natural-parks/1/amman-national-park",
+          "note": "Geographic reference only; retained research point, not a verified activity entrance."
+        },
+        {
+          "url": "https://petra.gov.jo/ar/index.php/en/news/gam-to-develop-three-new-tracks-at-amman-national-park",
+          "note": "April 2026 announcement proposes three new tracks. Completion/access to those tracks not established; keep separate from the documented Ghamadan perimeter road circuit."
+        }
+      ],
+      "decision": "candidate",
+      "productionId": null,
+      "reviewedOn": "2026-09-12",
+      "reviewSummary": "April 2026 announcement proposes three new tracks. Completion/access to those tracks not established; keep separate from the documented Ghamadan perimeter road circuit."
+    },
+    {
+      "id": "king-abdullah-ii-parks",
+      "name": "King Abdullah II Park (Al-Muqabalain)",
+      "verificationStatus": "supported",
+      "decision": "production",
+      "productionId": "king-abdullah-ii-park",
+      "reviewedOn": "2026-09-12",
+      "originalProposal": {
+        "name": "King Abdullah II Parks (Al-Muqabalain)",
+        "description": "Public walking is reported; resolve exact canonical pin and current completed walking area. Do not confuse with Wadi Saqra gardens or Qweismeh stadium.",
+        "evidence": [
+          {
+            "url": "https://www.trfihi-parks.com/en/park-details/2817-King%20Abdullah%20II%20Parks",
+            "note": "Directory names Al-Sakhra Street and walking paths; geographic confirmation remains incomplete."
+          }
+        ]
+      },
+      "canonicalKey": "https://mapcarta.com/W483730363",
+      "coordinateReference": {
+        "latitude": 31.90678,
+        "longitude": 35.92581,
+        "url": "https://mapcarta.com/W483730363"
+      },
+      "scopeReview": "Named municipal park in Al-Muqabalain; coordinates matched to the named site. Original broader proposal narrowed to this park only. Manual scope review, not polygon containment.",
+      "reviewSummary": "Selected bounded scope: General-public park paths and documented jogging provision in Al-Muqabalain. Running limited pending a current track-condition assessment; surface and slope unknown. Excludes women-only zone, booked courts and museum interiors; check park opening conditions.",
+      "qualification": "Royal Hashemite Court, 27 November 2019: inauguration of this public family park in Mugabalein. Resolves earlier construction closure; distinct from Wadi Saqra gardens and Irbid namesake. Municipal account explicitly describes opened phase-two facilities including a jogging/cycling track. Historical phase-three construction context; website 2026 footer is not publication date. Jogging provision supported, present track condition/surface not independently inspected. WHO Q4 2024 newsletter corroborates park activity investment, specifically a women-only walking/gym zone. Indexed PDF excerpt reviewed. That restricted zone is excluded from the general-public record.",
+      "accessReview": "Managed general-public park paths; women-only zone, reserved courts and museums excluded. Historic jogging evidence; exact hours and current track condition unconfirmed.",
+      "attributeReview": "Environment: park; terrain: unknown; surface: unknown. Explicit source notes in production evidence distinguish observations from inferences. Unknowns do not satisfy hard preferences.",
+      "limitations": "Managed general-public park paths; women-only zone, reserved courts and museums excluded. Historic jogging evidence; exact hours and current track condition unconfirmed."
+    },
+    {
+      "id": "princess-iman-park",
+      "name": "Princess Iman Park",
+      "slug": "princess-iman-park",
+      "latitude": 31.9696608,
+      "longitude": 35.8791221,
+      "district": "Al-Ahwaz Street / west Amman",
+      "supportedActivities": [],
+      "environment": "park",
+      "terrain": "unknown",
+      "surfaces": [
+        "unknown"
+      ],
+      "suitability": {
+        "running": "unknown",
+        "walking": "unknown"
+      },
+      "verificationStatus": "candidate",
+      "description": "Named garden pin and old playground reviews do not establish useful walking or running space. Inspect current paths and access.",
+      "evidence": [
+        {
+          "url": "https://jo.near-place.com/hdyqt-alamyrt-ayman-princes-iman-park-al-ahwaz-street-amman",
+          "note": "Geographic listing has a named pin and older visitor reviews; not an exercise assessment."
+        }
+      ],
+      "decision": "candidate",
+      "productionId": null,
+      "reviewedOn": "2026-09-12",
+      "reviewSummary": "Named garden pin and old playground reviews do not establish useful walking or running space. Inspect current paths and access."
+    },
+    {
+      "id": "zahran-park",
+      "name": "Zahran Park",
+      "slug": "zahran-park",
+      "latitude": null,
+      "longitude": null,
+      "district": "Zahran / Fourth Circle",
+      "supportedActivities": [],
+      "environment": "park",
+      "terrain": "unknown",
+      "surfaces": [
+        "unknown"
+      ],
+      "suitability": {
+        "running": "unknown",
+        "walking": "unknown"
+      },
+      "verificationStatus": "candidate",
+      "description": "Resolve Methqal Al-Fayez Street listing versus other similarly named Zahran parks, then inspect paths. No district-wide terrain assumptions.",
+      "evidence": [
+        {
+          "url": "https://www.trfihi-parks.com/en/park-details/2811-Zahran-Park",
+          "note": "Directory locates a Zahran Park on Methqal Al-Fayez Street; insufficient canonical-coordinate corroboration."
+        }
+      ],
+      "decision": "candidate",
+      "productionId": null,
+      "reviewedOn": "2026-09-12",
+      "reviewSummary": "Resolve Methqal Al-Fayez Street listing versus other similarly named Zahran parks, then inspect paths. No district-wide terrain assumptions."
+    },
+    {
+      "id": "jubilee-sweileh",
+      "name": "Jubilee Park / Sweileh (proposed name)",
+      "slug": "jubilee-sweileh",
+      "latitude": null,
+      "longitude": null,
+      "district": "Unresolved: Sweileh versus Al-Abdali",
+      "supportedActivities": [],
+      "environment": "park",
+      "terrain": "unknown",
+      "surfaces": [
+        "unknown"
+      ],
+      "suitability": {
+        "running": "unknown",
+        "walking": "unknown"
+      },
+      "verificationStatus": "candidate",
+      "description": "Reject conflated name. Research Al-Jubilee Park and Mousa Saket Park separately with coordinates before reconsidering.",
+      "evidence": [
+        {
+          "url": "https://media.ammancity.gov.jo/En/NewsDetails/Mayor_Opens_Public_Park__IT_Centers",
+          "note": "Municipal article places Mousa Saket park in Sweileh and Al-Jubilee Park in Al-Abdali."
+        }
+      ],
+      "decision": "rejected",
+      "productionId": null,
+      "reviewedOn": "2026-09-12",
+      "reviewSummary": "Reject conflated name. Research Al-Jubilee Park and Mousa Saket Park separately with coordinates before reconsidering."
+    },
+    {
+      "id": "naour-countryside",
+      "name": "Naour countryside",
+      "slug": "naour-countryside",
+      "latitude": null,
+      "longitude": null,
+      "district": "Naour",
+      "supportedActivities": [],
+      "environment": "unknown",
+      "terrain": "unknown",
+      "surfaces": [
+        "unknown"
+      ],
+      "suitability": {
+        "running": "unknown",
+        "walking": "unknown"
+      },
+      "verificationStatus": "candidate",
+      "description": "Countryside is not a bounded activity area. Need a named public route/area and municipal-scope evidence; do not substitute settlement coordinates.",
+      "evidence": [
+        {
+          "url": "https://www.geonames.org/247724/na-ur.html",
+          "note": "GeoNames identifies a settlement, not an activity route."
+        }
+      ],
+      "decision": "rejected",
+      "productionId": null,
+      "reviewedOn": "2026-09-12",
+      "reviewSummary": "Countryside is not a bounded activity area. Need a named public route/area and municipal-scope evidence; do not substitute settlement coordinates."
+    },
+    {
+      "id": "scandinavian-forest",
+      "name": "Scandinavian Forest",
+      "slug": "scandinavian-forest",
+      "latitude": null,
+      "longitude": null,
+      "district": "Rujm Al-Hawi / northern Amman fringe",
+      "supportedActivities": [],
+      "environment": "woodland",
+      "terrain": "unknown",
+      "surfaces": [
+        "unknown"
+      ],
+      "suitability": {
+        "running": "unknown",
+        "walking": "unknown"
+      },
+      "verificationStatus": "candidate",
+      "description": "Running evidence exists, but confirm Greater Amman boundary membership, public access and a canonical activity-area pin before promotion.",
+      "evidence": [
+        {
+          "url": "https://greatruns.com/amman-jordan-scandinavian-forest/",
+          "note": "Running guide describes dirt trails north of Amman; inclusion in an Amman guide is not municipal-boundary evidence."
+        },
+        {
+          "url": "https://www.wikiloc.com/hiking-trails/amman-scandinavian-forest-9011655",
+          "note": "User route near Rujm Al-Hawi, Balqa; boundary uncertainty retained. Hiking is not imported as a V1 activity."
+        }
+      ],
+      "decision": "candidate",
+      "productionId": null,
+      "reviewedOn": "2026-09-12",
+      "reviewSummary": "Running evidence exists, but confirm Greater Amman boundary membership, public access and a canonical activity-area pin before promotion."
+    },
+    {
+      "id": "king-of-bahrain-forest",
+      "name": "Ghamadan / King of Bahrain Forest Perimeter",
+      "verificationStatus": "supported",
+      "decision": "production",
+      "productionId": "ghamadan-perimeter",
+      "reviewedOn": "2026-09-12",
+      "originalProposal": {
+        "name": "King of Bahrain Forest",
+        "description": "Guide mainly recommends surrounding Ghamadan streets, not forest trails. Resolve scope and possible overlap with Amman National Park before promotion.",
+        "evidence": [
+          {
+            "url": "https://greatruns.com/amman-jordan-king-of-bahrain-forest/",
+            "note": "Guide explicitly distinguishes few runnable forest trails from the surrounding road loop."
+          }
+        ]
+      },
+      "canonicalKey": "https://www.mapmyrun.com/routes/view/3407364427",
+      "coordinateReference": {
+        "latitude": 31.85796,
+        "longitude": 35.89325,
+        "url": "https://www.mapmyrun.com/routes/view/3407364427"
+      },
+      "scopeReview": "Named Ghamadan municipal park context and published perimeter circuit in southern Amman; surrounding roads only, excluding forest interior and Amman National Park proposed tracks. Manual scope review, not polygon containment.",
+      "reviewSummary": "Selected bounded scope: Published outdoor road/dirt circuit around Ghamadan attractions, starting near sports fields. Shared roads require traffic awareness; no continuous sidewalk or traffic-free route guaranteed. Excludes forest interior, zoo and paid attractions.",
+      "qualification": "Local-club-informed running guide describes the surrounding road/dirt circuit, not official forest trails. Pedestrian walking fit is inferred from that running route. Mixed road use limits suitability; clubs credited by one guide are not independent sources. Municipality identifies Ghamadan park as King of Bahrain Forest and documents community public-space use. Supports identity/municipal scope; does not certify road safety or forest trail access.",
+      "accessReview": "Published surrounding roads, not unrestricted forest access. Shared traffic and dirt sections; walking fit inferred. No sidewalk, gradient or route-length guarantee.",
+      "attributeReview": "Environment: open-space; terrain: unknown; surface: paved, dirt. Explicit source notes in production evidence distinguish observations from inferences. Unknowns do not satisfy hard preferences.",
+      "limitations": "Published surrounding roads, not unrestricted forest access. Shared traffic and dirt sections; walking fit inferred. No sidewalk, gradient or route-length guarantee."
+    },
+    {
+      "id": "wasfi-al-tal-forest",
+      "name": "Wasfi Al-Tal Forest",
+      "slug": "wasfi-al-tal-forest",
+      "latitude": null,
+      "longitude": null,
+      "district": "Balqa",
+      "supportedActivities": [],
+      "environment": "woodland",
+      "terrain": "unknown",
+      "surfaces": [
+        "unknown"
+      ],
+      "suitability": {
+        "running": "unknown",
+        "walking": "unknown"
+      },
+      "verificationStatus": "candidate",
+      "description": "Excluded from this Amman-first dataset: documented in Balqa, without evidence of Greater Amman municipal membership.",
+      "evidence": [
+        {
+          "url": "https://rhc.jo/en/news/king-participates-arbor-day-celebration",
+          "note": "Royal Hashemite Court locates the forest in Balqa. Regional Amman running guides are not boundary proof."
+        }
+      ],
+      "decision": "rejected",
+      "productionId": null,
+      "reviewedOn": "2026-09-12",
+      "reviewSummary": "Excluded from this Amman-first dataset: documented in Balqa, without evidence of Greater Amman municipal membership."
+    },
+    {
+      "id": "downtown-amman",
+      "name": "Downtown Amman / Al-Balad (broad proposal)",
+      "slug": "downtown-amman",
+      "latitude": null,
+      "longitude": null,
+      "district": "Downtown / Al-Balad",
+      "supportedActivities": [],
+      "environment": "urban",
+      "terrain": "unknown",
+      "surfaces": [
+        "unknown"
+      ],
+      "suitability": {
+        "running": "unknown",
+        "walking": "unknown"
+      },
+      "verificationStatus": "candidate",
+      "description": "Use Hashemite Plaza as the bounded initial area. Do not add overlapping downtown streets or archaeological interiors under this record.",
+      "evidence": [
+        {
+          "url": "https://www.lonelyplanet.com/articles/best-places-to-visit-in-jordan",
+          "note": "Describes exploring downtown; broad tourist walking does not define one route or all surfaces."
+        }
+      ],
+      "decision": "merged",
+      "productionId": "hashemite-plaza",
+      "reviewedOn": "2026-09-12",
+      "reviewSummary": "Use Hashemite Plaza as the bounded initial area. Do not add overlapping downtown streets or archaeological interiors under this record."
+    },
+    {
+      "id": "citadel-surroundings",
+      "name": "Citadel surrounding area",
+      "slug": "citadel-surroundings",
+      "latitude": null,
+      "longitude": null,
+      "district": "Jabal Al-Qalaa",
+      "supportedActivities": [],
+      "environment": "urban",
+      "terrain": "unknown",
+      "surfaces": [
+        "unknown"
+      ],
+      "suitability": {
+        "running": "unknown",
+        "walking": "unknown"
+      },
+      "verificationStatus": "candidate",
+      "description": "An archaeological attraction is identifiable; surrounding public walking streets/steps need an exact scope and access review. Do not treat paid Citadel interior as its surroundings.",
+      "evidence": [
+        {
+          "url": "https://international.visitjordan.com/wheretogo/amman/",
+          "note": "Official tourism source establishes Citadel attraction, not an assessed surrounding exercise route."
+        }
+      ],
+      "decision": "candidate",
+      "productionId": null,
+      "reviewedOn": "2026-09-12",
+      "reviewSummary": "An archaeological attraction is identifiable; surrounding public walking streets/steps need an exact scope and access review. Do not treat paid Citadel interior as its surroundings."
+    },
+    {
+      "id": "prince-hashem-bird-garden",
+      "name": "Prince Hashem Bird Garden",
+      "slug": "prince-hashem-bird-garden",
+      "latitude": 31.97077,
+      "longitude": 35.89283,
+      "district": "Shmeisani",
+      "supportedActivities": [],
+      "environment": "park",
+      "terrain": "unknown",
+      "surfaces": [
+        "unknown"
+      ],
+      "suitability": {
+        "running": "unknown",
+        "walking": "unknown"
+      },
+      "verificationStatus": "candidate",
+      "description": "Family recreation is documented, but visitor account's last visit was before 2020. Confirm present walkable space, restrictions and condition; distinguish Bassman namesakes.",
+      "evidence": [
+        {
+          "url": "https://carpediemourway.com/kids/fun-activities-in-amman-with-kids/",
+          "note": "Firsthand visitor identifies aviary/playground and explicitly dates last visit before 2020; no exercise suitability established."
+        },
+        {
+          "url": "https://mapcarta.com/N1076073258",
+          "note": "Geographic reference only; retained research point, not a verified activity entrance."
+        }
+      ],
+      "decision": "candidate",
+      "productionId": null,
+      "reviewedOn": "2026-09-12",
+      "reviewSummary": "Family recreation is documented, but visitor account's last visit was before 2020. Confirm present walkable space, restrictions and condition; distinguish Bassman namesakes."
+    },
+    {
+      "id": "king-abdullah-i-gardens",
+      "name": "King Abdullah I Gardens (Wadi Saqra)",
+      "slug": "king-abdullah-i-gardens",
+      "latitude": null,
+      "longitude": null,
+      "district": "Wadi Saqra",
+      "supportedActivities": [],
+      "environment": "park",
+      "terrain": "unknown",
+      "surfaces": [
+        "unknown"
+      ],
+      "suitability": {
+        "running": "unknown",
+        "walking": "unknown"
+      },
+      "verificationStatus": "candidate",
+      "description": "Resolve current opening/rehabilitation status and usable outdoor paths; distinguish Al-Muqabalain's King Abdullah II Parks.",
+      "evidence": [
+        {
+          "url": "https://www.giz.de/sites/default/files/media/pkb-document/2025-07/giz2021-0031en-public-space-gender-amman-jordan.pdf",
+          "note": "Public-space inventory includes King Abdullah Park, but does not resolve current access or similarly named sites."
+        }
+      ],
+      "decision": "candidate",
+      "productionId": null,
+      "reviewedOn": "2026-09-12",
+      "reviewSummary": "Resolve current opening/rehabilitation status and usable outdoor paths; distinguish Al-Muqabalain's King Abdullah II Parks."
+    },
+    {
+      "id": "jubeiha-public-park",
+      "name": "Jubeiha public park / former amusement city",
+      "slug": "jubeiha-public-park",
+      "latitude": null,
+      "longitude": null,
+      "district": "Jubeiha",
+      "supportedActivities": [],
+      "environment": "park",
+      "terrain": "unknown",
+      "surfaces": [
+        "unknown"
+      ],
+      "suitability": {
+        "running": "unknown",
+        "walking": "unknown"
+      },
+      "verificationStatus": "candidate",
+      "description": "Confirm completed public-park conversion, exact activity boundary and access. Historical amusement-city or conversion plans are insufficient.",
+      "evidence": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Jubeiha_area",
+          "note": "Area article discusses former amusement city and park plans, not a current exercise inspection."
+        }
+      ],
+      "decision": "candidate",
+      "productionId": null,
+      "reviewedOn": "2026-09-12",
+      "reviewSummary": "Confirm completed public-park conversion, exact activity boundary and access. Historical amusement-city or conversion plans are insufficient."
+    },
+    {
+      "id": "al-shoura-park",
+      "name": "Al-Shoura Park",
+      "slug": "al-shoura-park",
+      "latitude": null,
+      "longitude": null,
+      "district": "Al-Akhdar / Badr",
+      "supportedActivities": [],
+      "environment": "park",
+      "terrain": "unknown",
+      "surfaces": [
+        "unknown"
+      ],
+      "suitability": {
+        "running": "unknown",
+        "walking": "unknown"
+      },
+      "verificationStatus": "candidate",
+      "description": "Promising walking candidate: municipal renovation and directory paths. Obtain a corroborated coordinate and current path/access inspection.",
+      "evidence": [
+        {
+          "url": "https://media.ammancity.gov.jo/En/NewsDetails/GAM_renovates_Al_Shura_Park_",
+          "note": "Municipality identifies renovated park in Badr; directory corroborates walking paths but geographic lookup could not be retrieved."
+        },
+        {
+          "url": "https://new.trfihi-parks.com/en/park-details/3022-Al-Shura-Park-%C2%A0",
+          "note": "Directory lists open walking paths and Shoury Street, Al-Akhdar; needs coordinate corroboration."
+        }
+      ],
+      "decision": "candidate",
+      "productionId": null,
+      "reviewedOn": "2026-09-12",
+      "reviewSummary": "Promising walking candidate: municipal renovation and directory paths. Obtain a corroborated coordinate and current path/access inspection."
+    },
+    {
+      "id": "al-huda-park",
+      "name": "Al-Huda Park",
+      "slug": "al-huda-park",
+      "latitude": null,
+      "longitude": null,
+      "district": "Amman; exact area unresolved",
+      "supportedActivities": [],
+      "environment": "park",
+      "terrain": "unknown",
+      "surfaces": [
+        "unknown"
+      ],
+      "suitability": {
+        "running": "unknown",
+        "walking": "unknown"
+      },
+      "verificationStatus": "candidate",
+      "description": "Municipal project reference identifies a park name, but coordinate, district and public walking provision need confirmation.",
+      "evidence": [
+        {
+          "url": "https://www.ammancity.gov.jo/site_doc/AmmanVLRreport.pdf",
+          "note": "GAM Voluntary Local Review mentions green improvements at Al-Huda; project mention alone is insufficient."
+        },
+        {
+          "url": "https://www.waze.com/live-map/directions/jo/amman-governorate/amman/alhuda-park?to=place.ChIJHWr94kufHBURVO-ItD98NfI",
+          "note": "Named Waze listing is an identity lead, but public exercise provision and correspondence with municipal project still unresolved. Listing alone does not establish suitable paths."
+        }
+      ],
+      "decision": "candidate",
+      "productionId": null,
+      "reviewedOn": "2026-09-12",
+      "reviewSummary": "Named Waze listing is an identity lead, but public exercise provision and correspondence with municipal project still unresolved. Listing alone does not establish suitable paths."
+    },
+    {
+      "id": "ics-rural-roads",
+      "name": "International Community School rural-road routes",
+      "decision": "candidate",
+      "productionId": null,
+      "reviewedOn": "2026-09-12",
+      "latitude": null,
+      "longitude": null,
+      "district": "Naour / southern fringe",
+      "supportedActivities": [],
+      "environment": "unknown",
+      "terrain": "unknown",
+      "surfaces": [
+        "unknown"
+      ],
+      "suitability": {
+        "running": "unknown",
+        "walking": "unknown"
+      },
+      "verificationStatus": "candidate",
+      "description": "Running guide publishes rural road routes near ICS, but school start access and Greater Amman municipal scope need confirmation. Includes dog/transport cautions. School point is not permission to enter.",
+      "reviewSummary": "Running guide publishes rural road routes near ICS, but school start access and Greater Amman municipal scope need confirmation. Includes dog/transport cautions. School point is not permission to enter.",
+      "evidence": [
+        {
+          "url": "https://greatruns.com/amman-jordan-international-community-school/",
+          "note": "Running guide publishes rural road routes near ICS, but school start access and Greater Amman municipal scope need confirmation. Includes dog/transport cautions. School point is not permission to enter."
+        }
+      ]
+    },
+    {
+      "id": "abs-school-track",
+      "name": "Amman Baccalaureate School track",
+      "decision": "rejected",
+      "productionId": null,
+      "reviewedOn": "2026-09-12",
+      "latitude": null,
+      "longitude": null,
+      "district": "Dabouq",
+      "supportedActivities": [],
+      "environment": "unknown",
+      "terrain": "unknown",
+      "surfaces": [
+        "unknown"
+      ],
+      "suitability": {
+        "running": "unknown",
+        "walking": "unknown"
+      },
+      "verificationStatus": "candidate",
+      "description": "2018 firsthand account describes conditional outsider access dependent on a guard/alumni contact. No formal general-public access established; private school track excluded.",
+      "reviewSummary": "2018 firsthand account describes conditional outsider access dependent on a guard/alumni contact. No formal general-public access established; private school track excluded.",
+      "evidence": [
+        {
+          "url": "https://www.trijordan.com/2018/06/10/abs/",
+          "note": "2018 firsthand account describes conditional outsider access dependent on a guard/alumni contact. No formal general-public access established; private school track excluded."
+        }
+      ]
+    },
+    {
+      "id": "sixtieth-street-walkway",
+      "name": "60th Street walkway (Zahran)",
+      "decision": "candidate",
+      "productionId": null,
+      "reviewedOn": "2026-09-12",
+      "latitude": null,
+      "longitude": null,
+      "district": "Zahran",
+      "supportedActivities": [],
+      "environment": "unknown",
+      "terrain": "unknown",
+      "surfaces": [
+        "unknown"
+      ],
+      "suitability": {
+        "running": "unknown",
+        "walking": "unknown"
+      },
+      "verificationStatus": "candidate",
+      "description": "Municipality reports completed 500 m walking/cycling facility in October 2025. Exact segment pin not resolved; do not confuse with Zahran Park or assign all Deir Ghbar.",
+      "reviewSummary": "Municipality reports completed 500 m walking/cycling facility in October 2025. Exact segment pin not resolved; do not confuse with Zahran Park or assign all Deir Ghbar.",
+      "evidence": [
+        {
+          "url": "https://media.ammancity.gov.jo/AR/NewsDetails/أمانة_عمان_تنفذ_ممشى_في_شارع_الستين_بمنطقة_زهران",
+          "note": "Municipality reports completed 500 m walking/cycling facility in October 2025. Exact segment pin not resolved; do not confuse with Zahran Park or assign all Deir Ghbar."
+        }
+      ]
+    },
+    {
+      "id": "al-rahab-walkway",
+      "name": "Al-Rahab Street walkway",
+      "decision": "candidate",
+      "productionId": null,
+      "reviewedOn": "2026-09-12",
+      "latitude": null,
+      "longitude": null,
+      "district": "Jabal Al-Nasr",
+      "supportedActivities": [],
+      "environment": "unknown",
+      "terrain": "unknown",
+      "surfaces": [
+        "unknown"
+      ],
+      "suitability": {
+        "running": "unknown",
+        "walking": "unknown"
+      },
+      "verificationStatus": "candidate",
+      "description": "February 2026 opening report identifies a 750 m walkway in Al-Nasr. Exact segment pin and running-specific assessment unresolved; not similarly named facilities in Saudi Arabia.",
+      "reviewSummary": "February 2026 opening report identifies a 750 m walkway in Al-Nasr. Exact segment pin and running-specific assessment unresolved; not similarly named facilities in Saudi Arabia.",
+      "evidence": [
+        {
+          "url": "https://royanews.tv/news/374101",
+          "note": "February 2026 opening report identifies a 750 m walkway in Al-Nasr. Exact segment pin and running-specific assessment unresolved; not similarly named facilities in Saudi Arabia."
+        }
+      ]
+    },
+    {
+      "id": "shafa-badran-walkway",
+      "name": "Shafa Badran proposed walkway",
+      "decision": "candidate",
+      "productionId": null,
+      "reviewedOn": "2026-09-12",
+      "latitude": null,
+      "longitude": null,
+      "district": "Shafa Badran",
+      "supportedActivities": [],
+      "environment": "unknown",
+      "terrain": "unknown",
+      "surfaces": [
+        "unknown"
+      ],
+      "suitability": {
+        "running": "unknown",
+        "walking": "unknown"
+      },
+      "verificationStatus": "candidate",
+      "description": "May 2026 municipal interview describes walkway work still under implementation. Completion, public opening and exact activity location not established.",
+      "reviewSummary": "May 2026 municipal interview describes walkway work still under implementation. Completion, public opening and exact activity location not established.",
+      "evidence": [
+        {
+          "url": "https://royanews.com/en/Amman-Municipality-plans-6-new-parks-and-gardens-in-2026-and/",
+          "note": "May 2026 municipal interview describes walkway work still under implementation. Completion, public opening and exact activity location not established."
+        }
+      ]
+    }
+  ]
+}

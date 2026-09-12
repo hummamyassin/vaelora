@@ -2,7 +2,7 @@
 
 ## Architecture
 
-All implementation lives in `src/domain/`, with no React, Next.js, provider, database, map, or AI imports. The existing weather proof of concept remains separate and unchanged. No production activity dataset or default scoring policy is introduced.
+The engine lives in `src/domain/`, with no React, Next.js, provider, database, map, or AI imports. The existing weather proof of concept remains separate and unchanged. The evidence-reviewed dataset now lives in `src/data/activity-areas.ts`; its [research review](research/activity-areas/README.md) documents selection, access and uncertainty. No default scoring policy is introduced.
 
 | File | Responsibility |
 |---|---|
@@ -38,10 +38,11 @@ Missing forecasts return no matches with reasons, not fallback weather. Malforme
 ## Assumptions and boundaries
 
 - V1 has only running and walking. Activities are evaluated separately, with no inferred support based on another activity's suitability.
-- Activity areas supplied by a future trusted data boundary belong to Greater Amman. This foundation does not implement a municipal polygon check or verify coordinates/evidence URLs at runtime. Synthetic test coordinates and example.invalid evidence are never real locations.
+- Production areas are supplied by the reviewed `src/data/` boundary. Offline dataset validation checks coordinates against the research crosswalk and a conservative geographic envelope; neither it nor the engine implements a municipal polygon check or verifies live access/evidence URLs. Synthetic test coordinates and example.invalid evidence are never real locations.
 - `supported` or `verified` areas require at least one evidence reference to qualify. `unverified`, unknown activity fit, and unsuitable fit are excluded. Suitability labels are editorial inputs requiring evidence, not calculated facts.
 - A structured terrain, surface, or environment preference is hard. Unknown values cannot satisfy it. A requested surface must be listed explicitly; mixed-surface areas qualify only when that surface is listed. Its presence does not establish a continuous route of any particular length.
 - Without an explicit characteristic constraint, no terrain/surface/environment order is invented; activity suitability supplies the fit tier. No distance, pace, route-length guarantee, opening-hours inference, travel-time optimization, or personalization is implemented.
+- Dataset access reviews and descriptions retain park hours/restrictions, shared-road limitations and short leisure-only spaces. Eligibility does not yet enforce these operational constraints or prove that a location accommodates a requested duration. Consumers must preserve these caveats; dataset completion does not enable a live recommendation feature.
 - Requests specify one Amman-local calendar date (today or tomorrow), whole start/end hours, and an integer duration of at least one hour. The end is exclusive and may be 24. Windows cannot span two request dates; an end at 24 is represented as next-day midnight. No duration is silently assumed.
 - Hourly inputs must already be normalized to `YYYY-MM-DDTHH:00` in Asia/Amman, each representing the following hour. Units are named explicitly; AQI means US AQI. A future adapter owns conversion, physical plausibility checks for optional readings, forecast freshness, and provider metadata. The existing validation dataset is not an application forecast service.
 - The caller supplies `now`; Amman calendar dates use `Intl` timezone conversion. The next complete local hour is the earliest candidate unless evaluation is exactly on an hour boundary. Algorithms are deterministic for the same data, policy, and clock.

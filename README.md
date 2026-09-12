@@ -1,9 +1,11 @@
 # VAELORA
 
 Weather-aware running and walking recommendations for Greater Amman, Jordan.
-This repository contains a placeholder page, an isolated weather validation, and a
-framework-independent domain/recommendation foundation. No production scoring policy
-or user-facing recommendation feature is enabled.
+This repository contains a placeholder page, an isolated weather validation, a
+framework-independent domain/recommendation foundation, and an evidence-reviewed Greater
+Amman activity dataset (11 selected areas; five support running, all support walking).
+See the [dataset review and limitations](docs/research/activity-areas/README.md).
+No production scoring policy or user-facing recommendation feature is enabled.
 
 ## Local development
 
@@ -29,7 +31,8 @@ node "$env:TEMP\vaelora-npm-tooling\package\bin\npm-cli.js" run dev
 - `npm ci`: install dependencies from the committed lockfile.
 - `npm run dev`: start the local development server.
 - `npm run lint`: run ESLint; warnings fail the check.
-- `npm test`: run offline domain tests and preserved weather-validation tests.
+- `npm test`: run offline domain, dataset and preserved weather-validation tests.
+- `npm run validate:data`: validate production records and the research decision crosswalk.
 - `npm run typecheck`: check TypeScript without emitting files.
 - `npm run build`: create and type-check the production build.
 - `npm start`: serve an existing production build.
@@ -37,12 +40,20 @@ node "$env:TEMP\vaelora-npm-tooling\package\bin\npm-cli.js" run dev
 Tests use Node.js 24's built-in test runner with TypeScript type stripping; no additional
 test dependencies are required. The production build checks TypeScript types.
 
+On this Windows setup, Turbopack currently fails to spawn its CSS worker with
+`Access is denied (os error 5)`, including outside the execution sandbox. The
+supported fallback `npm run build -- --webpack` produces the production build;
+the default build command remains unchanged.
+
 ## Structure and boundaries
 
 - `src/app/`: App Router routes, root layout, and global styles.
 - `src/domain/`: activity types and pure filtering, environmental categorization,
   best-time, and Top Matches functions. See [domain foundation](docs/domain-foundation.md).
 - `tests/domain/`: synthetic, offline engine tests.
+- `src/data/activity-areas.ts`: selected production activity areas and source notes.
+- `docs/research/activity-areas/`: evidence policy, 35 research proposals and decisions.
+- `tests/data/`: dataset integrity and real-data eligibility tests.
 - `next.config.ts`: Next.js configuration.
 - `tsconfig.json`: strict TypeScript and the `@/*` alias for `src/*`.
 - `eslint.config.mjs`: Next.js and TypeScript lint rules.
@@ -50,7 +61,7 @@ test dependencies are required. The production build checks TypeScript types.
 - `AGENTS.md`: product scope and contributor guidance, preserved from planning.
 
 Add directories only as implementation needs them: `src/components/` for reusable UI,
-`src/data/` for supported location data, `src/services/weather/` for weather access,
+`src/services/weather/` for weather access,
 and `src/ai/` for orchestration. These remain future boundaries. Domain logic must
 remain independent of UI and AI providers.
 
