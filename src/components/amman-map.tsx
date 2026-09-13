@@ -16,7 +16,7 @@ interface AmmanMapProps {
 
 const mapStyle: StyleSpecification = {
   version: 8,
-  sources: { osm: { type: "raster", tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"], tileSize: 256, attribution: "© OpenStreetMap contributors" } },
+  sources: { osm: { type: "raster", tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"], tileSize: 256, attribution: '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a>' } },
   layers: [{ id: "osm", type: "raster", source: "osm" }],
 };
 // Reserve room for overview/navigation controls and the attribution/caption.
@@ -36,13 +36,13 @@ export function ActivityMap({ matches, selectedAreaId, onSelect, locale = "en" }
     if (!containerRef.current || mapRef.current) return;
     const center = coverage.cities[0].center;
     const style = structuredClone(mapStyle);
-    if (locale === "ar") (style.sources.osm as maplibregl.RasterSourceSpecification).attribution = "© مساهمو OpenStreetMap";
+    if (locale === "ar") (style.sources.osm as maplibregl.RasterSourceSpecification).attribution = '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">مساهمو OpenStreetMap</a>';
     let map: MapLibreMap;
     try { map = new maplibregl.Map({ container: containerRef.current, style, center: [center.longitude, center.latitude], zoom: 10.7, minZoom: 3, maxZoom: 17, attributionControl: false, locale: { "NavigationControl.ZoomIn": t(locale,"zoomIn"), "NavigationControl.ZoomOut": t(locale,"zoomOut"), "AttributionControl.ToggleAttribution": t(locale,"attribution"), "Map.Title": t(locale,"map") } }); }
     catch { requestAnimationFrame(() => setFailed(true)); return; }
     map.on("error", () => setFailed(true));
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
-    map.addControl(new maplibregl.AttributionControl({ compact: true }), "bottom-right");
+    map.addControl(new maplibregl.AttributionControl({ compact: false }), "bottom-right");
     mapRef.current = map;
     return () => { map.remove(); mapRef.current = null; };
   }, [locale]);
