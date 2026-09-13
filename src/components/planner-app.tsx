@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { Activity as RunIcon, Footprints, LocateFixed, Navigation, Send, Sparkles, ArrowUpRight, Bookmark, LoaderCircle } from "lucide-react";
 import { buildUiRecommendationRequest, type Preference, type TimePreset } from "./recommendation-request";
 import { PlannerResults } from "./planner-results";
+import { HeroPhoto } from "./location-photo";
 import { areaName, t, type Locale } from "../lib/i18n";
 import { coverage } from "../lib/coverage";
 import { distanceKm, orderNearby, validCoordinates, type Coordinates } from "../lib/geography";
@@ -69,7 +70,7 @@ export function PlannerApp({ policy, areas }: { policy: UiPolicy; areas: readonl
     event.preventDefault(); if (!prompt.trim() || busy) return;
     setAgentLoading(true); setAgentStatus(null); setError(false); setResult(null);
     try {
-      if (!origin && /near me|قريب مني|قريبة مني/i.test(prompt)) await locate();
+      if (!origin && /near me|قريب(?:ًا|ا|ة)? مني/i.test(prompt)) await locate();
       const response = await fetch("/api/agent", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prompt: prompt.trim(), locale }) });
       const answer = await response.json() as AgentView;
       if (!answer.status) throw new Error("Unavailable");
@@ -81,7 +82,11 @@ export function PlannerApp({ policy, areas }: { policy: UiPolicy; areas: readonl
 
   return <main className="v11" data-ready={ready} dir={locale === "ar" ? "rtl" : "ltr"} lang={locale}>
     <header className="site-header"><a className="brand" href="#top" aria-label={t(locale, "home")}><span className="brand-mark"><Navigation size={21} /></span>{t(locale, "brand")}</a><nav aria-label={t(locale, "planner")}><a href="#recommend">{t(locale, "planner")}</a><a href="#results">{t(locale, "results")}</a></nav><button className="language-switch" lang={locale === "ar" ? "en" : "ar"} onClick={() => { setLocale(locale === "ar" ? "en" : "ar"); setPrompt(""); }}>{locale === "en" ? "العربية" : "EN"}</button></header>
-    <section className="hero" id="top" data-motion={ambient ? "on" : "off"}><div className="hero-copy"><p className="eyebrow">{t(locale, "tagline")}</p><h1>{t(locale, "headline")}</h1><p className="hero-lede">{t(locale, "intro")}</p><p className="coverage-line"><span />{t(locale, "expansion")}</p></div><div className="jordan-terrain" aria-hidden="true"><svg viewBox="0 0 600 360"><circle cx="435" cy="90" r="48" fill="#D8B77C"/><path d="M0 255 88 175 150 204 252 85 303 176 365 147 474 238 600 145V360H0Z" fill="#C98F6B"/><path d="M0 299 111 241 197 259 316 177 389 241 448 214 600 283V360H0Z" fill="#102A3A"/><path d="M0 332Q155 218 283 285T600 305M0 350Q180 247 318 310T600 327M36 360Q198 273 323 333T600 350" fill="none" stroke="#D8B77C" strokeOpacity=".4"/></svg></div><button className="motion-toggle" aria-pressed={!ambient} onClick={() => setAmbient(!ambient)}>{t(locale, ambient ? "pause" : "resume")}</button></section>
+    <section className="hero photo-hero" id="top" data-motion={ambient ? "on" : "off"}>
+      <HeroPhoto locale={locale}/>
+      <div className="hero-copy"><p className="eyebrow">{t(locale, "tagline")}</p><h1>{t(locale, "headline")}</h1><p className="hero-lede">{t(locale, "intro")}</p><div className="hero-activities"><span><RunIcon size={17}/>{t(locale, "running")}</span><span><Footprints size={17}/>{t(locale, "walking")}</span></div><p className="coverage-line"><span />{t(locale, "expansion")}</p></div>
+      <button className="motion-toggle" aria-pressed={!ambient} onClick={() => setAmbient(!ambient)}>{t(locale, ambient ? "pause" : "resume")}</button>
+    </section>
     <div className="product-shell">
       <section className="ask-section" id="ask"><div className="ask-heading"><span className="section-symbol"><Sparkles size={22} /></span><div><h2>{t(locale, "ask")}</h2><p>{t(locale, "askHelp")}</p></div></div><form onSubmit={ask} className="ask-form"><label className="sr-only" htmlFor="agent-prompt">{t(locale, "prompt")}</label><div className="prompt-box"><input id="agent-prompt" value={prompt} onChange={e => setPrompt(e.target.value)} placeholder={t(locale, "placeholder")} maxLength={2000} autoComplete="off" /><button type="submit" disabled={busy || !prompt.trim()} aria-label={t(locale, "send")}>{agentLoading ? <LoaderCircle className="spin" /> : <Send />}<span>{t(locale, "send")}</span></button></div><div className="suggestions">{(["suggestion1", "suggestion2", "suggestion3"] as const).map(key => <button type="button" key={key} onClick={() => { setPrompt(t(locale, key)); document.getElementById("agent-prompt")?.focus(); }}>{t(locale, key)}<ArrowUpRight size={14} /></button>)}</div></form><p className="fine-print">{t(locale, "aiRule")}</p><div role="status">{agentLoading && <p>{t(locale, "checking")}</p>}{agentStatus && agentStatus !== "answered" && <p className="agent-notice">{t(locale, agentStatus === "clarification" ? "clarification" : "aiError")}</p>}{agentStatus === "answered" && <a className="answer-link" href="#results">{t(locale, "results")} ↓</a>}</div></section>
       <div className="quick-journeys"><button disabled={busy || geoState === "locating"} onClick={nearNow} className="near-journey"><LocateFixed /><strong>{t(locale, "near")}</strong><small>{t(locale, "nearHelp")}</small><ArrowUpRight /></button><button onClick={() => chooseJourney("running")}><RunIcon /><strong>{t(locale, "run")}</strong><small>{t(locale, "runHelp")}</small><ArrowUpRight /></button><button onClick={() => chooseJourney("walking")}><Footprints /><strong>{t(locale, "walk")}</strong><small>{t(locale, "walkHelp")}</small><ArrowUpRight /></button></div>
