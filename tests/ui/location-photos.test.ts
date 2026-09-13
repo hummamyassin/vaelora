@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { statSync, readFileSync } from "node:fs";
 import { activityAreas } from "../../src/data/activity-areas.ts";
 import { locationPhotos, photoFallbackReasons } from "../../src/lib/location-photos.ts";
-import { messages } from "../../src/lib/i18n.ts";
+import { messages, terrainText } from "../../src/lib/i18n.ts";
 
 test("Every production area has either verified photo metadata or an explicit fallback, never both", () => {
   const ids = activityAreas.map(a => a.id).sort();
@@ -41,4 +41,12 @@ test("Photo placeholders explicitly disclaim location photography in both langua
   assert.match(messages.photoNeutral[1], /ليست صورة/);
   assert.match(messages.photoHistorical[0], /not a live view/);
   assert.match(messages.photoHistorical[1], /ليست بثًا مباشرًا/);
+});
+
+test("Terrain wording scopes missing documentation to terrain, not location verification", () => {
+  assert.equal(terrainText("en", "unknown"), "Terrain not documented");
+  assert.equal(terrainText("ar", "unknown"), "التضاريس غير موثّقة");
+  assert.equal(terrainText("en", "flat"), "Terrain: Flat");
+  assert.match(terrainText("ar", "rolling"), /^التضاريس:/);
+  assert.doesNotMatch(terrainText("en", "unknown"), /location|unverified/i);
 });

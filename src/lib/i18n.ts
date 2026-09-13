@@ -4,7 +4,8 @@ export const messages = {
   photoLoading: ["Loading location photo…", "جارٍ تحميل صورة المكان…"],
   photoMissing: ["Location photo not yet available", "لا تتوفر صورة موثّقة للمكان بعد"],
   photoFailed: ["Photo could not load", "تعذر تحميل الصورة"],
-  photoNeutral: ["Neutral placeholder · not a photograph of this place", "خلفية محايدة · ليست صورة لهذا المكان"],
+  photoNeutral: ["VAELORA area profile · not a photograph of this place", "بطاقة المكان من فيلورا · ليست صورة لهذا المكان"],
+  terrainUnknown: ["Terrain not documented", "التضاريس غير موثّقة"], terrainFlat: ["Flat", "مسطحة"], areaProfile: ["Activity area", "منطقة للنشاط الخارجي"], selectedArea: ["Selected on your map", "المكان المحدد على خريطتك"],
   photoCredit: ["Photo credit", "مصدر الصورة وحقوقها"], photoSource: ["Original photograph", "الصورة الأصلية"],
   photoChanges: ["Resized, WebP compressed and cropped for display. Photo adaptation retains the linked license.", "صُغّرت الصورة وضُغطت بصيغة WebP واقتُصّت للعرض. تظل النسخة المعدّلة خاضعة للرخصة المرتبطة."],
   photoHistorical: ["Reference photo, not a live view or evidence of current access or conditions.", "صورة مرجعية، وليست بثًا مباشرًا أو دليلًا على حالة المكان أو إمكانية الدخول حاليًا."],
@@ -46,3 +47,5 @@ export function areaName(locale: Locale, area: { id: string; name: string }): st
 export function areaDescription(locale: Locale, area: { id: string; description: string }): string { return locale === "ar" ? arabicAreas[area.id]?.description ?? t(locale, "unavailable") : area.description; }
 export function numberText(locale: Locale, value: number | null | undefined, digits = 0): string { return value == null || !Number.isFinite(value) ? t(locale, "unavailable") : new Intl.NumberFormat(locale === "ar" ? "ar-JO" : "en-JO", { maximumFractionDigits: digits }).format(value); }
 export function windowText(start: string, end: string): string { return `${start.slice(11, 16)}–${end.slice(11, 16)}`; }
+/** Unknown terrain is not an assertion about the area's separate evidence status. */
+export function terrainText(locale: Locale, terrain: string): string { return terrain === "unknown" ? t(locale,"terrainUnknown") : `${t(locale,"terrain")}: ${terrain === "flat" ? t(locale,"terrainFlat") : label(locale,terrain)}`; }
