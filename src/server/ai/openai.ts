@@ -33,8 +33,8 @@ export function createOpenAIModel(options: { apiKey: string; model: string; fetc
     finally { clearTimeout(timer); }
   }
   return {
-    async extract(prompt, now) {
-      const system = instructions(now), input = [{ role: "user", content: prompt }];
+    async extract(prompt, now, context) {
+      const system = instructions(now, context), input = [{ role: "user", content: prompt }];
       const response = await request(input, system, recommendationTool);
       return { ...response.call, continuation: { input, system, output: response.output, callId: response.callId } };
     },

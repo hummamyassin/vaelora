@@ -1,15 +1,18 @@
 # VAELORA
 
 Weather-aware running and walking recommendations for Greater Amman, Jordan.
-This repository contains a placeholder page, an isolated weather validation, a
-framework-independent domain/recommendation foundation, and an evidence-reviewed Greater
-Amman activity dataset (11 selected areas; five support running, all support walking).
+V2 opens directly into a bilingual activity dashboard with deterministic scores,
+hourly conditions, exact outing windows, optional filters, nearby reviewed places,
+a synchronized map, and a grounded AI drawer. Nine sourced weather reference areas
+are separate from the evidence-reviewed activity dataset (11 selected places;
+five support running, all support walking).
 See the [dataset review and limitations](docs/research/activity-areas/README.md).
 A live deterministic weather pipeline and a single-turn AI tool-calling agent are
-implemented. The responsive V1 interface now connects the recommendation endpoint to
-intent controls, Top Matches, an hourly timeline, and a MapLibre/OpenStreetMap map.
+implemented. The mobile-first English/Arabic interface connects the dashboard endpoint
+to Top Matches and a MapLibre/OpenStreetMap map.
 Comfort policy remains provisional.
 See [AI agent, configuration and evaluation](docs/ai-agent.md).
+See [V2 architecture and limits](docs/v2-product.md) and [V2 validation](docs/v2-qa.md).
 
 ## Local development
 
@@ -38,9 +41,9 @@ node "$env:TEMP\vaelora-npm-tooling\package\bin\npm-cli.js" run dev
 - `npm run dev`: start the local development server.
 - `npm run lint`: run ESLint; warnings fail the check.
 - `npm test`: run offline domain, dataset, weather integration and AI-agent tests.
-- `npm run validate:data`: validate production records and the research decision crosswalk.
+- `npm run validate:data`: validate production records, the research decision crosswalk and weather reference areas.
 - `npm run smoke:weather`: make the controlled live Open-Meteo pipeline check and save its evidence.
-- `npm run eval:agent`: run 28 offline agent evaluation replays with synthetic weather.
+- `npm run eval:agent`: run 28 original offline replays plus 16 V2 grounding and contract checks.
 - `npm run smoke:agent`: run three controlled live-model cases if configured; otherwise skip.
 - `npm run typecheck`: check TypeScript without emitting files.
 - `npm run build`: create and type-check the production build.

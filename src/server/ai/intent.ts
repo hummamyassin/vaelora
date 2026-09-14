@@ -2,11 +2,14 @@ import { parseRecommendationRequest } from "../recommendations/request.ts";
 import { forecastDates } from "../weather/open-meteo.ts";
 import { v1WeatherPolicy } from "../recommendations/policy.ts";
 import { forecastHours } from "../../lib/geography.ts";
+import { weatherAreas } from "../../data/weather-areas.ts";
 
 export const issueCodes = ["missing-activity", "ambiguous", "contradictory", "unsupported-activity", "unsupported-date", "unsupported-constraint", "route-distance", "fractional-time"] as const;
 const choice = (values: readonly string[]) => ({ type: ["string", "null"], enum: [...values, null] });
 const number = { type: ["number", "null"] };
 export const intentProperties = {
+  weatherQuery: choice(["conditions", "compare-activities", "compare-areas", "tonight-tomorrow-morning"]),
+  weatherAreaIds: { type: "array", items: { type: "string", enum: weatherAreas.map(a=>a.id) }, maxItems: 2 },
   activity: choice(["running", "walking"]), day: choice(["today", "tomorrow"]),
   startHour: number, endHour: number, durationHours: number, durationMinutes: number,
   terrain: choice(["flat", "rolling", "hilly"]), surface: choice(["paved", "track", "gravel", "dirt"]),
@@ -17,6 +20,8 @@ export const intentProperties = {
 };
 export const intentSchema = { type: "object", properties: intentProperties, required: Object.keys(intentProperties), additionalProperties: false };
 export interface Intent {
+  weatherQuery?: "conditions" | "compare-activities" | "compare-areas" | "tonight-tomorrow-morning" | null;
+  weatherAreaIds?: string[];
   activity: "running" | "walking" | null; day: "today" | "tomorrow" | null;
   startHour: number | null; endHour: number | null; durationHours: number | null;
   durationMinutes?: number | null;
@@ -29,10 +34,11 @@ export interface Intent {
 }
 export const isObject = (v: unknown): v is Record<string, unknown> => !!v && typeof v === "object" && !Array.isArray(v);
 export function parseIntent(value: unknown): Intent {
-  if (!isObject(value) || Object.keys(value).some(k => !Object.hasOwn(intentProperties, k)) || Object.keys(intentProperties).some(k => k !== "durationMinutes" && !Object.hasOwn(value, k))) throw new Error("Invalid intent fields");
+  if (!isObject(value) || Object.keys(value).some(k => !Object.hasOwn(intentProperties, k)) || Object.keys(intentProperties).some(k => !["durationMinutes","weatherQuery","weatherAreaIds"].includes(k) && !Object.hasOwn(value, k))) throw new Error("Invalid intent fields");
   for (const [key, schema] of Object.entries(intentProperties)) {
     const v = value[key];
-    if (key === "durationMinutes" && v === undefined) continue;
+    if (["durationMinutes","weatherQuery","weatherAreaIds"].includes(key) && v === undefined) continue;
+    if (key === "weatherAreaIds") { if (!Array.isArray(v) || v.length>2 || new Set(v).size!==v.length || v.some(id=>!weatherAreas.some(a=>a.id===id))) throw new Error("Invalid weather areas"); continue; }
     if ("enum" in schema) { if (!(schema.enum as readonly unknown[]).includes(v)) throw new Error(`Invalid ${key}`); }
     else if (key === "issues") {
       if (!Array.isArray(v) || v.length > 8 || v.some(x => !issueCodes.includes(x))) throw new Error("Invalid issues");

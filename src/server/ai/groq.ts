@@ -46,8 +46,8 @@ export function createGroqModel(options: { apiKey: string; model: string; fetch?
   }
 
   return {
-    async extract(prompt, now) {
-      const system = instructions(now), messages = [{ role: "user", content: prompt }];
+    async extract(prompt, now, context) {
+      const system = instructions(now, context), messages = [{ role: "user", content: prompt }];
       const response = await request(messages, system, recommendationTool);
       return { ...response.call, continuation: { messages: [...messages, response.assistant], callId: response.callId } };
     },

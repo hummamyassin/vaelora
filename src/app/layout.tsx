@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./globals.css";
 import "./planner.css";
+import "./dashboard.css";
 
 export const metadata: Metadata = {
   title: "VAELORA — Find your best time outside",

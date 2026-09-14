@@ -3,6 +3,8 @@ import type { RecommendationRequest } from "../../domain/recommendation/types.ts
 import { isObject, parseIntent, resolveIntent, type Intent } from "./intent.ts";
 import { presentationTool, recommendationTool, type RecommendationModel } from "./contracts.ts";
 import { t, label, areaName, areaDescription, windowText, type Locale } from "../../lib/i18n.ts";
+import { answerWeather } from "./weather-answer.ts";
+import type { createDashboardPipeline, DashboardRequest } from "../recommendations/dashboard.ts";
 
 const clarificationText = {
   "missing-activity": "Specify running or walking.", ambiguous: "Specify an unambiguous day (today or tomorrow) and time.",
@@ -30,17 +32,22 @@ export function renderRecommendation(result: RecommendationResponse, assumptions
   }
   return { matches, text: [text, ...assumptions, ...result.warnings].join("\n\n") };
 }
-export function createOutdoorAgent(options: { model: RecommendationModel; run: (request: RecommendationRequest) => Promise<RecommendationResponse>; clock?: () => Date }) {
-  return async (prompt: unknown, locale: Locale = "en") => {
+export function createOutdoorAgent(options: { model: RecommendationModel; run: (request: RecommendationRequest) => Promise<RecommendationResponse>; weatherRun?: ReturnType<typeof createDashboardPipeline>; clock?: () => Date }) {
+  return async (prompt: unknown, locale: Locale = "en", context?: DashboardRequest) => {
     if (typeof prompt !== "string" || !prompt.trim() || prompt.length > 2000) return { status: "invalid-request" as const, text: locale === "ar" ? "اكتب طلبًا واضحًا لا يتجاوز 2000 حرف." : "Submit a nonempty request of at most 2000 characters.", trace: [] };
     const now = (options.clock ?? (() => new Date()))();
     let intent: Intent;
     let call;
     try {
-      call = await options.model.extract(prompt, now);
+      call = await options.model.extract(prompt, now, context);
       if (call.name !== recommendationTool.name) throw new Error("Unknown tool");
       intent = parseIntent(call.arguments);
     } catch { return { status: "model-error" as const, text: t(locale, "aiError"), trace: [] }; }
+    if (intent.weatherQuery && options.weatherRun) {
+      try { return await answerWeather(intent,options.weatherRun,now,locale,context); }
+      catch { return {status:"service-error" as const,text:t(locale,"error"),trace:[]}; }
+    }
+    if (intent.weatherQuery || intent.weatherAreaIds?.length) return {status:"clarification" as const,intent,issues:["unsupported-constraint"] as Intent["issues"],text:t(locale,"clarification"),trace:[]};
     const resolved = resolveIntent(intent, now);
     if (resolved.kind === "clarification") return { status: "clarification" as const, intent, issues: resolved.issues, text: locale === "ar" ? t(locale,"clarification") : resolved.issues.map(i => clarificationText[i]).join(" "), trace: [{ action: "constraints-need-clarification", issues: resolved.issues }] };
     let result: RecommendationResponse;

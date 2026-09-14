@@ -60,7 +60,7 @@ export interface RecommendationView {
 }
 
 export interface AgentView {
-  status: "answered" | "clarification" | "model-error" | "service-error" | "invalid-request";
+  status: "answered" | "conditions" | "clarification" | "model-error" | "service-error" | "invalid-request";
   text: string;
   matches?: Array<{ areaId: string; name: string }>;
   result?: RecommendationView;
