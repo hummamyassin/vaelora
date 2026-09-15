@@ -14,6 +14,13 @@ Comfort policy remains provisional.
 See [AI agent, configuration and evaluation](docs/ai-agent.md).
 See [V2 architecture and limits](docs/v2-product.md) and [V2 validation](docs/v2-qa.md).
 
+V2.1 adds local GPS walking/running recording, activity summaries and IndexedDB
+history, explicit GPX export, privacy-safe image cards, Compare Areas, a three-day
+outlook, discrete area-score maps, saved areas and an offline PWA shell.
+See [V2.1 architecture and limitations](docs/v2.1-product.md) and
+[V2.1 validation](docs/v2.1-qa.md). Background GPS with a locked screen is **not
+guaranteed**; leaving the foreground pauses recording.
+
 ## Local development
 
 Use Node.js 24 LTS with npm available on your PATH.
@@ -46,7 +53,7 @@ node "$env:TEMP\vaelora-npm-tooling\package\bin\npm-cli.js" run dev
 - `npm run eval:agent`: run 28 original offline replays plus 16 V2 grounding and contract checks.
 - `npm run smoke:agent`: run three controlled live-model cases if configured; otherwise skip.
 - `npm run typecheck`: check TypeScript without emitting files.
-- `npm run build`: create and type-check the production build.
+- `npm run build`: prepare the same-origin MapLibre worker, build/type-check production, and generate the public offline asset list.
 - `npm start`: serve an existing production build.
 
 Tests use Node.js 24's built-in test runner with TypeScript type stripping; no additional

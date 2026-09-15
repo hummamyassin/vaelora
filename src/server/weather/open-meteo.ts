@@ -41,16 +41,17 @@ export interface WeatherProvider {
   getForecast(area: Pick<ActivityArea, "latitude" | "longitude">, now: Date): Promise<ForecastResult>;
 }
 
-function normalize(raw: unknown, dates: ReturnType<typeof forecastDates>) {
+function normalize(raw: unknown, dates: ReturnType<typeof forecastDates>, days = 2) {
+  const scope = Array.from({length:days},(_,i)=>new Date(Date.parse(`${dates.today}T00:00:00Z`)+i*86400000).toISOString().slice(0,10));
   if (!object(raw) || raw.error || raw.timezone !== "Asia/Amman" || raw.utc_offset_seconds !== 10800 ||
       !finite(raw.latitude) || !finite(raw.longitude) || Math.abs(raw.latitude) > 90 || Math.abs(raw.longitude) > 180 ||
       !object(raw.hourly) || !object(raw.hourly_units) || raw.hourly_units.time !== "iso8601") throw new Error("Invalid provider metadata");
   const data = raw.hourly, units = raw.hourly_units;
-  if (!Array.isArray(data.time) || data.time.length === 0 || data.time.length > 48) throw new Error("Invalid hourly timestamps");
+  if (!Array.isArray(data.time) || data.time.length === 0 || data.time.length > days * 24) throw new Error("Invalid hourly timestamps");
   const byTime = new Map<string, number>();
   data.time.forEach((time, index) => {
     if (typeof time !== "string" || !/^\d{4}-\d{2}-\d{2}T(?:[01]\d|2[0-3]):00$/.test(time) ||
-        ![dates.today, dates.tomorrow].includes(time.slice(0, 10)) || byTime.has(time)) throw new Error("Invalid/duplicate/out-of-scope hour");
+        !scope.includes(time.slice(0, 10)) || byTime.has(time)) throw new Error("Invalid/duplicate/out-of-scope hour");
     byTime.set(time, index);
   });
   for (const [key, , unit] of fields) {
@@ -59,7 +60,7 @@ function normalize(raw: unknown, dates: ReturnType<typeof forecastDates>) {
   }
   const issues: string[] = [];
   const hourly: HourlyConditions[] = [];
-  for (const date of [dates.today, dates.tomorrow]) for (let h = 0; h < 24; h++) {
+  for (const date of scope) for (let h = 0; h < 24; h++) {
     const time = `${date}T${String(h).padStart(2, "0")}:00`;
     const index = byTime.get(time);
     const hour: HourlyConditions = { time };
@@ -79,7 +80,7 @@ function normalize(raw: unknown, dates: ReturnType<typeof forecastDates>) {
 /** One request per exact point; bounded successful cache and in-flight deduplication.
  * No rounding, city fallback, retries, stale-on-error serving or grid-cell merging.
  */
-export function createOpenMeteoAdapter(options: { fetch?: typeof fetch; clock?: () => Date; timeoutMs?: number; ttlMs?: number } = {}): WeatherProvider {
+export function createOpenMeteoAdapter(options: { fetch?: typeof fetch; clock?: () => Date; timeoutMs?: number; ttlMs?: number; days?: 2 | 3 } = {}): WeatherProvider {
   const fetcher = options.fetch ?? fetch, clock = options.clock ?? (() => new Date());
   const timeoutMs = options.timeoutMs ?? 10000, ttlMs = options.ttlMs ?? 600000;
   if (!Number.isFinite(timeoutMs) || timeoutMs <= 0 || !Number.isFinite(ttlMs) || ttlMs < 0) throw new Error("Invalid adapter timing");
@@ -88,9 +89,10 @@ export function createOpenMeteoAdapter(options: { fetch?: typeof fetch; clock?: 
   return { async getForecast(area, now) {
     if (!finite(area.latitude) || !finite(area.longitude) || Math.abs(area.latitude) > 90 || Math.abs(area.longitude) > 180) throw new Error("Invalid requested coordinates");
     const dates = forecastDates(now);
+    const endDate = options.days === 3 ? new Date(Date.parse(`${dates.today}T00:00:00Z`)+2*86400000).toISOString().slice(0,10) : dates.tomorrow;
     const url = new URL("https://api.open-meteo.com/v1/forecast");
     url.search = new URLSearchParams({ latitude: String(area.latitude), longitude: String(area.longitude), hourly: fields.map(f => f[0]).join(","),
-      timezone: "Asia/Amman", start_date: dates.today, end_date: dates.tomorrow, temperature_unit: "celsius", wind_speed_unit: "kmh", timeformat: "iso8601", cell_selection: "land" }).toString();
+      timezone: "Asia/Amman", start_date: dates.today, end_date: endDate, temperature_unit: "celsius", wind_speed_unit: "kmh", timeformat: "iso8601", cell_selection: "land" }).toString();
     const key = url.toString();
     const saved = cache.get(key);
     if (saved && saved.expires > clock().getTime()) {
@@ -116,7 +118,7 @@ export function createOpenMeteoAdapter(options: { fetch?: typeof fetch; clock?: 
           return { ok: false, code: status === 429 ? "rate-limited" : "provider-http", message: `Open-Meteo HTTP ${status}`, retryable: status === 429 || status >= 500 };
         }
         let normalized: ReturnType<typeof normalize>;
-        try { normalized = normalize(response.raw, dates); }
+        try { normalized = normalize(response.raw, dates, options.days ?? 2); }
         catch { return { ok: false, code: "invalid-response", message: "Open-Meteo returned invalid metadata, timestamps, units or array alignment", retryable: false }; }
         const result: Extract<ForecastResult, { ok: true }> = { ok: true, hourly: normalized.hourly, issues: normalized.issues, metadata: {
           provider: "open-meteo", attribution: "Weather data by Open-Meteo (CC BY 4.0)", requested: { latitude: area.latitude, longitude: area.longitude }, returned: normalized.returned,

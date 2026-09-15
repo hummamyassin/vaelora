@@ -18,7 +18,7 @@ const nextConfig: NextConfig = {
       { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
       { key: "Permissions-Policy", value: "geolocation=(self), camera=(), microphone=()" },
       { key: "X-Frame-Options", value: "DENY" },
-    ] }];
+    ] }, {source:"/sw.js",headers:[{key:"Cache-Control",value:"no-cache, no-store, must-revalidate"},{key:"Service-Worker-Allowed",value:"/"}]}, {source:"/offline-assets.js",headers:[{key:"Cache-Control",value:"no-cache, no-store, must-revalidate"}]}];
   },
 };
 

@@ -10,8 +10,11 @@
     "eval:agent:v2": "node --test --test-name-pattern=\"V2 offline AI|AI rejects unsupported|AI tool schema|Single agent|Agent HTTP|AI nearby|Weather failure\" tests/server/v2-dashboard.test.ts",
     "smoke:agent": "node --env-file-if-exists=.env.local scripts/agent-evaluation.ts --live",
     "validate:data": "node scripts/validate-activity-areas.ts && node scripts/validate-weather-areas.ts",
+    "predev": "node scripts/prepare-maplibre.mjs",
     "dev": "next dev",
+    "prebuild": "node scripts/prepare-maplibre.mjs",
     "build": "next build",
+    "postbuild": "node scripts/pwa-assets.mjs",
     "start": "next start",
     "lint": "eslint . --max-warnings=0",
     "typecheck": "tsc --noEmit"

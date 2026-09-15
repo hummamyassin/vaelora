@@ -43,6 +43,11 @@ import {
 } from "../lib/geography";
 import { LocationPhoto, PhotoCredit } from "./location-photo";
 import type { AgentView } from "./types";
+import { TrackApp } from "./track-app";
+import { PlanningTools } from "./planning-tools";
+import { PwaStatus } from "./pwa-status";
+import { loadActivities } from "../lib/activity-store";
+import { localActivityAnswer } from "../domain/tracking/summary";
 const ActivityMap = dynamic(
   () => import("./amman-map").then((m) => m.ActivityMap),
   { ssr: false, loading: () => <p>…</p> },
@@ -129,6 +134,10 @@ function Gauge({
   );
 }
 export function DashboardApp() {
+  const [view, setView] = useState<
+    "home" | "track" | "map" | "compare" | "outlook" | "saved"
+  >("home");
+  const [tracking, setTracking] = useState(false);
   const [locale, setLocale] = useState<Locale>("en"),
     [ready, setReady] = useState(false);
   const [areaId, setAreaId] = useState("amman-central"),
@@ -189,7 +198,7 @@ export function DashboardApp() {
     save("activity", activity);
   }, [locale, ar, areaId, activity, ready]);
   useEffect(() => {
-    if (!ready) return;
+    if (!ready || tracking) return;
     const controller = new AbortController();
     const requestKey = JSON.stringify({
       areaId,
@@ -263,6 +272,7 @@ export function DashboardApp() {
     origin,
     radius,
     refreshTick,
+    tracking,
   ]);
   const outlook = result?.[activity],
     best = outlook?.bestWindow;
@@ -329,6 +339,14 @@ export function DashboardApp() {
     setAsking(true);
     setAnswer(null);
     try {
+      if (localActivityAnswer(prompt, [], locale) !== null) {
+        setAnswer({
+          status: "conditions",
+          text: localActivityAnswer(prompt, await loadActivities(), locale)!,
+          trace: [],
+        });
+        return;
+      }
       const nearRequested = /near me|قريب(?:ًا|ا|ة)? مني|بالقرب مني/i.test(
         prompt,
       );
@@ -384,7 +402,11 @@ export function DashboardApp() {
   return (
     <main className="v2" lang={locale} dir={ar ? "rtl" : "ltr"}>
       <header className="v2-header">
-        <a href="#dashboard" className="v2-brand">
+        <a
+          href="#dashboard"
+          className="v2-brand"
+          onClick={() => setView("home")}
+        >
           <Navigation size={23} />
           {text("VAELORA", "ڤيلورا")}
         </a>
@@ -406,7 +428,18 @@ export function DashboardApp() {
           {ar ? "English" : "العربية"}
         </button>
       </header>
-      <div className="v2-shell" id="dashboard">
+      <div className="v2-shell" id="dashboard" hidden={view !== "home"}>
+        <div className="v21-tools-nav">
+          {(["compare", "outlook", "saved"] as const).map((v) => (
+            <button key={v} onClick={() => setView(v)}>
+              {v === "compare"
+                ? text("Compare Areas", "مقارنة المناطق")
+                : v === "outlook"
+                  ? text("3-Day Outlook", "توقعات 3 أيام")
+                  : text("Saved Areas", "المناطق المحفوظة")}
+            </button>
+          ))}
+        </div>
         <div className="v2-location-row">
           <button className="area-control" onClick={() => setSheet("area")}>
             <MapPin size={20} />
@@ -964,17 +997,73 @@ export function DashboardApp() {
           </details>
         </footer>
       </div>
+      <div className="v2-shell" hidden={view !== "track"}>
+        <TrackApp
+          locale={locale}
+          onRecording={setTracking}
+          snapshot={(kind) => {
+            const hour = result?.[kind].current;
+            const timestamp = Date.parse(result?.evaluatedAt ?? "");
+            if (
+              !hour ||
+              result?.area.id !== area.id ||
+              !Number.isFinite(timestamp) ||
+              Date.now() - timestamp > 3600000
+            )
+              return null;
+            return {
+              areaId: area.id,
+              areaName: area.name[locale],
+              timestamp,
+              temperatureC: hour.conditions.temperatureC ?? null,
+              windKmh: hour.conditions.windKmh ?? null,
+              score: hour.score,
+            };
+          }}
+        />
+      </div>
+      {view !== "home" && view !== "track" && (
+        <div className="v2-shell">
+          <button className="v21-back" onClick={() => setView("home")}>
+            {text("Back to Home", "العودة للرئيسية")}
+          </button>
+          <PlanningTools
+            key={view}
+            mode={view}
+            locale={locale}
+            areaId={areaId}
+            minutes={minutes}
+            origin={origin}
+            onSelect={(id) => {
+              setAreaId(id);
+              setOrigin(null);
+              setView("home");
+            }}
+          />
+        </div>
+      )}
+      <PwaStatus locale={locale} />
       <nav
         className="v2-dock"
         aria-label={text("Quick actions", "إجراءات سريعة")}
       >
-        <button onClick={locate}>
-          <LocateFixed size={20} />
-          {text("Near me", "بالقرب مني")}
+        <button aria-pressed={view === "home"} onClick={() => setView("home")}>
+          <Navigation size={20} />
+          {text("Home", "الرئيسية")}
         </button>
-        <button onClick={() => setSheet("filters")}>
-          <SlidersHorizontal size={20} />
-          {text("Plan activity", "خطط لنشاطك")}
+        <button aria-pressed={view === "map"} onClick={() => setView("map")}>
+          <MapPin size={20} />
+          {text("Map", "الخريطة")}
+        </button>
+        <button
+          className="track-dock"
+          aria-pressed={view === "track"}
+          onClick={() => setView("track")}
+        >
+          <Activity size={20} />
+          {tracking
+            ? text("Recording", "جارٍ التسجيل")
+            : text("Track", "تتبّع")}
         </button>
         <button className="ask-dock" onClick={() => setSheet("ai")}>
           <Sparkles size={20} />
@@ -1146,6 +1235,7 @@ export function DashboardApp() {
           )}
           {sheet === "ai" && (
             <div className="v2-ai">
+              <button className="v21-quiet" onClick={()=>setPrompt(text("My activity today","نشاطي اليوم"))}>{text("My activity today · on this device","نشاطي اليوم · على هذا الجهاز")}</button>
               <p>
                 {text(
                   "Real forecasts. Deterministic scores. Reviewed places.",
