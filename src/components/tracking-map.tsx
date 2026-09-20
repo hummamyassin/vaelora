@@ -5,6 +5,7 @@ import type { Feature } from "geojson";
 import type { GPSPoint } from "../domain/tracking/activity";
 import { routeSegments } from "../domain/tracking/export";
 import type { Locale } from "../lib/i18n";
+import {useMapLabels} from "./use-map-labels";
 export function TrackingMap({
   points,
   revision,
@@ -23,6 +24,7 @@ export function TrackingMap({
     [ready, setReady] = useState(false),
     [failed, setFailed] = useState(false);
   const ar = locale === "ar";
+  useMapLabels(container,locale);
   useEffect(() => {
     let map: ml.Map;
     try {
@@ -53,16 +55,26 @@ export function TrackingMap({
     map.addControl(new ml.NavigationControl({ showCompass: false }));
     // Route layers must be available even when remote basemap tiles never load.
     map.on("style.load", () => {
+      const tokens = getComputedStyle(document.documentElement);
+      const color = (name: string) => tokens.getPropertyValue(name).trim();
       map.addSource("route", {
         type: "geojson",
         data: { type: "FeatureCollection", features: [] },
+      });
+      map.addLayer({
+        id: "route-outline",
+        type: "line",
+        source: "route",
+        filter: ["==", ["geometry-type"], "LineString"],
+        paint: { "line-color": color("--route-outline"), "line-width": 9 },
+        layout: { "line-cap": "round", "line-join": "round" },
       });
       map.addLayer({
         id: "route-line",
         type: "line",
         source: "route",
         filter: ["==", ["geometry-type"], "LineString"],
-        paint: { "line-color": "#ca895d", "line-width": 5 },
+        paint: { "line-color": color("--route"), "line-width": 5 },
         layout: { "line-cap": "round", "line-join": "round" },
       });
       map.addLayer({
@@ -76,13 +88,13 @@ export function TrackingMap({
             "match",
             ["get", "role"],
             "start",
-            "#3b8069",
+            color("--route-start"),
             "finish",
-            "#cb7751",
-            "#102a3a",
+            color("--route-finish"),
+            color("--route-outline"),
           ],
           "circle-stroke-width": 3,
-          "circle-stroke-color": "#fff",
+          "circle-stroke-color": color("--on-strong"),
         },
       });
       setReady(true);

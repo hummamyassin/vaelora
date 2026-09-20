@@ -6,6 +6,7 @@ import type { Map as MapLibreMap, Marker, StyleSpecification } from "maplibre-gl
 import type { MatchView } from "./types";
 import { areaName, t, type Locale } from "../lib/i18n";
 import { coverage } from "../lib/coverage";
+import {useMapLabels} from "./use-map-labels";
 
 interface AmmanMapProps {
   matches: readonly MatchView[];
@@ -24,6 +25,7 @@ const mapPadding = { top: 110, bottom: 90, left: 65, right: 65 };
 
 export function ActivityMap({ matches, selectedAreaId, onSelect, locale = "en" }: AmmanMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  useMapLabels(containerRef,locale);
   const mapRef = useRef<MapLibreMap | null>(null);
   const markersRef = useRef<Map<string, Marker>>(new Map());
   const onSelectRef = useRef(onSelect);

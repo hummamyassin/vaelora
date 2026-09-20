@@ -46,7 +46,18 @@ import type { AgentView } from "./types";
 import { TrackApp } from "./track-app";
 import { PlanningTools } from "./planning-tools";
 import { PwaStatus } from "./pwa-status";
-import { loadActivities } from "../lib/activity-store";
+import { loadActivities, clearActivities } from "../lib/activity-store";
+import {
+  defaultProfile,
+  parseProfile,
+  profileKey,
+  initials,
+  clearPreferences,
+  clearAppPreferences,
+  type GuestProfile,
+} from "../lib/guest-profile";
+import { Onboarding, ProfilePanel } from "./guest-profile";
+import type { RecordedActivity } from "../domain/tracking/activity";
 import { localActivityAnswer } from "../domain/tracking/summary";
 const ActivityMap = dynamic(
   () => import("./amman-map").then((m) => m.ActivityMap),
@@ -134,6 +145,16 @@ function Gauge({
   );
 }
 export function DashboardApp() {
+  const [profile, setProfile] = useState<GuestProfile>(defaultProfile);
+  const [profileOpen, setProfileOpen] = useState(false),
+    [profileError, setProfileError] = useState(false);
+  const [localActivities, setLocalActivities] = useState<RecordedActivity[]>(
+      [],
+    ),
+    [activityError, setActivityError] = useState(false);
+  const [sessionBusy, setSessionBusy] = useState(false),
+    [dataRevision, setDataRevision] = useState(0),
+    [openActivityId, setOpenActivityId] = useState<string | null>(null);
   const [view, setView] = useState<
     "home" | "track" | "map" | "compare" | "outlook" | "saved"
   >("home");
@@ -185,10 +206,104 @@ export function DashboardApp() {
       if (weatherAreas.some((a) => a.id === id)) setAreaId(id);
       const a = read("activity");
       if (a === "running" || a === "walking") setActivity(a);
+      const stored = read("guest-profile");
+      if (stored) {
+        try {
+          const p = parseProfile(stored);
+          setProfile(p);
+          setLocale(p.locale);
+          setActivity(p.activity);
+          setMinutes(p.minutes);
+        } catch {
+          setProfileError(true);
+        }
+      }
       setReady(true);
     });
     return () => cancelAnimationFrame(frame);
   }, []);
+  useEffect(() => {
+    let mounted = true;
+    const refresh = () =>
+      void loadActivities()
+        .then((rows) => {
+          if (mounted) {
+            setLocalActivities(rows);
+            setActivityError(false);
+          }
+        })
+        .catch(() => {
+          if (mounted) setActivityError(true);
+        });
+    refresh();
+    globalThis.addEventListener("vaelora:activities", refresh);
+    return () => {
+      mounted = false;
+      globalThis.removeEventListener("vaelora:activities", refresh);
+    };
+  }, []);
+  useEffect(() => {
+    const media = matchMedia("(prefers-color-scheme: dark)");
+    const apply = () => {
+      const theme =
+        profile.theme === "system"
+          ? media.matches
+            ? "dark"
+            : "light"
+          : profile.theme;
+      document.documentElement.dataset.theme = theme;
+      document
+        .querySelector('meta[name="theme-color"]')
+        ?.setAttribute("content", theme === "dark" ? "#101412" : "#eff3ef");
+    };
+    apply();
+    media.addEventListener("change", apply);
+    return () => media.removeEventListener("change", apply);
+  }, [profile.theme]);
+  function updateProfile(next: GuestProfile) {
+    const valid = parseProfile(next);
+    setProfile(valid);
+    setLocale(valid.locale);
+    setActivity(valid.activity);
+    setMinutes(valid.minutes);
+    try {
+      localStorage.setItem(profileKey, JSON.stringify(valid));
+      setProfileError(false);
+    } catch {
+      setProfileError(true);
+    }
+  }
+  function showActivity(id: string) {
+    if (sessionBusy) {
+      setProfileOpen(false);
+      setView("track");
+      return;
+    }
+    setOpenActivityId(id);
+    setProfileOpen(false);
+    setView("track");
+  }
+  async function clearLocal(kind: "history" | "profile" | "all") {
+    if (sessionBusy) throw new Error("Finish activity first");
+    if (kind !== "profile") {
+      await clearActivities();
+      setOpenActivityId(null);
+      setDataRevision((n) => n + 1);
+    }
+    if (kind !== "history") {
+      if (kind === "all") clearAppPreferences(localStorage);
+      else clearPreferences(localStorage);
+      setProfile(defaultProfile);
+      setLocale("en");
+      setActivity("walking");
+      setMinutes(60);
+      setAreaId("amman-central");
+      setPreferences([]);
+      setOrigin(null);
+      setProfileOpen(false);
+      setView("home");
+    }
+  }
   useEffect(() => {
     if (!ready) return;
     document.documentElement.lang = locale;
@@ -196,7 +311,17 @@ export function DashboardApp() {
     save("locale", locale);
     save("area", areaId);
     save("activity", activity);
-  }, [locale, ar, areaId, activity, ready]);
+    if (profile.onboarding) {
+      try {
+        localStorage.setItem(
+          profileKey,
+          JSON.stringify({ ...profile, locale }),
+        );
+      } catch {
+        /* Session remains usable without storage. */
+      }
+    }
+  }, [locale, ar, areaId, activity, ready, profile]);
   useEffect(() => {
     if (!ready || tracking) return;
     const controller = new AbortController();
@@ -408,7 +533,7 @@ export function DashboardApp() {
           onClick={() => setView("home")}
         >
           <Navigation size={23} />
-          {text("VAELORA", "ڤيلورا")}
+          VAELORA
         </a>
         <span className="v2-header-note">
           {text(
@@ -427,19 +552,23 @@ export function DashboardApp() {
         >
           {ar ? "English" : "العربية"}
         </button>
+        <button
+          className="profile-entry"
+          aria-label={text("Open profile", "فتح الملف الشخصي")}
+          onClick={() => setProfileOpen(true)}
+        >
+          {initials(profile.name)}
+        </button>
       </header>
+      {profileError && (
+        <p className="v2-notice" role="status">
+          {text(
+            "Profile storage unavailable. You can continue for this session.",
+            "تعذّر حفظ الملف محليًا. يمكنك متابعة الاستخدام في هذه الجلسة.",
+          )}
+        </p>
+      )}
       <div className="v2-shell" id="dashboard" hidden={view !== "home"}>
-        <div className="v21-tools-nav">
-          {(["compare", "outlook", "saved"] as const).map((v) => (
-            <button key={v} onClick={() => setView(v)}>
-              {v === "compare"
-                ? text("Compare Areas", "مقارنة المناطق")
-                : v === "outlook"
-                  ? text("3-Day Outlook", "توقعات 3 أيام")
-                  : text("Saved Areas", "المناطق المحفوظة")}
-            </button>
-          ))}
-        </div>
         <div className="v2-location-row">
           <button className="area-control" onClick={() => setSheet("area")}>
             <MapPin size={20} />
@@ -471,12 +600,19 @@ export function DashboardApp() {
         <div className="v2-title-row">
           <div>
             <p className="v2-kicker">
-              {text(
-                "A LITTLE MOVEMENT. A BETTER DAY.",
-                "قليل من الحركة. يوم أفضل.",
-              )}
+              {text("YOUR OUTDOORS. YOUR RHYTHM.", "وقتك في الخارج. بإيقاعك.")}
             </p>
-            <h1>{text("Your time outside.", "وقتك في الخارج.")}</h1>
+            <h1>
+              {profile.name ? (
+                <>
+                  {text("Ready, ", "مستعد للانطلاق، ")}
+                  <bdi>{profile.name}</bdi>
+                  {ar ? "؟" : "?"}
+                </>
+              ) : (
+                text("Make your move.", "حان وقت الانطلاق.")
+              )}
+            </h1>
           </div>
           <button className="filter-button" onClick={() => setSheet("filters")}>
             <SlidersHorizontal size={17} />
@@ -516,10 +652,23 @@ export function DashboardApp() {
           </p>
         )}
         <section className="v2-overview" aria-busy={loading}>
-          <div className="v2-score-card">
+          <div
+            className="v2-score-card"
+            data-score={
+              score == null
+                ? "unknown"
+                : score >= 90
+                  ? "excellent"
+                  : score >= 70
+                    ? "good"
+                    : score >= 60
+                      ? "fair"
+                      : "poor"
+            }
+          >
             <div className="v2-card-top">
               <span className="v2-kicker">
-                {text("VAELORA SCORE", "مؤشر ڤيلورا")}
+                {text("VAELORA Score", "مؤشر VAELORA")}
               </span>
               <span className="v2-live">
                 {day === "today"
@@ -660,6 +809,63 @@ export function DashboardApp() {
               {text("Try again", "حاول مجددًا")}
             </button>
           </div>
+        )}
+        <div className="home-launch">
+          <button
+            className="product-primary"
+            onClick={() => {
+              setOpenActivityId(null);
+              setView("track");
+            }}
+          >
+            <Activity size={22} />
+            {sessionBusy
+              ? text("Return to activity", "العودة إلى النشاط")
+              : text("Start Activity", "ابدأ النشاط")}
+            <ArrowUpRight size={20} />
+          </button>
+          <p>
+            {text(
+              "Your route. Your pace. Saved on this device.",
+              "مسارك، بإيقاعك. محفوظ على هذا الجهاز.",
+            )}
+          </p>
+        </div>
+        <div
+          className="v21-tools-nav"
+          aria-label={text("Planning tools", "أدوات التخطيط")}
+        >
+          {(["compare", "outlook", "saved"] as const).map((v) => (
+            <button key={v} onClick={() => setView(v)}>
+              {v === "compare"
+                ? text("Compare Areas", "مقارنة المناطق")
+                : v === "outlook"
+                  ? text("3-Day Outlook", "توقعات 3 أيام")
+                  : text("Saved Areas", "المناطق المحفوظة")}
+              <ArrowUpRight size={15} />
+            </button>
+          ))}
+        </div>
+        {localActivities.length > 0 && (
+          <section className="home-recent">
+            <h2>{text("Last time out", "آخر نشاط لك")}</h2>
+            <button
+              className="profile-recent"
+              onClick={() => showActivity(localActivities[0].id)}
+            >
+              <span>
+                {t(locale, localActivities[0].activity)} ·{" "}
+                {new Date(localActivities[0].startedAt).toLocaleDateString(
+                  ar ? "ar-JO" : "en-GB",
+                )}
+              </span>
+              <strong>
+                {(localActivities[0].distanceM / 1000).toFixed(2)}{" "}
+                {text("km", "كم")}
+              </strong>
+              <ArrowUpRight size={18} />
+            </button>
+          </section>
         )}
         <section className="v2-timeline-card">
           <div className="v2-section-heading">
@@ -999,8 +1205,13 @@ export function DashboardApp() {
       </div>
       <div className="v2-shell" hidden={view !== "track"}>
         <TrackApp
+          key={dataRevision}
           locale={locale}
           onRecording={setTracking}
+          onSession={setSessionBusy}
+          preferredActivity={activity}
+          openActivityId={openActivityId}
+          onActivityOpened={setOpenActivityId}
           snapshot={(kind) => {
             const hour = result?.[kind].current;
             const timestamp = Date.parse(result?.evaluatedAt ?? "");
@@ -1043,6 +1254,26 @@ export function DashboardApp() {
         </div>
       )}
       <PwaStatus locale={locale} />
+      {ready && !profile.onboarding && (
+        <Onboarding profile={{ ...profile, locale }} save={updateProfile} />
+      )}
+      {profileOpen && profile.onboarding && (
+        <ProfilePanel
+          key={profile.locale}
+          profile={{ ...profile, locale }}
+          save={updateProfile}
+          close={() => setProfileOpen(false)}
+          activities={localActivities}
+          storageError={activityError}
+          busy={sessionBusy}
+          onPlaces={() => {
+            setProfileOpen(false);
+            setView("saved");
+          }}
+          onActivity={showActivity}
+          onClear={clearLocal}
+        />
+      )}
       <nav
         className="v2-dock"
         aria-label={text("Quick actions", "إجراءات سريعة")}
@@ -1067,7 +1298,7 @@ export function DashboardApp() {
         </button>
         <button className="ask-dock" onClick={() => setSheet("ai")}>
           <Sparkles size={20} />
-          {text("Ask VAELORA", "اسأل ڤيلورا")}
+          {text("Ask VAELORA", "اسأل VAELORA")}
         </button>
       </nav>
       {sheet && (
@@ -1077,7 +1308,7 @@ export function DashboardApp() {
               ? text("Make it your outing", "خطط لنشاط يناسبك")
               : sheet === "area"
                 ? text("Choose your area", "اختر منطقتك")
-                : text("Ask VAELORA", "اسأل ڤيلورا")
+                : text("Ask VAELORA", "اسأل VAELORA")
           }
           close={() => setSheet(null)}
           closeLabel={text("Close panel", "إغلاق اللوحة")}
@@ -1235,7 +1466,17 @@ export function DashboardApp() {
           )}
           {sheet === "ai" && (
             <div className="v2-ai">
-              <button className="v21-quiet" onClick={()=>setPrompt(text("My activity today","نشاطي اليوم"))}>{text("My activity today · on this device","نشاطي اليوم · على هذا الجهاز")}</button>
+              <button
+                className="v21-quiet"
+                onClick={() =>
+                  setPrompt(text("My activity today", "نشاطي اليوم"))
+                }
+              >
+                {text(
+                  "My activity today · on this device",
+                  "نشاطي اليوم · على هذا الجهاز",
+                )}
+              </button>
               <p>
                 {text(
                   "Real forecasts. Deterministic scores. Reviewed places.",

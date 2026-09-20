@@ -13,11 +13,11 @@
 .track-history button,
 .track-actions button,
 .compare-select button {
-  border: 1px solid #d9ded5;
-  background: #fffcf7;
+  border: 1px solid var(--border);
+  background: var(--surface);
   border-radius: 13px;
   padding: 12px 15px;
-  color: #102a3a;
+  color: var(--text-primary);
   min-height: 44px;
 }
 .v21-tools-nav button {
@@ -27,7 +27,7 @@
   margin-bottom: 24px;
 }
 .v21-panel {
-  background: #fffcf7;
+  background: var(--surface);
   border-radius: 24px;
   padding: 26px;
   margin: 20px 0;
@@ -42,34 +42,34 @@
 .v21-panel select,
 .compare-select select {
   display: block;
-  background: #f0eee6;
-  border: 1px solid #d6d8d0;
+  background: var(--surface-elevated);
+  border: 1px solid var(--border);
   border-radius: 12px;
   padding: 13px;
-  color: #102a3a;
+  color: var(--text-primary);
   max-width: 100%;
   width: 100%;
   margin: 7px 0 15px;
 }
 .v21-primary {
-  background: #102a3a;
-  color: #fff !important;
+  background: var(--surface-strong);
+  color: var(--text-secondary) !important;
   border: 0;
   border-radius: 13px;
   padding: 14px 22px;
 }
 .v21-notice {
-  background: #ece7d9;
-  color: #102a3a;
+  background: var(--surface-elevated);
+  color: var(--text-primary);
   padding: 16px;
   border-radius: 14px;
   line-height: 1.6;
   margin: 16px 0;
 }
 .v21-notice button {
-  background: #102a3a;
+  background: var(--surface-strong);
   border: 0;
-  color: #fff;
+  color: var(--text-secondary);
   border-radius: 10px;
   padding: 12px;
   min-height: 44px;
@@ -77,7 +77,7 @@
 .v21-muted {
   font-size: 12px;
   line-height: 1.65;
-  color: #53696f;
+  color: var(--text-secondary);
 }
 .track-heading {
   display: flex;
@@ -92,7 +92,7 @@
   margin: 12px 0;
 }
 .track-privacy {
-  color: #3d7060;
+  color: var(--text-secondary);
   font-size: 13px;
   margin: 14px 0 24px;
 }
@@ -104,7 +104,7 @@
 .track-ready p {
   max-width: 440px;
   margin: 12px auto 25px;
-  color: #576c70;
+  color: var(--text-secondary);
 }
 .track-ready-orbit {
   display: grid;
@@ -112,12 +112,12 @@
   margin: 30px auto;
   width: 140px;
   height: 140px;
-  border: 1px solid #c1cab8;
-  outline: 14px solid #f0f2e7;
+  border: 1px solid var(--border);
+  outline: 14px solid var(--border);
   border-radius: 50%;
   font-size: 70px;
-  color: #ba7752;
-  background: #e5e9db;
+  color: var(--text-secondary);
+  background: var(--surface-elevated);
 }
 .track-ready h2 {
   font-size: 27px;
@@ -129,8 +129,8 @@
 .track-start {
   display: block;
   width: 100%;
-  background: #102a3a;
-  color: #f8f4eb;
+  background: var(--surface-strong);
+  color: var(--text-secondary);
   border: 0;
   border-radius: 16px;
   padding: 21px;
@@ -149,11 +149,11 @@
   width: 18px;
   height: 18px;
   margin: 0;
-  accent-color: #102a3a;
+  accent-color: var(--text-primary);
 }
 .track-live {
-  background: #102a3a;
-  color: #faf7ef;
+  background: var(--surface-strong);
+  color: var(--text-secondary);
   border-radius: 26px;
   padding: 28px;
   margin-top: 24px;
@@ -162,15 +162,15 @@
   display: flex;
   gap: 8px;
   align-items: center;
-  color: #e7cd96;
+  color: var(--text-secondary);
   font-size: 13px;
 }
 .recording-dot {
   width: 8px;
   height: 8px;
-  background: #95c5a7;
+  background: var(--surface-elevated);
   border-radius: 50%;
-  box-shadow: 0 0 0 5px #326251;
+  box-shadow: 0 0 0 5px var(--shadow-color);
 }
 .track-timer {
   text-align: center;
@@ -186,7 +186,7 @@
 .track-timer > span,
 .track-metrics span {
   display: block;
-  color: #c0cfd0;
+  color: var(--text-secondary);
   font-size: 12px;
   margin-top: 8px;
 }
@@ -194,7 +194,7 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 22px;
-  border-top: 1px solid #33505a;
+  border-top: 1px solid var(--border);
   padding-top: 24px;
 }
 .track-metrics strong {
@@ -205,18 +205,18 @@
 .track-metrics small {
   font-size: 12px;
   font-weight: 400;
-  color: #c0cfd0;
+  color: var(--text-secondary);
 }
 .track-gps {
   font-size: 11px;
-  color: #c0cfd0;
+  color: var(--text-secondary);
   margin: 25px 0 0;
   line-height: 1.7;
 }
 .track-map {
   position: relative;
   height: 390px;
-  background: #e4e8df;
+  background: var(--surface-elevated);
   margin: 20px 0;
   border-radius: 24px;
   overflow: hidden;
@@ -237,12 +237,12 @@
   position: absolute;
   top: 12px;
   inset-inline-start: 12px;
-  background: #fff9ed;
+  background: var(--surface);
   border: 0;
   border-radius: 12px;
   padding: 12px;
-  box-shadow: 0 2px 10px #1232;
-  color: #102a3a;
+  box-shadow: 0 2px 10px var(--shadow-color);
+  color: var(--text-primary);
   max-width: 65%;
 }
 .track-map-key {
@@ -251,8 +251,8 @@
   inset-inline: 12px;
   pointer-events: none;
   font-size: 10px;
-  background: #102a3ae8;
-  color: #fff9ed;
+  background: var(--overlay);
+  color: var(--text-secondary);
   padding: 8px;
   border-radius: 8px;
   width: fit-content;
@@ -262,8 +262,8 @@
   inset-inline: 12px;
   top: 60px;
   border-radius: 10px;
-  background: #fff7e7;
-  color: #102a3a;
+  background: var(--surface);
+  color: var(--text-primary);
   font-size: 11px;
   padding: 10px;
 }
@@ -275,22 +275,22 @@
   bottom: 95px;
   z-index: 2;
   padding: 8px;
-  background: #f4f1e9d9;
+  background: var(--overlay);
   border-radius: 20px;
   backdrop-filter: blur(10px);
 }
 .track-controls button {
   padding: 17px;
   border-radius: 14px;
-  border: 1px solid #102a3a;
-  background: #f8f5ec;
-  color: #102a3a;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-primary);
   font-weight: 700;
   font-size: 16px;
 }
 .track-controls button:last-child {
-  background: #102a3a;
-  color: #fff;
+  background: var(--surface-strong);
+  color: var(--text-secondary);
 }
 .track-actions {
   display: flex;
@@ -311,30 +311,30 @@
 }
 .track-history span {
   font-size: 12px;
-  color: #566b6e;
+  color: var(--text-secondary);
 }
 .track-limit {
   font-size: 12px;
   line-height: 1.75;
-  color: #607477;
+  color: var(--text-secondary);
   margin: 25px 0 35px;
 }
 .track-summary small {
   font-size: 12px;
-  color: #5e7071;
+  color: var(--text-secondary);
 }
 .v2-dock .track-dock {
-  background: #e4c992;
-  color: #102a3a;
+  background: var(--brand-primary);
+  color: var(--route-outline);
   font-weight: 800;
   border-radius: 13px;
 }
 .v2-dock .ask-dock {
   background: transparent;
-  color: #e1ebea;
+  color: var(--on-strong);
 }
 .v2-dock button[aria-pressed="true"]:not(.track-dock) {
-  background: #2a4753;
+  background: var(--surface-elevated);
 }
 .v2-dock {
   gap: 4px;
@@ -364,7 +364,7 @@
   margin: 24px 0;
 }
 .compare-card {
-  background: #fffcf7;
+  background: var(--surface);
   border-radius: 24px;
   padding: 25px;
 }
@@ -374,7 +374,7 @@
 .compare-score {
   display: block;
   font-size: 64px;
-  color: #427762;
+  color: var(--text-secondary);
   margin: 20px 0;
 }
 .compare-score small {
@@ -387,7 +387,7 @@
   gap: 12px;
   font-size: 12px;
   padding-bottom: 18px;
-  border-bottom: 1px solid #e1e4dc;
+  border-bottom: 1px solid var(--border);
 }
 .compare-both b {
   display: block;
@@ -399,8 +399,8 @@
   line-height: 1.8;
 }
 .compare-card button {
-  background: #e5ebdf;
-  color: #102a3a;
+  background: var(--surface-elevated);
+  color: var(--text-primary);
   border: 0;
   padding: 13px;
   border-radius: 12px;
@@ -411,16 +411,16 @@
   grid-template-columns: 1fr 1fr auto;
   gap: 12px;
   align-items: center;
-  border-top: 1px solid #e0e5db;
+  border-top: 1px solid var(--border);
   padding: 20px 0;
 }
 .saved-area button {
   border: 0;
-  background: #e9eee2;
+  background: var(--surface-elevated);
   border-radius: 12px;
   padding: 12px;
   text-align: start;
-  color: #102a3a;
+  color: var(--text-primary);
 }
 .saved-area span {
   display: block;
@@ -433,7 +433,7 @@
 .score-map {
   height: 460px;
   position: relative;
-  background: #e8ecdf;
+  background: var(--surface-elevated);
   border-radius: 24px;
   overflow: hidden;
   margin-top: 20px;
@@ -446,37 +446,37 @@
   position: absolute;
   top: 0;
   inset-inline: 15px;
-  background: #fff6e7;
+  background: var(--surface);
   padding: 12px;
   border-radius: 12px;
   font-size: 12px;
 }
 .area-score-marker {
-  background: #102a3a;
-  color: #fff7e7;
-  border: 2px solid #e5c78c;
+  background: var(--surface-strong);
+  color: var(--text-secondary);
+  border: 2px solid var(--border);
   border-radius: 16px;
   padding: 8px 11px;
   font-size: 11px;
-  box-shadow: 0 3px 8px #1234;
+  box-shadow: 0 3px 8px var(--shadow-color);
   max-width: 145px;
   white-space: normal;
 }
 .area-score-marker:focus {
-  outline: 4px solid #ca885a;
+  outline: 4px solid var(--border);
 }
 .pwa-status {
   max-width: 1160px;
   margin: 15px auto 120px;
   padding: 0 20px;
-  color: #5b7173;
+  color: var(--text-secondary);
   font-size: 11px;
 }
 .pwa-status button {
   border: 0;
   background: transparent;
   text-decoration: underline;
-  color: #385c67;
+  color: var(--text-secondary);
   min-height: 44px;
 }
 .pwa-status p {
@@ -611,4 +611,173 @@
     animation: none !important;
     transition: none !important;
   }
+}
+/* Track and planning use the same semantic surfaces, with a distinct live state. */
+.v21-tools-nav {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 22px 0;
+}
+.v21-tools-nav button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5px;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  padding: 10px 0;
+  font-size: 11px;
+}
+.track-ready {
+  background: transparent;
+  padding: 12px 0;
+  margin: 10px auto;
+}
+.track-ready-orbit {
+  width: 80px;
+  height: 80px;
+  margin: 28px auto;
+  border: 0;
+  outline: 0;
+  background: var(--surface-elevated);
+  color: var(--brand-accent);
+  border-radius: 24px;
+}
+.track-ready h2 {
+  font-size: 29px;
+  font-weight: 800;
+}
+.track-start {
+  background: var(--brand-primary);
+  color: var(--route-outline);
+  min-height: 60px;
+  font-weight: 800;
+}
+.track-live {
+  background: var(--surface-strong);
+  color: var(--on-strong);
+  border: 1px solid var(--border);
+}
+.track-live[data-state="recording"] {
+  border-color: var(--activity-live);
+}
+.track-live[data-state="recording"] .track-timer strong,
+.track-state {
+  color: var(--activity-live);
+}
+.track-timer > span,
+.track-metrics span,
+.track-metrics small,
+.track-gps {
+  color: var(--on-strong);
+}
+.recording-dot {
+  background: var(--activity-live);
+  box-shadow: 0 0 0 5px var(--border);
+}
+.track-controls {
+  background: var(--surface);
+  bottom: calc(86px + env(safe-area-inset-bottom));
+  border: 1px solid var(--border);
+  backdrop-filter: none;
+}
+.track-controls button {
+  background: var(--brand-primary);
+  color: var(--route-outline);
+  border: 0;
+}
+.track-controls button:last-child {
+  background: var(--surface-elevated);
+  color: var(--text-primary);
+}
+.track-follow {
+  background: var(--surface);
+  color: var(--text-primary);
+}
+.track-map-key {
+  background: var(--surface-strong);
+  color: var(--on-strong);
+}
+.track-privacy {
+  color: var(--gps);
+}
+.track-history button {
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  padding: 20px 0;
+}
+.track-history strong {
+  font-size: 21px;
+  font-variant-numeric: tabular-nums;
+}
+.area-score-marker {
+  background: var(--surface-strong);
+  color: var(--on-strong);
+  border: 2px solid var(--route-start);
+  box-shadow: var(--shadow);
+}
+.area-score-marker:focus-visible {
+  outline: 3px solid var(--focus);
+}
+.v2 .maplibregl-ctrl-group {
+  background: var(--surface);
+}
+.v2 .maplibregl-ctrl-group button {
+  min-height: 36px;
+}
+[data-theme="dark"] .v2 .maplibregl-ctrl-icon {
+  filter: invert(1);
+}
+@media (max-width: 600px) {
+  .track-heading h1 {
+    font-size: 30px;
+  }
+  .track-timer {
+    margin: 20px 0;
+  }
+  .track-live {
+    padding: 22px;
+  }
+  .track-ready p {
+    margin-bottom: 16px;
+  }
+  .v21-panel {
+    padding: 20px;
+  }
+}
+
+.v2 .track-start {
+  font-weight: 800;
+  font-size: 18px;
+}
+.track-ready h2 {
+  font-size: 27px;
+}
+.v2 .map-marker {
+  background: var(--route-outline);
+  border-color: var(--route-start);
+}
+.v2 .map-marker::after {
+  background: var(--route-start);
+}
+.v2 .map-marker.is-selected {
+  background: var(--route-start);
+  border-color: var(--route-outline);
+}
+.v2 .map-marker.is-selected::after {
+  background: var(--route-outline);
+}
+.area-score-marker[data-score="good"] {
+  border-color: var(--score-good);
+}
+.area-score-marker[data-score="fair"] {
+  border-color: var(--score-fair);
+}
+.area-score-marker[data-score="poor"] {
+  border-color: var(--score-poor);
 }

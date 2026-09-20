@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { Navigation } from "lucide-react";
 import dynamic from "next/dynamic";
 import {
   ActivityRecorder,
@@ -38,13 +39,15 @@ async function shareCard(a: RecordedActivity, ar: boolean) {
   canvas.width = 1000;
   canvas.height = 1000;
   const c = canvas.getContext("2d")!;
-  c.fillStyle = "#102a3a";
+  const tokens = getComputedStyle(document.documentElement);
+  const color = (name: string) => tokens.getPropertyValue(name).trim();
+  c.fillStyle = color("--surface-strong");
   c.fillRect(0, 0, 1000, 1000);
-  c.fillStyle = "#e5c78c";
+  c.fillStyle = color("--brand-primary");
   c.font = "bold 42px Arial";
   c.textAlign = "center";
   c.fillText("VAELORA", 500, 125);
-  c.fillStyle = "#faf7ef";
+  c.fillStyle = color("--on-strong");
   c.font = "32px Arial";
   c.fillText(
     ar
@@ -58,13 +61,21 @@ async function shareCard(a: RecordedActivity, ar: boolean) {
     250,
   );
   c.font = "bold 120px Arial";
-  c.fillText(`${(a.distanceM / 1000).toFixed(2)} km`, 500, 430);
+  c.fillText(
+    `${(a.distanceM / 1000).toFixed(2)} ${ar ? "كم" : "km"}`,
+    500,
+    430,
+  );
   c.font = "52px Arial";
   c.fillText(durationLabel(a.activeMs), 500, 565);
   c.font = "30px Arial";
   c.fillText(ar ? "الوقت النشط" : "ACTIVE TIME", 500, 620);
   c.font = "50px Arial";
-  c.fillText(`${paceLabel(metrics(a).averagePaceSeconds)} /km`, 500, 740);
+  c.fillText(
+    `${paceLabel(metrics(a).averagePaceSeconds)} ${ar ? "/كم" : "/km"}`,
+    500,
+    740,
+  );
   c.font = "25px Arial";
   c.fillText(
     ar
@@ -74,7 +85,7 @@ async function shareCard(a: RecordedActivity, ar: boolean) {
     795,
   );
   if (a.conditions?.score != null) {
-    c.fillStyle = "#e5c78c";
+    c.fillStyle = color("--brand-primary");
     c.fillText(`VAELORA ${a.conditions.score}/100`, 500, 900);
   }
   const blob = await new Promise<Blob>((resolve, reject) =>
@@ -109,10 +120,18 @@ export function TrackApp({
   locale,
   snapshot,
   onRecording,
+  onSession,
+  preferredActivity = "walking",
+  openActivityId,
+  onActivityOpened,
 }: {
   locale: Locale;
   snapshot: (activity: ActivityKind) => ConditionsSnapshot | null;
   onRecording: (active: boolean) => void;
+  onSession: (busy: boolean) => void;
+  preferredActivity?: ActivityKind;
+  openActivityId?: string | null;
+  onActivityOpened: (id: null) => void;
 }) {
   const ar = locale === "ar",
     text = (en: string, arabic: string) => (ar ? arabic : en);
@@ -287,6 +306,28 @@ export function TrackApp({
   useEffect(() => {
     onRecording(active);
   }, [active, onRecording]);
+  useEffect(() => {
+    onSession(state === "recording" || state === "paused");
+  }, [state, onSession]);
+  useEffect(() => {
+    if (state === "idle" || state === "finished") {
+      const frame = requestAnimationFrame(() => setKind(preferredActivity));
+      return () => cancelAnimationFrame(frame);
+    }
+  }, [preferredActivity, state]);
+  useEffect(() => {
+    if (!openActivityId || state === "recording" || state === "paused") return;
+    const item = history.find((a) => a.id === openActivityId);
+    if (!item) return;
+    const frame = requestAnimationFrame(() => {
+      setSummary(item);
+      setSaved(true);
+      setShowHistory(false);
+      setDeleteConfirm(false);
+      onActivityOpened(null);
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [openActivityId, history, state, onActivityOpened]);
   function start() {
     if (
       engine.current &&
@@ -356,7 +397,7 @@ export function TrackApp({
     >
       <header className="track-heading">
         <div>
-          <p className="v2-kicker">PLAN · TRACK · ANALYZE</p>
+          <p className="v2-kicker">{text("Plan · Track · Analyze", "خطّط · تتبّع · حلّل")}</p>
           <h1>
             {summary
               ? text("Your activity, recorded.", "نشاطك، كما سجّلته.")
@@ -404,10 +445,15 @@ export function TrackApp({
                   "Keep-screen-on is unavailable. Keep this page visible while recording.",
                   "إبقاء الشاشة مضاءة غير متاح. أبقِ الصفحة ظاهرة أثناء التسجيل.",
                 )
-              : notice === "share-error" ? text("The share card could not be created. Try again; your activity is still saved.","تعذر إنشاء بطاقة المشاركة. حاول مجددًا؛ نشاطك ما زال محفوظًا.") : text(
-                  "GPS signal interrupted. Missing points are not invented; recording resumes with a route gap.",
-                  "انقطعت إشارة GPS. لن نختلق نقاطًا مفقودة؛ يُستأنف المسار مع فجوة.",
-                )}
+              : notice === "share-error"
+                ? text(
+                    "The share card could not be created. Try again; your activity is still saved.",
+                    "تعذر إنشاء بطاقة المشاركة. حاول مجددًا؛ نشاطك ما زال محفوظًا.",
+                  )
+                : text(
+                    "GPS signal interrupted. Missing points are not invented; recording resumes with a route gap.",
+                    "انقطعت إشارة GPS. لن نختلق نقاطًا مفقودة؛ يُستأنف المسار مع فجوة.",
+                  )}
         </p>
       )}
       {showHistory && (
@@ -437,14 +483,17 @@ export function TrackApp({
                   {item.activity === "walking"
                     ? text("Walking", "المشي")
                     : text("Running", "الجري")}{" "}
-                  · {(item.distanceM / 1000).toFixed(2)} km
+                  · {(item.distanceM / 1000).toFixed(2)} {text("km", "كم")}
                 </strong>
                 <span>
                   {new Date(item.startedAt).toLocaleDateString(
                     ar ? "ar-JO" : "en-GB",
                   )}{" "}
                   · <bdi>{durationLabel(item.activeMs)}</bdi> ·{" "}
-                  <bdi>{paceLabel(metrics(item).averagePaceSeconds)} /km</bdi>
+                  <bdi>
+                    {paceLabel(metrics(item).averagePaceSeconds)}{" "}
+                    {text("/km", "/كم")}
+                  </bdi>
                 </span>
               </button>
             ))}
@@ -467,13 +516,13 @@ export function TrackApp({
             ))}
           </div>
           <div className="track-ready-orbit" aria-hidden="true">
-            ↗
+            <Navigation size={44} />
           </div>
           <h2>{text("A little movement. Yours.", "خطوات بسيطة، تخصّك.")}</h2>
           <p>
             {text(
-              "Choose your activity. We’ll measure your movement, one reliable GPS point at a time.",
-              "اختر نشاطك. سنقيس حركتك باستخدام نقاط GPS الموثوقة.",
+              "Location draws your route and measures distance. Choose an activity, then start when you’re ready.",
+              "نستخدم الموقع لرسم مسارك وقياس المسافة. اختر نشاطك وابدأ عندما تكون جاهزًا.",
             )}
           </p>
           <label className="track-wake">
@@ -491,7 +540,8 @@ export function TrackApp({
             )}
           </label>
           <button className="track-start" onClick={start}>
-          {text("Start Activity", "ابدأ النشاط")} <span aria-hidden="true">↗</span>
+            {text("Start Activity", "ابدأ النشاط")}{" "}
+            <span aria-hidden="true">↗</span>
           </button>
         </section>
       )}
@@ -580,7 +630,8 @@ export function TrackApp({
             <div className="track-metrics">
               <div>
                 <strong data-testid="track-distance">
-                  {(current.distanceM / 1000).toFixed(2)} <small>km</small>
+                  {(current.distanceM / 1000).toFixed(2)}{" "}
+                  <small>{text("km", "كم")}</small>
                 </strong>
                 <span>
                   {text("Distance · GPS estimate", "المسافة · تقدير GPS")}
@@ -589,21 +640,22 @@ export function TrackApp({
               <div>
                 <strong>
                   <bdi>{paceLabel(stats?.averagePaceSeconds ?? null)}</bdi>{" "}
-                  <small>/km</small>
+                  <small>{text("/km", "/كم")}</small>
                 </strong>
                 <span>{text("Average pace", "متوسط الوتيرة")}</span>
               </div>
               <div>
                 <strong>
                   {stats?.averageSpeedKmh?.toFixed(1) ?? "—"}{" "}
-                  <small>km/h</small>
+                  <small>{text("km/h", "كم/س")}</small>
                 </strong>
                 <span>{text("Average speed", "متوسط السرعة")}</span>
               </div>
               {!summary && (
                 <div>
                   <strong>
-                    {currentSpeed?.toFixed(1) ?? "—"} <small>km/h</small>
+                    {currentSpeed?.toFixed(1) ?? "—"}{" "}
+                    <small>{text("km/h", "كم/س")}</small>
                   </strong>
                   <span>{text("Current speed", "السرعة الحالية")}</span>
                 </div>
@@ -618,7 +670,7 @@ export function TrackApp({
                 }{" "}
                 ·{" "}
                 {display.accuracy != null
-                  ? `±${Math.round(display.accuracy)} m`
+                  ? `±${Math.round(display.accuracy)} ${text("m", "م")}`
                   : "—"}{" "}
                 · {text("Current pace", "الوتيرة الحالية")}{" "}
                 <bdi>
@@ -627,7 +679,7 @@ export function TrackApp({
                       ? 3600 / currentSpeed
                       : null,
                   )}{" "}
-                  /km
+                  {text("/km", "/كم")}
                 </bdi>
               </p>
             )}
@@ -658,7 +710,8 @@ export function TrackApp({
                   {summary.conditions.areaName} ·{" "}
                   {summary.conditions.temperatureC ?? "—"}°C ·{" "}
                   {text("Wind", "الرياح")} {summary.conditions.windKmh ?? "—"}{" "}
-                  km/h · VAELORA {summary.conditions.score ?? "—"}/100
+                  {text("km/h", "كم/س")} · VAELORA{" "}
+                  {summary.conditions.score ?? "—"}/100
                   <br />
                   <small>
                     {text(

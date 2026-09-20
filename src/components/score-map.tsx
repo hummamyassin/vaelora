@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import * as ml from "../lib/maplibre";
 import type { PlanningResponse } from "../server/recommendations/planning";
 import type { Locale } from "../lib/i18n";
+import { useMapLabels } from "./use-map-labels";
 export function ScoreMap({
   rows,
   activity,
@@ -17,6 +18,7 @@ export function ScoreMap({
   const container = useRef<HTMLDivElement>(null),
     mapRef = useRef<ml.Map | null>(null),
     [failed, setFailed] = useState(false);
+  useMapLabels(container, locale);
   useEffect(() => {
     let map: ml.Map;
     try {
@@ -58,6 +60,17 @@ export function ScoreMap({
       const el = document.createElement("button");
       el.className = "area-score-marker";
       el.type = "button";
+      const score = r.days[0][activity].score;
+      el.dataset.score =
+        score == null
+          ? "unknown"
+          : score >= 90
+            ? "excellent"
+            : score >= 70
+              ? "good"
+              : score >= 60
+                ? "fair"
+                : "poor";
       el.textContent = `${r.area.name[locale]} ${r.days[0][activity].score ?? "—"}`;
       el.onclick = () => onSelect(r.area.id);
       return new ml.Marker({ element: el })

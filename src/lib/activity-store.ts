@@ -3,6 +3,10 @@ import {
   type RecordedActivity,
 } from "../domain/tracking/activity.ts";
 const databaseName = "vaelora-activities";
+function changed() {
+  if (typeof window !== "undefined")
+    window.dispatchEvent(new Event("vaelora:activities"));
+}
 function openDatabase(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(databaseName, 1);
@@ -54,6 +58,7 @@ export async function saveActivity(value: RecordedActivity) {
   } finally {
     db.close();
   }
+  changed();
 }
 export async function saveDraft(a: RecordedActivity) {
   if (a.state === "finished" || a.state === "idle") return;
@@ -73,7 +78,24 @@ export async function loadDrafts() {
 }
 export async function deleteActivity(id: string) {
   await transact("activities", "readwrite", (s) => s.delete(id));
+  changed();
 }
 export async function deleteDraft(id: string) {
   await transact("draft", "readwrite", (s) => s.delete(id));
+}
+export async function clearActivities() {
+  const db = await openDatabase();
+  try {
+    await new Promise<void>((resolve, reject) => {
+      const tx = db.transaction(["activities", "draft"], "readwrite");
+      tx.objectStore("activities").clear();
+      tx.objectStore("draft").clear();
+      tx.oncomplete = () => resolve();
+      tx.onerror = tx.onabort = () =>
+        reject(new Error("Local deletion failed"));
+    });
+  } finally {
+    db.close();
+  }
+  changed();
 }

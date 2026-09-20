@@ -21,6 +21,11 @@ See [V2.1 architecture and limitations](docs/v2.1-product.md) and
 [V2.1 validation](docs/v2.1-qa.md). Background GPS with a locked screen is **not
 guaranteed**; leaving the foreground pauses recording.
 
+V2.2 adds a graphite/citrine sports identity, light/dark/system appearance,
+optional bilingual onboarding, a device-local guest profile, personalized Home,
+activity statistics and direct history access. See
+[V2.2 product experience and validation](docs/v2.2-product.md).
+
 ## Local development
 
 Use Node.js 24 LTS with npm available on your PATH.
