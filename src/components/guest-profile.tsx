@@ -47,7 +47,12 @@ export function Onboarding({
       closeLabel={t("Continue as guest", "المتابعة كضيف")}
       className="onboarding"
     >
-      <button className="onboarding-language" onClick={()=>save({...profile,locale:ar?"en":"ar"})}>{ar?"English":"العربية"}</button>
+      <button
+        className="onboarding-language"
+        onClick={() => save({ ...profile, locale: ar ? "en" : "ar" })}
+      >
+        {ar ? "English" : "العربية"}
+      </button>
       <div className="onboarding-mark">
         <Navigation size={42} />
       </div>
@@ -155,122 +160,12 @@ export function ProfilePanel({
           <h3>{profile.name || t("Guest", "ضيف")}</h3>
           <p>
             {t(
-              "Local guest profile · This device only",
-              "ملف ضيف محلي · على هذا الجهاز فقط",
+              "Local profile · This device only",
+              "ملف محلي · على هذا الجهاز فقط",
             )}
           </p>
         </div>
       </div>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          try {
-            save(parseProfile(draft));
-            setMessage(
-              t(
-                "Preferences saved on this device.",
-                "حُفظت التفضيلات على هذا الجهاز.",
-              ),
-            );
-          } catch {
-            setMessage(
-              t(
-                "Enter a valid name (up to 40 characters).",
-                "أدخل اسمًا صالحًا لا يتجاوز 40 حرفًا.",
-              ),
-            );
-          }
-        }}
-      >
-        <label className="profile-field">
-          {t("Display name", "الاسم")}
-          <input
-            value={draft.name}
-            maxLength={40}
-            onChange={(e) => setDraft({ ...draft, name: e.target.value })}
-          />
-        </label>
-        <div className="profile-grid">
-          <label className="profile-field">
-            {t("Preferred activity", "النشاط المفضّل")}
-            <select
-              aria-label={t("Preferred activity", "النشاط المفضّل")}
-              value={draft.activity}
-              onChange={(e) =>
-                setDraft({
-                  ...draft,
-                  activity: e.target.value as GuestProfile["activity"],
-                })
-              }
-            >
-              <option value="walking">{t("Walking", "المشي")}</option>
-              <option value="running">{t("Running", "الجري")}</option>
-            </select>
-          </label>
-          <label className="profile-field">
-            {t("Preferred duration", "المدة المفضّلة")}
-            <select
-              aria-label={t("Preferred duration", "المدة المفضّلة")}
-              value={draft.minutes}
-              onChange={(e) =>
-                setDraft({
-                  ...draft,
-                  minutes: Number(e.target.value) as GuestProfile["minutes"],
-                })
-              }
-            >
-              {[30, 60, 90].map((n) => (
-                <option key={n} value={n}>
-                  {n} {t("min", "دقيقة")}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="profile-field">
-            {t("Language", "اللغة")}
-            <select
-              aria-label={t("Language", "اللغة")}
-              value={draft.locale}
-              onChange={(e) =>
-                setDraft({
-                  ...draft,
-                  locale: e.target.value as GuestProfile["locale"],
-                })
-              }
-            >
-              <option value="en">English</option>
-              <option value="ar">العربية</option>
-            </select>
-          </label>
-          <label className="profile-field">
-            {t("Appearance", "المظهر")}
-            <select
-              aria-label={t("Appearance", "المظهر")}
-              value={draft.theme}
-              onChange={(e) =>
-                setDraft({
-                  ...draft,
-                  theme: e.target.value as GuestProfile["theme"],
-                })
-              }
-            >
-              <option value="system">{t("System", "النظام")}</option>
-              <option value="light">{t("Light", "فاتح")}</option>
-              <option value="dark">{t("Dark", "داكن")}</option>
-            </select>
-          </label>
-        </div>
-        <p className="profile-muted">
-          {t(
-            "Metric units · kilometres, minutes and kilometres/hour",
-            "الوحدات المترية · كيلومتر، دقيقة، كيلومتر/ساعة",
-          )}
-        </p>
-        <button className="product-primary" type="submit">
-          {t("Save preferences", "حفظ التفضيلات")}
-        </button>
-        <p role="status">{message}</p>
-      </form>
       <section className="profile-section">
         <h3>{t("Your movement", "نشاطك بالأرقام")}</h3>
         {storageError ? (
@@ -280,6 +175,22 @@ export function ProfilePanel({
               "تعذّر الوصول إلى الأنشطة. الإحصاءات غير متاحة.",
             )}
           </p>
+        ) : totals.count === 0 ? (
+          <div className="profile-empty">
+            <Footprints size={28} />
+            <h4>
+              {t(
+                "Your next chapter starts outside.",
+                "خطوتك المقبلة تبدأ في الخارج.",
+              )}
+            </h4>
+            <p>
+              {t(
+                "Record a walk or run. Your distance, time and progress will appear here.",
+                "سجّل مشيًا أو جريًا لتجد هنا مسافتك ووقتك وتقدّمك.",
+              )}
+            </p>
+          </div>
         ) : (
           <>
             <div className="profile-stats">
@@ -360,8 +271,129 @@ export function ProfilePanel({
         {t("Saved Areas", "المناطق المحفوظة")}
         <ArrowUpRight size={18} />
       </button>
-      <section className="profile-section">
-        <h3>{t("Privacy & data", "الخصوصية والبيانات")}</h3>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          try {
+            save(parseProfile(draft));
+            setMessage(
+              t(
+                "Preferences saved on this device.",
+                "حُفظت التفضيلات على هذا الجهاز.",
+              ),
+            );
+          } catch {
+            setMessage(
+              t(
+                "Enter a valid name (up to 40 characters).",
+                "أدخل اسمًا صالحًا لا يتجاوز 40 حرفًا.",
+              ),
+            );
+          }
+        }}
+      >
+        <details className="profile-preference">
+          <summary>
+            {t("Profile & activity preferences", "الملف وتفضيلات النشاط")}
+          </summary>
+          <label className="profile-field">
+            {t("Display name", "الاسم")}
+            <input
+              value={draft.name}
+              maxLength={40}
+              onChange={(e) => setDraft({ ...draft, name: e.target.value })}
+            />
+          </label>
+          <div className="profile-grid">
+            <label className="profile-field">
+              {t("Preferred activity", "النشاط المفضّل")}
+              <select
+                aria-label={t("Preferred activity", "النشاط المفضّل")}
+                value={draft.activity}
+                onChange={(e) =>
+                  setDraft({
+                    ...draft,
+                    activity: e.target.value as GuestProfile["activity"],
+                  })
+                }
+              >
+                <option value="walking">{t("Walking", "المشي")}</option>
+                <option value="running">{t("Running", "الجري")}</option>
+              </select>
+            </label>
+            <label className="profile-field">
+              {t("Preferred duration", "المدة المفضّلة")}
+              <select
+                aria-label={t("Preferred duration", "المدة المفضّلة")}
+                value={draft.minutes}
+                onChange={(e) =>
+                  setDraft({
+                    ...draft,
+                    minutes: Number(e.target.value) as GuestProfile["minutes"],
+                  })
+                }
+              >
+                {[30, 60, 90].map((n) => (
+                  <option key={n} value={n}>
+                    {n} {t("min", "دقيقة")}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+        </details>
+        <details className="profile-preference">
+          <summary>{t("Language & units", "اللغة والوحدات")}</summary>
+          <label className="profile-field">
+            {t("Language", "اللغة")}
+            <select
+              aria-label={t("Language", "اللغة")}
+              value={draft.locale}
+              onChange={(e) =>
+                setDraft({
+                  ...draft,
+                  locale: e.target.value as GuestProfile["locale"],
+                })
+              }
+            >
+              <option value="en">English</option>
+              <option value="ar">العربية</option>
+            </select>
+          </label>
+          <p className="profile-muted">
+            {t(
+              "Metric units · kilometres, minutes and kilometres/hour",
+              "الوحدات المترية · كيلومتر، دقيقة، كيلومتر/ساعة",
+            )}
+          </p>
+        </details>
+        <details className="profile-preference">
+          <summary>{t("Appearance", "المظهر")}</summary>{" "}
+          <label className="profile-field">
+            {t("Appearance", "المظهر")}
+            <select
+              aria-label={t("Appearance", "المظهر")}
+              value={draft.theme}
+              onChange={(e) =>
+                setDraft({
+                  ...draft,
+                  theme: e.target.value as GuestProfile["theme"],
+                })
+              }
+            >
+              <option value="system">{t("System", "النظام")}</option>
+              <option value="light">{t("Light", "فاتح")}</option>
+              <option value="dark">{t("Dark", "داكن")}</option>
+            </select>
+          </label>
+        </details>
+        <button className="profile-save" type="submit">
+          {t("Save preferences", "حفظ التفضيلات")}
+        </button>
+        <p role="status">{message}</p>
+      </form>
+      <details className="profile-preference profile-privacy">
+        <summary>{t("Privacy & data", "الخصوصية والبيانات")}</summary>
         <p>
           {t(
             "Your profile and activities are stored in this browser, without cloud sync. Routes are not sent to AI. Exporting GPX reveals precise location history. Clearing browser storage removes your data.",
@@ -442,10 +474,19 @@ export function ProfilePanel({
             </button>
           </div>
         )}
-      </section>
-      <p className="profile-muted">
-        VAELORA 2.2 · {t("Plan · Track · Analyze", "خطّط · تتبّع · حلّل")}
-      </p>
+      </details>
+      <details className="profile-preference">
+        <summary>{t("About VAELORA", "عن VAELORA")}</summary>
+        <p className="profile-muted">
+          {t(
+            "Weather-aware walking and running. Made for your time outside in Greater Amman.",
+            "مشي وجري تراعي خططهما الطقس، لوقتك في الخارج ضمن عمّان الكبرى.",
+          )}
+        </p>
+        <p className="profile-muted">
+          VAELORA 2.2.1 · {t("Plan · Track · Analyze", "خطّط · تتبّع · حلّل")}
+        </p>
+      </details>
     </AppDialog>
   );
 }

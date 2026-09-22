@@ -8,11 +8,13 @@ export function ScoreMap({
   rows,
   activity,
   locale,
+  selectedAreaId,
   onSelect,
 }: {
   rows: PlanningResponse["rows"];
   activity: "walking" | "running";
   locale: Locale;
+  selectedAreaId: string;
   onSelect: (id: string) => void;
 }) {
   const container = useRef<HTMLDivElement>(null),
@@ -39,6 +41,7 @@ export function ScoreMap({
         },
         center: [35.89, 31.98],
         zoom: 10,
+        renderWorldCopies: false,
         attributionControl: { compact: false },
       });
     } catch {
@@ -56,11 +59,26 @@ export function ScoreMap({
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
-    const markers = rows.map((r) => {
+    let disposed = false;
+    const markers = new Map<string, ml.Marker>();
+    const sourceId = "activity-area-clusters";
+    const update = () => {
+      if (disposed || !map.getSource(sourceId) || !map.isSourceLoaded(sourceId)) return;
+      const visible = new Set<string>();
+      for (const feature of map.querySourceFeatures(sourceId)) {
+        if (feature.geometry.type !== "Point") continue;
+        const props = feature.properties;
+        const cluster = Boolean(props.cluster);
+        const key = cluster ? `cluster-${props.cluster_id}` : String(props.areaId);
+        if (visible.has(key)) continue;
+        visible.add(key);
+        if (markers.has(key)) continue;
+        const r = rows.find(row => row.area.id === props.areaId);
+        if (!cluster && !r) continue;
       const el = document.createElement("button");
-      el.className = "area-score-marker";
+      el.className = cluster ? "area-cluster-marker" : "area-score-marker";
       el.type = "button";
-      const score = r.days[0][activity].score;
+      const score = r?.days[0][activity].score;
       el.dataset.score =
         score == null
           ? "unknown"
@@ -71,21 +89,60 @@ export function ScoreMap({
               : score >= 60
                 ? "fair"
                 : "poor";
-      el.textContent = `${r.area.name[locale]} ${r.days[0][activity].score ?? "—"}`;
-      el.onclick = () => onSelect(r.area.id);
-      return new ml.Marker({ element: el })
-        .setLngLat([r.area.longitude, r.area.latitude])
-        .addTo(map);
-    });
+      el.textContent = cluster ? `${props.point_count} +` : `${score ?? "—"}`;
+      el.dataset.area = r?.area.name[locale] ?? "";
+      el.dataset.selected = String(r?.area.id === selectedAreaId);
+      el.title = cluster
+        ? locale === "ar" ? `${props.point_count} مناطق · قرّب للاستكشاف` : `${props.point_count} areas · zoom to explore`
+        : `${r!.area.name[locale]} · ${score ?? "—"}/100`;
+      el.setAttribute("aria-label", el.title);
+      el.onclick = () => {
+        if (!cluster) { onSelect(r!.area.id); return; }
+        const source = map.getSource(sourceId) as ml.GeoJSONSource;
+        void source.getClusterExpansionZoom(Number(props.cluster_id)).then(zoom => {
+          if (!disposed) map.easeTo({ center: feature.geometry.type === "Point" ? feature.geometry.coordinates as [number, number] : map.getCenter(), zoom,
+            duration: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 350 });
+        }).catch(() => { if (!disposed) setFailed(true); });
+      };
+      markers.set(key, new ml.Marker({ element: el })
+        .setLngLat(feature.geometry.coordinates as [number, number]).addTo(map));
+      }
+      for (const [key, marker] of markers) if (!visible.has(key)) { marker.remove(); markers.delete(key); }
+    };
+    const install = () => {
+      if (disposed) return;
+      map.addSource(sourceId, { type: "geojson", cluster: true, clusterRadius: 96, clusterMaxZoom: 16,
+        data: { type: "FeatureCollection", features: rows.map(r => ({ type: "Feature", properties: { areaId: r.area.id },
+          geometry: { type: "Point", coordinates: [r.area.longitude, r.area.latitude] } })) } });
+      // A source-backed layer keeps worker clustering active; accessible HTML buttons
+      // display the actual per-area scores or cluster counts, never averaged scores.
+      map.addLayer({ id: sourceId, type: "circle", source: sourceId, paint: { "circle-radius": 0, "circle-opacity": 0 } });
+      map.on("sourcedata", update);
+      map.on("moveend", update);
+      map.on("zoomend", update);
+      update();
+    };
+    if (map.isStyleLoaded()) install(); else map.once("load", install);
     const bounds = new ml.LngLatBounds();
     rows.forEach((r) => bounds.extend([r.area.longitude, r.area.latitude]));
     if (rows.length)
       map.fitBounds(bounds, { padding: 55, maxZoom: 12, duration: 0 });
-    return () => markers.forEach((m) => m.remove());
-  }, [rows, activity, locale, onSelect]);
+    return () => {
+      disposed = true;
+      map.off("load", install);
+      map.off("sourcedata", update);
+      map.off("moveend", update);
+      map.off("zoomend", update);
+      markers.forEach((m) => m.remove());
+      if (mapRef.current === map) {
+        if (map.getLayer(sourceId)) map.removeLayer(sourceId);
+        if (map.getSource(sourceId)) map.removeSource(sourceId);
+      }
+    };
+  }, [rows, activity, locale, onSelect, selectedAreaId]);
   return (
     <div className="score-map">
-      <div ref={container} />
+      <div ref={container} aria-label={locale === "ar" ? "خريطة مؤشرات المناطق" : "Area score map"} />
       {failed && (
         <p>
           {locale === "ar"

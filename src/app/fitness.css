@@ -66,14 +66,7 @@
   line-height: 1.6;
   margin: 16px 0;
 }
-.v21-notice button {
-  background: var(--surface-strong);
-  border: 0;
-  color: var(--text-secondary);
-  border-radius: 10px;
-  padding: 12px;
-  min-height: 44px;
-}
+
 .v21-muted {
   font-size: 12px;
   line-height: 1.65;
@@ -151,13 +144,7 @@
   margin: 0;
   accent-color: var(--text-primary);
 }
-.track-live {
-  background: var(--surface-strong);
-  color: var(--text-secondary);
-  border-radius: 26px;
-  padding: 28px;
-  margin-top: 24px;
-}
+
 .track-state {
   display: flex;
   gap: 8px;
@@ -172,17 +159,7 @@
   border-radius: 50%;
   box-shadow: 0 0 0 5px var(--shadow-color);
 }
-.track-timer {
-  text-align: center;
-  margin: 28px 0 35px;
-}
-.track-timer strong {
-  display: block;
-  font-size: clamp(44px, 7vw, 85px);
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -2px;
-  line-height: 1.25;
-}
+
 .track-timer > span,
 .track-metrics span {
   display: block;
@@ -190,29 +167,13 @@
   font-size: 12px;
   margin-top: 8px;
 }
-.track-metrics {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 22px;
-  border-top: 1px solid var(--border);
-  padding-top: 24px;
-}
-.track-metrics strong {
-  font-size: 30px;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
+
 .track-metrics small {
   font-size: 12px;
   font-weight: 400;
   color: var(--text-secondary);
 }
-.track-gps {
-  font-size: 11px;
-  color: var(--text-secondary);
-  margin: 25px 0 0;
-  line-height: 1.7;
-}
+
 .track-map {
   position: relative;
   height: 390px;
@@ -267,31 +228,7 @@
   font-size: 11px;
   padding: 10px;
 }
-.track-controls {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  position: sticky;
-  bottom: 95px;
-  z-index: 2;
-  padding: 8px;
-  background: var(--overlay);
-  border-radius: 20px;
-  backdrop-filter: blur(10px);
-}
-.track-controls button {
-  padding: 17px;
-  border-radius: 14px;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  color: var(--text-primary);
-  font-weight: 700;
-  font-size: 16px;
-}
-.track-controls button:last-child {
-  background: var(--surface-strong);
-  color: var(--text-secondary);
-}
+
 .track-actions {
   display: flex;
   gap: 10px;
@@ -336,9 +273,7 @@
 .v2-dock button[aria-pressed="true"]:not(.track-dock) {
   background: var(--surface-elevated);
 }
-.v2-dock {
-  gap: 4px;
-}
+
 .compare-select {
   border: 0;
   padding: 20px 0;
@@ -430,14 +365,7 @@
 .saved-area input {
   margin: 0;
 }
-.score-map {
-  height: 460px;
-  position: relative;
-  background: var(--surface-elevated);
-  border-radius: 24px;
-  overflow: hidden;
-  margin-top: 20px;
-}
+
 .score-map > div {
   height: 100%;
   width: 100%;
@@ -451,20 +379,7 @@
   border-radius: 12px;
   font-size: 12px;
 }
-.area-score-marker {
-  background: var(--surface-strong);
-  color: var(--text-secondary);
-  border: 2px solid var(--border);
-  border-radius: 16px;
-  padding: 8px 11px;
-  font-size: 11px;
-  box-shadow: 0 3px 8px var(--shadow-color);
-  max-width: 145px;
-  white-space: normal;
-}
-.area-score-marker:focus {
-  outline: 4px solid var(--border);
-}
+
 .pwa-status {
   max-width: 1160px;
   margin: 15px auto 120px;
@@ -511,25 +426,11 @@
   .v21-panel {
     padding: 22px 18px;
   }
-  .track-live {
-    padding: 24px 19px;
-  }
-  .track-timer strong {
-    font-size: 52px;
-  }
-  .track-metrics {
-    grid-template-columns: 1fr 1fr;
-    gap: 24px 12px;
-  }
-  .track-metrics strong {
-    font-size: 28px;
-  }
+
   .track-map {
     height: 330px;
   }
-  .track-controls {
-    bottom: 90px;
-  }
+
   .track-ready-orbit {
     width: 115px;
     height: 115px;
@@ -567,23 +468,7 @@
     grid-column: 1/-1;
     grid-row: 2;
   }
-  .score-map {
-    height: 400px;
-  }
-  .v2-dock {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    padding: 7px;
-    min-width: 0;
-  }
-  .v2-dock button {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    min-width: 0;
-    padding: 8px 4px;
-    font-size: 10px;
-  }
+
   .v2-dock button svg {
     width: 19px;
     height: 19px;
@@ -656,11 +541,7 @@
   min-height: 60px;
   font-weight: 800;
 }
-.track-live {
-  background: var(--surface-strong);
-  color: var(--on-strong);
-  border: 1px solid var(--border);
-}
+
 .track-live[data-state="recording"] {
   border-color: var(--activity-live);
 }
@@ -668,31 +549,11 @@
 .track-state {
   color: var(--activity-live);
 }
-.track-timer > span,
-.track-metrics span,
-.track-metrics small,
-.track-gps {
-  color: var(--on-strong);
-}
 .recording-dot {
   background: var(--activity-live);
   box-shadow: 0 0 0 5px var(--border);
 }
-.track-controls {
-  background: var(--surface);
-  bottom: calc(86px + env(safe-area-inset-bottom));
-  border: 1px solid var(--border);
-  backdrop-filter: none;
-}
-.track-controls button {
-  background: var(--brand-primary);
-  color: var(--route-outline);
-  border: 0;
-}
-.track-controls button:last-child {
-  background: var(--surface-elevated);
-  color: var(--text-primary);
-}
+
 .track-follow {
   background: var(--surface);
   color: var(--text-primary);
@@ -715,12 +576,7 @@
   font-size: 21px;
   font-variant-numeric: tabular-nums;
 }
-.area-score-marker {
-  background: var(--surface-strong);
-  color: var(--on-strong);
-  border: 2px solid var(--route-start);
-  box-shadow: var(--shadow);
-}
+
 .area-score-marker:focus-visible {
   outline: 3px solid var(--focus);
 }
@@ -737,12 +593,7 @@
   .track-heading h1 {
     font-size: 30px;
   }
-  .track-timer {
-    margin: 20px 0;
-  }
-  .track-live {
-    padding: 22px;
-  }
+
   .track-ready p {
     margin-bottom: 16px;
   }
@@ -780,4 +631,314 @@
 }
 .area-score-marker[data-score="poor"] {
   border-color: var(--score-poor);
+}
+
+/* Track: time first, distance and pace next, speed as supporting detail. */
+.track-live {
+  margin-top: 16px;
+  padding: 22px 26px;
+  border: 1px solid var(--strong-border);
+  border-radius: var(--radius);
+  background: var(--surface-strong);
+  color: var(--on-strong);
+}
+.track-live[data-state="recording"] {
+  border-color: var(--strong-border);
+}
+.track-state {
+  font-size: 12px;
+  letter-spacing: 0.3px;
+}
+.track-live[data-state="paused"] .track-state {
+  color: var(--score-fair);
+}
+.track-timer {
+  margin: 16px 0 22px;
+  text-align: center;
+}
+.track-timer strong {
+  display: block;
+  font-size: clamp(56px, 7vw, 84px);
+  line-height: 1.1;
+  font-weight: 800;
+  letter-spacing: -2px;
+  font-variant-numeric: tabular-nums;
+}
+.track-live[data-state="recording"] .track-timer strong {
+  color: var(--on-strong);
+}
+.track-metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 20px;
+  row-gap: 16px;
+  border-top: 1px solid var(--strong-border);
+  padding-top: 18px;
+}
+.track-metrics strong {
+  font-size: 34px;
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.track-metrics > .track-speed {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  border-top: 1px solid var(--strong-border);
+  padding-top: 12px;
+}
+.track-metrics .track-speed strong {
+  font-size: 19px;
+}
+.track-metrics .track-speed span {
+  font-size: 11px;
+  margin: 0;
+}
+.track-metrics span,
+.track-metrics small,
+.track-timer > span {
+  color: var(--on-strong-muted);
+}
+.track-gps {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 11px;
+  line-height: 1.7;
+  color: var(--on-strong-muted);
+  margin: 16px 0 0;
+}
+.track-gps > span:first-child {
+  color: var(--route);
+}
+.track-gps[data-quality="paused"] > span:first-child {
+  color: var(--score-fair);
+}
+.track-app[data-session="live"] .track-heading {
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}
+.track-app[data-session="live"] .track-heading h1 {
+  font-size: 24px;
+  margin: 0;
+}
+.track-app[data-session="live"] .track-heading .v2-kicker {
+  display: none;
+}
+.track-app[data-session="live"] .track-privacy {
+  margin: 6px 0 12px;
+  font-size: 11px;
+}
+.track-app[data-session="live"] .track-heading button {
+  padding: 8px 10px;
+  font-size: 11px;
+}
+.track-controls {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 10px;
+  position: sticky;
+  bottom: calc(var(--dock-clearance) + env(safe-area-inset-bottom));
+  z-index: 2;
+  padding: 7px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+}
+.track-controls button {
+  padding: 14px;
+  border: 0;
+  border-radius: 12px;
+  font-weight: 750;
+  font-size: 15px;
+  min-height: 50px;
+  background: var(--brand-primary);
+  color: var(--route-outline);
+}
+.track-controls button:last-child {
+  background: var(--surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+}
+.v21-notice button {
+  background: var(--surface-strong);
+  color: var(--on-strong);
+  border: 0;
+  border-radius: 10px;
+  padding: 12px;
+  min-height: 44px;
+}
+/* Map: geographic points stay fixed; only overlapping targets are hidden. */
+.score-map {
+  height: 520px;
+  position: relative;
+  background: var(--surface-elevated);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-top: 14px;
+}
+.area-score-marker {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 2px solid var(--route-start) !important;
+  border-radius: 50%;
+  background: var(--surface-strong);
+  color: var(--on-strong);
+  font-size: 14px;
+  font-weight: 750;
+  box-shadow: 0 2px 8px var(--shadow-color);
+}
+.area-score-marker::after {
+  content: attr(data-area);
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 5px);
+  inset-inline-start: 50%;
+  transform: translateX(-50%);
+  padding: 6px 9px;
+  border-radius: 8px;
+  background: var(--surface-strong);
+  color: var(--on-strong);
+  font-size: 12px;
+  white-space: normal;
+  width: max-content;
+  max-width: 150px;
+  text-align: center;
+  pointer-events: none;
+}
+[dir="rtl"] .area-score-marker::after {
+  transform: translateX(50%);
+}
+.area-score-marker:hover,
+.area-score-marker:focus-visible {
+  z-index: 2;
+}
+.area-score-marker:hover::after,
+.area-score-marker:focus-visible::after {
+  display: block;
+}
+.area-score-marker[data-score="good"] {
+  border-color: var(--score-good) !important;
+}
+.area-score-marker[data-score="fair"] {
+  border-color: var(--score-fair) !important;
+}
+.area-score-marker[data-score="poor"] {
+  border-color: var(--score-poor) !important;
+}
+.area-score-marker[data-selected="true"] {
+  outline: 2px solid var(--on-strong);
+  outline-offset: 3px;
+}
+.area-cluster-marker {
+  width: 44px;
+  height: 44px;
+  min-height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--strong-border);
+  background: var(--surface-strong);
+  color: var(--on-strong);
+  box-shadow: 0 0 0 4px var(--shadow-color);
+  font-size: 13px;
+  font-weight: 700;
+}
+.area-score-marker, .area-cluster-marker { touch-action: manipulation; }
+.planning-tools[data-mode="map"] .v2-segment {
+  max-width: 300px;
+  margin: 12px 0 8px;
+}
+.planning-tools[data-mode="map"] h1 {
+  font-size: 32px;
+  margin: 6px 0;
+}
+.planning-tools[data-mode="map"] .v21-muted {
+  max-width: 540px;
+}
+.v2 .maplibregl-ctrl-group button {
+  min-height: 44px;
+  width: 44px;
+}
+@media (max-width: 700px) {
+  .track-live {
+    padding: 18px;
+  }
+  .track-timer {
+    margin: 12px 0 18px;
+  }
+  .track-timer strong {
+    font-size: 56px;
+  }
+  .track-metrics {
+    gap: 12px;
+    padding-top: 14px;
+  }
+  .track-metrics strong {
+    font-size: 30px;
+  }
+  .track-metrics > .track-speed {
+    display: block;
+  }
+  .track-metrics .track-speed strong {
+    font-size: 19px;
+  }
+  .track-gps {
+    font-size: 10px;
+    gap: 5px;
+  }
+  .track-app[data-session="live"] .track-heading h1 {
+    font-size: 21px;
+  }
+  .track-map {
+    height: 340px;
+    margin: 12px 0;
+  }
+  .v21-back {
+    margin-bottom: 12px;
+    padding: 8px 12px;
+  }
+  .planning-tools[data-mode="map"] h1 {
+    font-size: 26px;
+  }
+  .planning-tools[data-mode="map"] .v2-kicker {
+    display: none;
+  }
+  .score-map {
+    height: clamp(400px, 57dvh, 560px);
+    margin-top: 12px;
+  }
+}
+@media (min-width: 1000px) {
+  .track-app[data-session="live"] .track-session {
+    display: grid;
+    grid-template-columns: minmax(360px, 0.85fr) minmax(0, 1.15fr);
+    column-gap: 20px;
+    align-items: start;
+  }
+  .track-app[data-session="live"] .track-live {
+    grid-column: 1;
+    grid-row: 1;
+    margin: 0;
+  }
+  .track-app[data-session="live"] .track-map {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    margin: 0;
+    height: 480px;
+  }
+  .track-app[data-session="live"] .track-controls {
+    grid-column: 1;
+    align-self: end;
+    margin-top: 12px;
+  }
+  .track-app[data-session="live"] .track-limit {
+    grid-column: 1/-1;
+  }
 }

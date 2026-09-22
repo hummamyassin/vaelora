@@ -7,6 +7,11 @@
   --text-primary: #15251e;
   --text-secondary: #506359;
   --on-strong: #f2f9ef;
+  --on-strong-muted: #c0cfc2;
+  --strong-border: #526459;
+  --strong-selected: #2d3e2c;
+  --on-ai: #ffffff;
+  --dock-clearance: 76px;
   --brand-primary: #c7f25b;
   --brand-accent: #08796c;
   --activity-live: #c7f25b;
@@ -41,6 +46,7 @@
   --brand-accent: #c7f25b;
   --gps: #6fd8d5;
   --ai: #c2a5ff;
+  --on-ai: #24143e;
   --warning: #f3c767;
   --danger: #ff9685;
   --border: #3b4b40;

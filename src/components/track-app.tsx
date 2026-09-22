@@ -393,11 +393,16 @@ export function TrackApp({
   return (
     <section
       className="track-app"
+      data-session={
+        !summary && (active || state === "paused") ? "live" : "idle"
+      }
       aria-label={text("VAELORA Track", "تتبّع النشاط")}
     >
       <header className="track-heading">
         <div>
-          <p className="v2-kicker">{text("Plan · Track · Analyze", "خطّط · تتبّع · حلّل")}</p>
+          <p className="v2-kicker">
+            {text("Plan · Track · Analyze", "خطّط · تتبّع · حلّل")}
+          </p>
           <h1>
             {summary
               ? text("Your activity, recorded.", "نشاطك، كما سجّلته.")
@@ -597,7 +602,7 @@ export function TrackApp({
         </section>
       )}
       {current && (summary || state === "recording" || state === "paused") && (
-        <>
+        <div className="track-session">
           <section
             className="track-live"
             data-state={summary ? "finished" : state}
@@ -644,7 +649,7 @@ export function TrackApp({
                 </strong>
                 <span>{text("Average pace", "متوسط الوتيرة")}</span>
               </div>
-              <div>
+              <div className="track-speed">
                 <strong>
                   {stats?.averageSpeedKmh?.toFixed(1) ?? "—"}{" "}
                   <small>{text("km/h", "كم/س")}</small>
@@ -652,7 +657,7 @@ export function TrackApp({
                 <span>{text("Average speed", "متوسط السرعة")}</span>
               </div>
               {!summary && (
-                <div>
+                <div className="track-speed">
                   <strong>
                     {currentSpeed?.toFixed(1) ?? "—"}{" "}
                     <small>{text("km/h", "كم/س")}</small>
@@ -662,25 +667,33 @@ export function TrackApp({
               )}
             </div>
             {!summary && (
-              <p className="track-gps" role="status">
-                {
-                  (qualityCopy[display.quality] ?? qualityCopy.waiting)[
-                    ar ? 1 : 0
-                  ]
-                }{" "}
-                ·{" "}
-                {display.accuracy != null
-                  ? `±${Math.round(display.accuracy)} ${text("m", "م")}`
-                  : "—"}{" "}
-                · {text("Current pace", "الوتيرة الحالية")}{" "}
-                <bdi>
-                  {paceLabel(
-                    currentSpeed && currentSpeed > 0
-                      ? 3600 / currentSpeed
-                      : null,
-                  )}{" "}
-                  {text("/km", "/كم")}
-                </bdi>
+              <p
+                className="track-gps"
+                role="status"
+                data-quality={active ? display.quality : "paused"}
+              >
+                <span>
+                  {!active
+                    ? text("GPS paused", "تتبّع الموقع متوقف مؤقتًا")
+                    : (qualityCopy[display.quality] ?? qualityCopy.waiting)[
+                        ar ? 1 : 0
+                      ]}{" "}
+                  ·{" "}
+                  {display.accuracy != null
+                    ? `±${Math.round(display.accuracy)} ${text("m", "م")}`
+                    : "—"}
+                </span>
+                <span>
+                  {text("Current pace", "الوتيرة الحالية")}{" "}
+                  <bdi>
+                    {paceLabel(
+                      currentSpeed && currentSpeed > 0
+                        ? 3600 / currentSpeed
+                        : null,
+                    )}{" "}
+                    {text("/km", "/كم")}
+                  </bdi>
+                </span>
               </p>
             )}
           </section>
@@ -835,7 +848,7 @@ export function TrackApp({
               )}
             </section>
           )}
-        </>
+        </div>
       )}
       <p className="track-limit">
         {text(

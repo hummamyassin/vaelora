@@ -569,6 +569,29 @@ export function DashboardApp() {
         </p>
       )}
       <div className="v2-shell" id="dashboard" hidden={view !== "home"}>
+        <div className="v2-title-row">
+          <div>
+            <p className="v2-kicker">
+              {text("YOUR OUTDOORS. YOUR RHYTHM.", "وقتك في الخارج. بإيقاعك.")}
+            </p>
+            <h1>
+              {profile.name ? (
+                <>
+                  {text("Ready, ", "مستعد للانطلاق، ")}
+                  <bdi>{profile.name}</bdi>
+                  {ar ? "؟" : "?"}
+                </>
+              ) : (
+                text("Make your move.", "حان وقت الانطلاق.")
+              )}
+            </h1>
+          </div>
+          <button className="filter-button" onClick={() => setSheet("filters")}>
+            <SlidersHorizontal size={17} />
+            {text("Filters", "التفضيلات")}
+            {preferences.length > 0 && <span>{preferences.length}</span>}
+          </button>
+        </div>
         <div className="v2-location-row">
           <button className="area-control" onClick={() => setSheet("area")}>
             <MapPin size={20} />
@@ -596,29 +619,6 @@ export function DashboardApp() {
               </button>
             ))}
           </div>
-        </div>
-        <div className="v2-title-row">
-          <div>
-            <p className="v2-kicker">
-              {text("YOUR OUTDOORS. YOUR RHYTHM.", "وقتك في الخارج. بإيقاعك.")}
-            </p>
-            <h1>
-              {profile.name ? (
-                <>
-                  {text("Ready, ", "مستعد للانطلاق، ")}
-                  <bdi>{profile.name}</bdi>
-                  {ar ? "؟" : "?"}
-                </>
-              ) : (
-                text("Make your move.", "حان وقت الانطلاق.")
-              )}
-            </h1>
-          </div>
-          <button className="filter-button" onClick={() => setSheet("filters")}>
-            <SlidersHorizontal size={17} />
-            {text("Filters", "التفضيلات")}
-            {preferences.length > 0 && <span>{preferences.length}</span>}
-          </button>
         </div>
         <div className="v2-active">
           <span>
@@ -1466,8 +1466,27 @@ export function DashboardApp() {
           )}
           {sheet === "ai" && (
             <div className="v2-ai">
+              <div className="ai-intro">
+                <span className="ai-mark">
+                  <Sparkles size={22} />
+                </span>
+                <div>
+                  <h3>
+                    {text(
+                      "Your outdoor intelligence",
+                      "دليلك للنشاط في الخارج",
+                    )}
+                  </h3>
+                  <p>
+                    {text(
+                      "A better plan starts with a question.",
+                      "سؤال بسيط يقودك إلى خطة أفضل.",
+                    )}
+                  </p>
+                </div>
+              </div>
               <button
-                className="v21-quiet"
+                className="ai-local-action"
                 onClick={() =>
                   setPrompt(text("My activity today", "نشاطي اليوم"))
                 }
@@ -1477,7 +1496,7 @@ export function DashboardApp() {
                   "نشاطي اليوم · على هذا الجهاز",
                 )}
               </button>
-              <p>
+              <p className="ai-grounding">
                 {text(
                   "Real forecasts. Deterministic scores. Reviewed places.",
                   "توقعات فعلية. مؤشرات محسوبة. أماكن مدروسة.",
@@ -1498,13 +1517,19 @@ export function DashboardApp() {
                     "قارن شفا بدران والجبيهة",
                   ),
                 ].map((p) => (
-                  <button key={p} onClick={() => setPrompt(p)}>
+                  <button
+                    key={p}
+                    onClick={() => {
+                      setPrompt(p);
+                      document.getElementById("v2-prompt")?.focus();
+                    }}
+                  >
                     {p}
                     <ArrowUpRight size={15} />
                   </button>
                 ))}
               </div>
-              <form onSubmit={ask}>
+              <form onSubmit={ask} aria-busy={asking}>
                 <label htmlFor="v2-prompt">
                   {text("Your question", "سؤالك")}
                 </label>
@@ -1513,10 +1538,14 @@ export function DashboardApp() {
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
                   maxLength={2000}
-                  rows={3}
+                  rows={2}
+                  placeholder={text(
+                    "Plan a walk, find a time…",
+                    "خطّط للمشي، واختر وقتًا…",
+                  )}
                 />
                 <button
-                  className="v2-primary"
+                  className="v2-primary ai-send"
                   disabled={asking || !prompt.trim()}
                 >
                   <Send size={17} />
@@ -1525,9 +1554,11 @@ export function DashboardApp() {
                     : text("Ask", "اسأل")}
                 </button>
               </form>
+              {asking && <p className="ai-progress" role="status">{text("Checking your request against VAELORA’s tools…", "نتحقق من طلبك باستخدام أدوات VAELORA…")}</p>}
               <p className="v2-fine">{t(locale, "aiRule")}</p>
               {answer && (
-                <div className="v2-ai-answer" role="status">
+                <div className="v2-ai-answer" data-status={answer.status} role={answer.status.endsWith("error") ? "alert" : "status"}>
+                  <h3>{answer.status.endsWith("error") ? text("Couldn’t complete your request", "تعذّر إكمال طلبك") : answer.status === "clarification" ? text("A little more detail", "نحتاج إلى تفاصيل إضافية") : text("Your answer", "إجابتك")}</h3>
                   <p>{answer.text || t(locale, "aiError")}</p>
                   {answer.trace?.length > 0 && (
                     <details>

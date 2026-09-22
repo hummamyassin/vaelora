@@ -96,7 +96,7 @@ export function PlanningTools({
       hour12: false,
     });
   return (
-    <section className="planning-tools">
+    <section className="planning-tools" data-mode={mode}>
       <header>
         <p className="v2-kicker">
           {text("MORE ROOM TO MOVE", "خيارات أوسع للحركة")}
@@ -258,8 +258,12 @@ export function PlanningTools({
           </div>
           <p className="v21-muted">
             {text(
-              "Current-hour scores today; best-window scores on future days. Hourly forecasts, not a block-level heatmap. Place preferences apply on Home.",
-              "مؤشرات الساعة الحالية لليوم، وأفضل فترة للأيام المقبلة. توقعات ساعية وليست خريطة دقيقة لكل شارع. تُطبّق تفضيلات الأماكن في الرئيسية.",
+              mode === "map"
+                ? "Area forecasts, not street-level conditions. Zoom in for nearby areas; select a score to plan."
+                : "Current conditions today; best outing windows for the days ahead.",
+              mode === "map"
+                ? "توقعات للمناطق، وليست لكل شارع. كبّر الخريطة للمناطق المتقاربة، واختر مؤشرًا للتخطيط."
+                : "ظروف الساعة الحالية لليوم، وأفضل فترات الخروج للأيام المقبلة.",
             )}
           </p>
           {!data && !error && (
@@ -282,6 +286,7 @@ export function PlanningTools({
           )}
           {data && mode === "map" && (
             <ScoreMap
+              selectedAreaId={areaId}
               rows={data.rows}
               activity={activity}
               locale={locale}
@@ -324,7 +329,7 @@ export function PlanningTools({
                     </div>
                     <p>
                       {s.temperatureC ?? "—"}°C · {text("Wind", "الرياح")}{" "}
-                      {s.windKmh ?? "—"} km/h
+                      {s.windKmh ?? "—"} {text("km/h", "كم/س")}
                       <br />
                       {text("Rain chance", "احتمال الهطول")}{" "}
                       {s.precipitationPercent ?? "—"}%
@@ -344,7 +349,8 @@ export function PlanningTools({
                     )}
                     {origin && (
                       <p>
-                        {distanceKm(origin, row.area).toFixed(1)} km ·{" "}
+                        {distanceKm(origin, row.area).toFixed(1)}{" "}
+                        {text("km", "كم")} ·{" "}
                         {text("to reference point", "إلى النقطة المرجعية")}
                       </p>
                     )}
