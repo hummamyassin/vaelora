@@ -1,5 +1,10 @@
 # VAELORA
 
+V2.3 adds dynamic urban Amman conditions, bilingual search, deterministic daily
+plans and nearby discovery, a burgundy Jordanian identity, generated place art,
+private route-image sharing and local weekly progress. See
+[V2.3 architecture, coverage, privacy and QA](docs/v23.md).
+
 Weather-aware running and walking recommendations for Greater Amman, Jordan.
 V2 opens directly into a bilingual activity dashboard with deterministic scores,
 hourly conditions, exact outing windows, optional filters, nearby reviewed places,

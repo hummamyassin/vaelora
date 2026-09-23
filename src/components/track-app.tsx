@@ -1,6 +1,13 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  useImperativeHandle,
+  type Ref,
+} from "react";
 import { Navigation } from "lucide-react";
+import { ActivityShare } from "./activity-share";
 import dynamic from "next/dynamic";
 import {
   ActivityRecorder,
@@ -33,69 +40,6 @@ function download(blob: Blob, name: string) {
   a.click();
   setTimeout(() => URL.revokeObjectURL(url), 30000);
 }
-async function shareCard(a: RecordedActivity, ar: boolean) {
-  // Privacy-safe by construction: no date, place, coordinates, or route enters this bitmap.
-  const canvas = document.createElement("canvas");
-  canvas.width = 1000;
-  canvas.height = 1000;
-  const c = canvas.getContext("2d")!;
-  const tokens = getComputedStyle(document.documentElement);
-  const color = (name: string) => tokens.getPropertyValue(name).trim();
-  c.fillStyle = color("--surface-strong");
-  c.fillRect(0, 0, 1000, 1000);
-  c.fillStyle = color("--brand-primary");
-  c.font = "bold 42px Arial";
-  c.textAlign = "center";
-  c.fillText("VAELORA", 500, 125);
-  c.fillStyle = color("--on-strong");
-  c.font = "32px Arial";
-  c.fillText(
-    ar
-      ? a.activity === "walking"
-        ? "نشاط مشي مكتمل"
-        : "نشاط جري مكتمل"
-      : a.activity === "walking"
-        ? "COMPLETED WALK"
-        : "COMPLETED RUN",
-    500,
-    250,
-  );
-  c.font = "bold 120px Arial";
-  c.fillText(
-    `${(a.distanceM / 1000).toFixed(2)} ${ar ? "كم" : "km"}`,
-    500,
-    430,
-  );
-  c.font = "52px Arial";
-  c.fillText(durationLabel(a.activeMs), 500, 565);
-  c.font = "30px Arial";
-  c.fillText(ar ? "الوقت النشط" : "ACTIVE TIME", 500, 620);
-  c.font = "50px Arial";
-  c.fillText(
-    `${paceLabel(metrics(a).averagePaceSeconds)} ${ar ? "/كم" : "/km"}`,
-    500,
-    740,
-  );
-  c.font = "25px Arial";
-  c.fillText(
-    ar
-      ? "متوسط الوتيرة · بلا بيانات الموقع"
-      : "AVERAGE PACE · NO LOCATION DATA",
-    500,
-    795,
-  );
-  if (a.conditions?.score != null) {
-    c.fillStyle = color("--brand-primary");
-    c.fillText(`VAELORA ${a.conditions.score}/100`, 500, 900);
-  }
-  const blob = await new Promise<Blob>((resolve, reject) =>
-    canvas.toBlob(
-      (b) => (b ? resolve(b) : reject(new Error("Image unavailable"))),
-      "image/png",
-    ),
-  );
-  download(blob, "vaelora-activity.png");
-}
 const qualityCopy: Record<string, [string, string]> = {
   waiting: ["Waiting for GPS…", "بانتظار إشارة GPS…"],
   good: ["GPS recording", "تسجيل GPS مستمر"],
@@ -124,6 +68,7 @@ export function TrackApp({
   preferredActivity = "walking",
   openActivityId,
   onActivityOpened,
+  startRef,
 }: {
   locale: Locale;
   snapshot: (activity: ActivityKind) => ConditionsSnapshot | null;
@@ -132,6 +77,7 @@ export function TrackApp({
   preferredActivity?: ActivityKind;
   openActivityId?: string | null;
   onActivityOpened: (id: null) => void;
+  startRef?: Ref<() => void>;
 }) {
   const ar = locale === "ar",
     text = (en: string, arabic: string) => (ar ? arabic : en);
@@ -384,6 +330,9 @@ export function TrackApp({
     refresh();
     await persist(data);
   }
+  useImperativeHandle(startRef, () => () => {
+    start();
+  });
   const current = summary ?? a,
     stats = current ? metrics(current) : null;
   const currentSpeed =
@@ -602,7 +551,12 @@ export function TrackApp({
         </section>
       )}
       {current && (summary || state === "recording" || state === "paused") && (
-        <div className="track-session">
+        <div className="track-session" data-recap={!!summary}>
+          {summary && (
+            <h2 className="recap-title">
+              {text("Your activity recap", "ملخص نشاطك")}
+            </h2>
+          )}
           <section
             className="track-live"
             data-state={summary ? "finished" : state}
@@ -764,15 +718,6 @@ export function TrackApp({
                   GPX ↓
                 </button>
                 <button
-                  onClick={() =>
-                    void shareCard(summary, ar).catch(() =>
-                      setNotice("share-error"),
-                    )
-                  }
-                >
-                  {text("Download share card", "تنزيل بطاقة المشاركة")}
-                </button>
-                <button
                   disabled={!saved || saving}
                   onClick={() => {
                     setSummary(null);
@@ -791,12 +736,7 @@ export function TrackApp({
                   {text("Delete activity", "حذف النشاط")}
                 </button>
               </div>
-              <small>
-                {text(
-                  "Share cards contain metrics only, with no route or location.",
-                  "تتضمن بطاقات المشاركة المقاييس فقط، دون مسار أو موقع.",
-                )}
-              </small>
+              <ActivityShare activity={summary} locale={locale} />
               {exportConfirm && (
                 <div className="v21-notice">
                   <p>

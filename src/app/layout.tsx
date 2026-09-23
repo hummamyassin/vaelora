@@ -7,7 +7,8 @@ import "./dashboard.css";
 import "./fitness.css";
 import "./tokens.css";
 import "./profile.css";
-export const viewport: Viewport = {themeColor:"#eff3ef",width:"device-width",initialScale:1,viewportFit:"cover"};
+import "./v23.css";
+export const viewport: Viewport = {themeColor:"#641f32",width:"device-width",initialScale:1,viewportFit:"cover"};
 
 export const metadata: Metadata = {
   appleWebApp:{capable:true,statusBarStyle:"default",title:"VAELORA"},

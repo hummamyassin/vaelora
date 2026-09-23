@@ -8,6 +8,7 @@ import {
   Activity,
 } from "lucide-react";
 import { AppDialog } from "./app-dialog";
+import { PersonalProgress } from "./personal-progress";
 import {
   activityTotals,
   initials,
@@ -267,6 +268,7 @@ export function ProfilePanel({
           </>
         )}
       </section>
+      <PersonalProgress activities={activities} locale={profile.locale} onOpen={onActivity}/>
       <button className="profile-recent" onClick={onPlaces}>
         {t("Saved Areas", "المناطق المحفوظة")}
         <ArrowUpRight size={18} />

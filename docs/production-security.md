@@ -1,5 +1,17 @@
 # Pre-deployment security audit
 
+## V2.3 privacy amendment
+
+Dynamic Home sends a coarse 0.02-degree cell ID to deterministic weather services;
+precise GPS remains in browser memory/local activity storage. Submitted search
+text goes through the server to Photon, with bounded responses, caching and rate
+limits. Provider text is rendered as React text, never HTML. Dynamic cells and
+routes never enter the AI payload. Maps still request OSM tiles for the viewed
+region. Share images trim all start/end-zone crossings locally, contain no raw
+coordinates, and do not alter original history. GPX retains explicit confirmation.
+See [V2.3 details and limitations](v23.md). Public geocoder traffic requires
+deployment-wide limits/provider review before scaling. No deployment performed.
+
 ## Readiness
 
 READY WITH NOTES for a small public portfolio. Do not enable public AI until the edge rule below is published and verified. No deployment or external infrastructure configuration was performed by this audit.

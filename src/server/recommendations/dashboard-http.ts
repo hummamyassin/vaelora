@@ -7,9 +7,8 @@ import {
   readJson,
 } from "../http-security.ts";
 import { InvalidRecommendationRequest } from "./request.ts";
-import type { createDashboardPipeline } from "./dashboard.ts";
 export function createDashboardHandler(
-  run: ReturnType<typeof createDashboardPipeline>,
+  run: (input: unknown) => Promise<{status:string}>,
 ) {
   const budget = createRequestBudget({
     perMinute: 120,
