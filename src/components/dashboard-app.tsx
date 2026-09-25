@@ -267,7 +267,7 @@ export function DashboardApp() {
       document.documentElement.dataset.theme = theme;
       document
         .querySelector('meta[name="theme-color"]')
-        ?.setAttribute("content", theme === "dark" ? "#101412" : "#eff3ef");
+        ?.setAttribute("content", theme === "dark" ? "#171719" : "#f6f1e8");
     };
     apply();
     media.addEventListener("change", apply);

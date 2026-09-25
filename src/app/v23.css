@@ -1,47 +1,47 @@
-/* V2.3 identity: original burgundy surfaces and a restrained diamond/check motif. */
+/* Modern Jordan Sport: oxblood, Jordan red, ivory and near-black. */
 :root {
-  --background: #f5f0e9;
-  --surface: #fffaf3;
-  --surface-elevated: #ede3de;
-  --surface-strong: #371e29;
-  --text-primary: #2d2027;
-  --text-secondary: #705d65;
-  --on-strong: #fff5eb;
-  --on-strong-muted: #d6c0c9;
-  --strong-border: #795963;
-  --strong-selected: #5d2c3d;
-  --brand-primary: #edb5b8;
-  --brand-accent: #8c2945;
-  --border: #dbcac8;
-  --focus: #a63450;
-  --shadow: 0 12px 30px #361b2510;
-  --route: #ad2546;
-  --route-outline: #fff5eb;
-  --gps: #17665d;
+  --background: #f6f1e8;
+  --surface: #fffaf2;
+  --surface-elevated: #e8ded2;
+  --surface-strong: #541c27;
+  --text-primary: #171719;
+  --text-secondary: #625b57;
+  --on-strong: #f6f1e8;
+  --on-strong-muted: #e8ded2;
+  --strong-border: #9b6470;
+  --strong-selected: #731f30;
+  --brand-primary: #541c27;
+  --brand-accent: #a61e2d;
+  --border: #d2c5b8;
+  --focus: #a61e2d;
+  --shadow: 0 12px 30px #541c2714;
+  --route: #a61e2d;
+  --route-outline: #f6f1e8;
+  --gps: #527400;
 }
 :root[data-theme="dark"] {
-  --background: #171418;
-  --surface: #241e23;
-  --surface-elevated: #352a32;
-  --surface-strong: #3d202d;
-  --text-primary: #fbf2e9;
-  --text-secondary: #cdbac3;
-  --on-strong: #fff5eb;
-  --on-strong-muted: #ddc3cd;
-  --brand-primary: #edb5b8;
-  --brand-accent: #f1a7b2;
-  --border: #51404a;
-  --focus: #f3b1bb;
-  --gps: #8ed7c9;
-  --route: #f1a7b2;
-  --route-outline: #2e1420;
+  --background: #171719;
+  --surface: #211c1d;
+  --surface-elevated: #33282a;
+  --surface-strong: #541c27;
+  --text-primary: #f6f1e8;
+  --text-secondary: #c9bdb4;
+  --on-strong: #f6f1e8;
+  --on-strong-muted: #e8ded2;
+  --brand-primary: #a61e2d;
+  --brand-accent: #ef6673;
+  --border: #4c3b3e;
+  --focus: #f6f1e8;
+  --gps: #b7f52a;
+  --route: #ef6673;
+  --route-outline: #171719;
 }
 .v2-brand {
   color: var(--brand-accent);
 }
 .profile-entry,
 .profile-avatar {
-  color: #472332;
+  color: var(--route-outline);
   min-width: 44px;
   min-height: 44px;
 }
@@ -105,8 +105,9 @@
   height: 6px;
   background: repeating-linear-gradient(
     135deg,
-    #c84c67 0 4px,
-    transparent 4px 9px
+    #a61e2d 0 5px,
+    #f6f1e8 5px 7px,
+    transparent 7px 12px
   );
   opacity: 0.7;
   pointer-events: none;
@@ -132,7 +133,7 @@
   overflow-wrap: anywhere;
 }
 .daily-plan .v2-kicker {
-  color: #f4b5bf;
+  color: #f6c6c8;
   margin: 0;
 }
 .daily-plan p,
@@ -147,7 +148,7 @@
 }
 .plan-sports {
   width: max-content;
-  background: #281820;
+  background: #171719;
   border-color: var(--strong-border);
 }
 .plan-sports button {
@@ -159,8 +160,8 @@
   min-height: 44px;
 }
 .plan-sports button[aria-pressed="true"] {
-  background: #f7e7dc;
-  color: #472332;
+  background: #f6f1e8;
+  color: #541c27;
 }
 .plan-facts {
   display: flex;
@@ -191,7 +192,7 @@
 .daily-plan .text-link {
   border: 0;
   background: none;
-  color: #fff4e9;
+  color: #f6f1e8;
   text-decoration: underline;
   text-underline-offset: 4px;
   padding: 0;
@@ -203,7 +204,7 @@
   border: 0;
   border-radius: 14px;
   background: var(--activity-live);
-  color: #233016;
+  color: #171719;
   font-weight: 750 !important;
   display: flex;
   align-items: center;
@@ -220,7 +221,7 @@
 .daily-plan[data-plan-state="no-window"],
 .daily-plan[data-plan-state="weather-unavailable"],
 .daily-plan[data-plan-state="location-unavailable"] {
-  border-color: #9b7784;
+  border-color: #a86f78;
 }
 .plan-safety {
   font-size: 12px !important;
@@ -409,7 +410,7 @@
 .location-art {
   display: block !important;
   min-height: 175px;
-  background: #4c2131 !important;
+  background: #541c27 !important;
 }
 .location-art .area-identity {
   position: relative;
@@ -420,8 +421,8 @@
   isolation: isolate;
   padding: 20px;
   min-height: 175px;
-  background: #4c2131 !important;
-  color: #fff0e6 !important;
+  background: #541c27 !important;
+  color: #f6f1e8 !important;
   overflow: hidden;
 }
 .location-art .area-identity strong {
@@ -434,13 +435,13 @@
 .location-art .area-identity small {
   font-size: 9px;
   max-width: 90%;
-  color: #edd2d8;
+  color: #e8ded2;
   z-index: 1;
   line-height: 1.5;
 }
 .location-art .identity-category {
   font-size: 10px;
-  color: #f4c0c7;
+  color: #f6c6c8;
   position: relative;
   z-index: 1;
 }
@@ -449,20 +450,20 @@
   inset: 0;
   height: 100%;
   width: 100%;
-  color: #ef9faa;
-  opacity: 0.22;
+  color: #f6f1e8;
+  opacity: 0.28;
   z-index: -1;
 }
 .location-art[data-theme-art="nature"] .area-identity {
-  background: #342830 !important;
+  background: #171719 !important;
 }
 .location-art[data-theme-art="urban"] .area-identity {
-  background: #34222b !important;
+  background: #3d171f !important;
 }
-.location-art[data-theme-art="park"] .area-identity { background: #442b34 !important; }
-.location-art[data-theme-art="running"] .area-identity { background: #5a2435 !important; }
-.location-art[data-theme-art="walking"] .area-identity { background: #38262d !important; }
-.location-art[data-theme-art="featured"] .area-identity { background: #4c2131 !important; }
+.location-art[data-theme-art="park"] .area-identity { background: #541c27 !important; }
+.location-art[data-theme-art="running"] .area-identity { background: #a61e2d !important; }
+.location-art[data-theme-art="walking"] .area-identity { background: #2b171b !important; }
+.location-art[data-theme-art="featured"] .area-identity { background: #541c27 !important; }
 .personal-progress {
   padding: 23px;
   background: var(--surface);
@@ -522,9 +523,9 @@
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: #a62649;
+  background: #a61e2d;
   border: 3px solid white;
-  box-shadow: 0 0 0 5px #a6264930;
+  box-shadow: 0 0 0 5px #a61e2d30;
 }
 .map-place-list {
   display: flex;
@@ -573,8 +574,8 @@
   background: var(--surface-strong);
   border: 2px solid var(--route);
 }
-.map-legend i[data-kind="selected"] { box-shadow: 0 0 0 3px #a6264930; background: var(--route); }
-.map-legend i[data-kind="origin"] { background: #a62649; border-color: white; }
+.map-legend i[data-kind="selected"] { box-shadow: 0 0 0 3px #a61e2d30; background: var(--route); }
+.map-legend i[data-kind="origin"] { background: #a61e2d; border-color: #f6f1e8; }
 .map-legend i[data-kind="cluster"] { border-radius: 4px; border-color: var(--strong-border); }
 .discovery-map > p {
   font-size: 12px;
@@ -596,6 +597,16 @@
   background: var(--surface);
   color: var(--text-primary);
 }
+.track-session[data-recap="true"] .track-timer > span,
+.track-session[data-recap="true"] .track-metrics span,
+.track-session[data-recap="true"] .track-metrics small,
+.track-session[data-recap="true"] .track-gps {
+  color: var(--text-secondary);
+}
+.track-session[data-recap="true"] .track-metrics,
+.track-session[data-recap="true"] .track-metrics > .track-speed {
+  border-color: var(--border);
+}
 .activity-share {
   border-top: 1px solid var(--border);
   margin-top: 24px;
@@ -616,8 +627,8 @@
   max-width: 340px;
   aspect-ratio: 3/4;
   margin: 18px auto;
-  background: #25161d;
-  color: #fbf4e9;
+  background: #171719;
+  color: #f6f1e8;
   border-radius: 15px;
   overflow: hidden;
 }
@@ -633,7 +644,7 @@
   width: 100%;
   flex: 1;
   min-height: 0;
-  color: #efabac;
+  color: #a61e2d;
 }
 .share-preview > b {
   font-size: 36px;
@@ -642,7 +653,7 @@
   font-size: 10px;
   position: absolute;
   top: 45%;
-  color: #cfc0c3;
+  color: #e8ded2;
 }
 .share-preview[data-template="performance"] > b {
   order: -1;
@@ -652,13 +663,13 @@
   max-height: 70%;
 }
 .share-preview[data-template="performance"] {
-  background: #f5eee6;
-  color: #4c2131;
-  border: 1px solid #dbcac8;
+  background: #f6f1e8;
+  color: #541c27;
+  border: 1px solid #d2c5b8;
 }
 .share-preview[data-template="minimal"] {
   justify-content: space-between;
-  background: linear-gradient(160deg, #25161d 0 28%, #8c2945 28% 66%, #371e29 66%);
+  background: linear-gradient(160deg, #171719 0 28%, #a61e2d 28% 66%, #541c27 66%);
 }
 .share-preview .share-activity {
   letter-spacing: .16em;
@@ -702,7 +713,7 @@
 }
 .share-preview[data-template="performance"] .share-primary { order: -1; margin-top: 22px; }
 .share-preview[data-template="performance"] .share-primary b { font-size: 58px; }
-.share-preview[data-template="performance"] .share-secondary { border-color: #4c213130; }
+.share-preview[data-template="performance"] .share-secondary { border-color: #541c2730; }
 .share-preview[data-template="minimal"] .share-motif,
 .share-preview[data-template="minimal"] .share-secondary span:nth-child(2),
 .share-preview[data-template="minimal"] .share-conditions { display: none; }

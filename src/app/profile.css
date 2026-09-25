@@ -4,7 +4,7 @@
   place-items: center;
   border-radius: 50%;
   background: var(--brand-primary);
-  color: var(--route-outline);
+  color: var(--on-strong);
   font-weight: 850;
   flex-shrink: 0;
 }
@@ -81,7 +81,7 @@
   font-size: 13px;
 }
 .profile-sport svg {
-  color: var(--gps);
+  color: var(--brand-accent);
 }
 .profile-recent {
   width: 100%;
@@ -135,7 +135,7 @@
   padding: 16px 20px;
   border-radius: 16px;
   background: var(--brand-primary);
-  color: var(--route-outline);
+  color: var(--on-strong);
   font-weight: 800 !important;
   border: 0;
 }
@@ -158,7 +158,7 @@
   width: 88px;
   height: 88px;
   background: var(--brand-primary);
-  color: var(--route-outline);
+  color: var(--on-strong);
   border-radius: 26px;
   margin: 35px 0;
 }

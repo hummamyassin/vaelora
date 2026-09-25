@@ -392,7 +392,7 @@
   border-radius: 10px;
 }
 .good .hour-bar > span {
-  background: var(--gps);
+  background: var(--score-good);
 }
 .v2-hourly strong {
   font-size: 20px;
@@ -1309,8 +1309,8 @@
   color: var(--text-primary);
 }
 .v2-dock .track-dock {
-  background: var(--brand-primary);
-  color: var(--route-outline);
+  background: #a61e2d;
+  color: #f6f1e8;
 }
 .v2-dock .ask-dock {
   color: var(--on-strong);
@@ -1470,8 +1470,8 @@
 }
 .v2-activity-switch button[aria-pressed="true"] {
   background: var(--strong-selected);
-  color: var(--brand-primary);
-  border-color: var(--brand-primary);
+  color: var(--on-strong);
+  border-color: var(--on-strong-muted);
 }
 .v2 .v2-text-action {
   min-height: 44px !important;
@@ -1514,11 +1514,11 @@
   background: transparent;
   color: var(--on-strong);
 }
-.v2-dock .track-dock[aria-pressed="false"] svg { color: var(--brand-primary); }
+.v2-dock .track-dock[aria-pressed="false"] svg { color: var(--on-strong-muted); }
 .v2-dock .track-dock[aria-pressed="true"] {
-  background: var(--brand-primary);
-  color: var(--route-outline);
-  box-shadow: inset 0 -3px 0 var(--route-outline);
+  background: var(--activity-live);
+  color: #171719;
+  box-shadow: inset 0 -3px 0 #527400;
 }
 /* Outdoor intelligence: compact quick actions and a clear question/answer. */
 .ai-intro {

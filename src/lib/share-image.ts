@@ -10,9 +10,9 @@ export async function createShareImage(
   if (!c) throw new Error("Canvas unavailable");
   const ar = model.locale === "ar";
   const dark = model.template !== "performance";
-  c.fillStyle = dark ? "#25161d" : "#f5eee6";
+  c.fillStyle = dark ? "#171719" : "#f6f1e8";
   c.fillRect(0, 0, 1080, 1440);
-  c.strokeStyle = model.template === "performance" ? "#8c2945" : "#a34757";
+  c.strokeStyle = model.template === "performance" ? "#a61e2d" : "#541c27";
   c.lineWidth = 3;
   for (let x = 20; x < 1080; x += 40) {
     c.beginPath();
@@ -25,13 +25,13 @@ export async function createShareImage(
   }
   c.textAlign = "center";
   c.direction = "ltr";
-  c.fillStyle = dark ? "#fbf4e9" : "#4c2131";
+  c.fillStyle = dark ? "#f6f1e8" : "#541c27";
   c.font = "700 38px Arial";
   c.fillText("VAELORA", 540, 128);
   c.font = "28px Arial";
   c.fillText(model.activity, 540, 183);
   const drawRoute = (left: number, top: number, size: number) => {
-    c.strokeStyle = "#efabac";
+    c.strokeStyle = "#a61e2d";
     c.lineWidth = 11;
     c.lineJoin = "round";
     c.lineCap = "round";
@@ -45,7 +45,7 @@ export async function createShareImage(
     }
   };
   const drawMotif = (top: number) => {
-    c.strokeStyle = model.template === "performance" ? "#8c2945" : "#efabac";
+    c.strokeStyle = model.template === "performance" ? "#a61e2d" : "#541c27";
     c.globalAlpha = 0.42;
     c.lineWidth = 7;
     for (let i = 0; i < 5; i++) {
@@ -59,25 +59,25 @@ export async function createShareImage(
   if (model.template === "map") {
     if (model.routeUseful) drawRoute(140, 230, 800);
     else drawMotif(420);
-    c.fillStyle = "#fbf4e9";
+    c.fillStyle = "#f6f1e8";
     c.font = "bold 104px Arial";
     c.fillText(model.distance, 500, 1110);
     c.font = "bold 48px Arial";
     c.fillText(ar ? "كم" : "km", 720, 1110);
   } else if (model.template === "performance") {
-    c.fillStyle = "#4c2131";
+    c.fillStyle = "#541c27";
     c.font = "bold 150px Arial";
     c.fillText(model.distance, 540, 420);
     c.font = "34px Arial";
     c.fillText(ar ? "كيلومتر" : "KILOMETRES", 540, 475);
-    c.fillStyle = "#fffaf3";
-    c.strokeStyle = "#dbcac8";
+    c.fillStyle = "#fffaf2";
+    c.strokeStyle = "#d2c5b8";
     c.lineWidth = 2;
     c.beginPath();
     c.roundRect(100, 560, 880, 360, 36);
     c.fill();
     c.stroke();
-    c.fillStyle = "#4c2131";
+    c.fillStyle = "#541c27";
     c.font = "bold 62px Arial";
     c.fillText(model.duration, 320, 720);
     c.fillText(model.pace, 760, 720);
@@ -87,7 +87,7 @@ export async function createShareImage(
     if (model.routeUseful) drawRoute(350, 950, 380);
     else drawMotif(920);
   } else {
-    c.fillStyle = "#8c2945";
+    c.fillStyle = "#a61e2d";
     c.beginPath();
     c.moveTo(0, 330);
     c.lineTo(1080, 170);
@@ -95,7 +95,7 @@ export async function createShareImage(
     c.lineTo(0, 920);
     c.closePath();
     c.fill();
-    c.fillStyle = "#fbf4e9";
+    c.fillStyle = "#f6f1e8";
     c.font = "bold 190px Arial";
     c.fillText(model.distance, 540, 650);
     c.font = "35px Arial";
@@ -106,12 +106,12 @@ export async function createShareImage(
     c.fillText(ar ? "الوقت النشط" : "ACTIVE TIME", 540, 1095);
   }
   if (model.template === "map" && !model.routeUseful) {
-    c.fillStyle = "#cfc0c3";
+    c.fillStyle = "#e8ded2";
     c.font = "25px Arial";
     c.fillText(ar ? "تُعرض المقاييس · المسار مخفي لحماية الخصوصية" : "Metrics shown · route hidden for privacy", 540, 880);
   }
   if (model.template === "map" || model.template === "performance") {
-    c.fillStyle = dark ? "#fbf4e9" : "#4c2131";
+    c.fillStyle = dark ? "#f6f1e8" : "#541c27";
     c.font = "36px Arial";
     c.direction = "ltr";
     const supporting = model.template === "map"
@@ -121,7 +121,7 @@ export async function createShareImage(
     if (conditions) c.fillText(conditions, 540, model.template === "map" ? 1190 : 1310);
   }
   c.direction = ar ? "rtl" : "ltr";
-  c.fillStyle = dark ? "#cfc0c3" : "#705d65";
+  c.fillStyle = dark ? "#e8ded2" : "#625b57";
   c.font = "24px Arial";
   c.fillText(
     ar
