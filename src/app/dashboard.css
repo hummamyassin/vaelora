@@ -87,6 +87,31 @@
   margin: auto;
   padding: 28px 0;
 }
+
+/* One viewport contract keeps every screen above the persistent dock. */
+.v2 {
+  --dock-reserve: calc(78px + env(safe-area-inset-bottom));
+  --header-reserve: calc(76px + env(safe-area-inset-top));
+  height: 100dvh;
+  overflow: hidden;
+  padding-bottom: 0;
+}
+.v2 > .v2-shell:not([hidden]) {
+  height: calc(100dvh - var(--header-reserve) - var(--dock-reserve));
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  scroll-padding-block: 24px;
+  padding-bottom: 28px;
+  scrollbar-gutter: stable;
+}
+.v2 > .v2-notice {
+  position: fixed;
+  top: calc(var(--header-reserve) + 8px);
+  inset-inline: 16px;
+  z-index: 25;
+  max-width: 680px;
+  margin-inline: auto;
+}
 .v2-location-row,
 .v2-title-row,
 .v2-section-heading {
@@ -1468,6 +1493,10 @@
   box-shadow: var(--shadow);
   z-index: 30;
 }
+.v2-dock:focus-within {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
 .v2-dock button {
   display: flex;
   align-items: center;
@@ -1603,6 +1632,35 @@
   color: var(--ai);
 }
 .ai-progress { color: var(--ai); font-size: 13px; padding: 10px 0; }
+.ai-reference {
+  display: grid;
+  gap: 7px;
+  margin: 14px 0;
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+.ai-reference select {
+  min-height: 48px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: var(--surface);
+  color: var(--text-primary);
+}
+.ai-recovery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+.ai-recovery button {
+  min-height: 44px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 9px 12px;
+  background: var(--surface);
+  color: var(--text-primary);
+}
 .v2-ai-answer[data-status$="error"] { border-inline-start-color: var(--danger); }
 .v2-ai-answer[data-status$="error"] h3 { color: var(--danger); }
 .v2-ai-answer summary {
@@ -1611,6 +1669,11 @@
   cursor: pointer;
 }
 @media (max-width: 600px) {
+  .v2 {
+    --dock-reserve: calc(82px + env(safe-area-inset-bottom));
+    --header-reserve: calc(68px + env(safe-area-inset-top));
+    padding-bottom: 0;
+  }
   .v2-shell {
     padding-top: 12px;
   }

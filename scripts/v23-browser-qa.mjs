@@ -49,13 +49,15 @@ const browser = await chromium.launch({
 const checks = [];
 try {
   for (const [locale, width, theme] of [
+    ["en", 320, "light"],
+    ["ar", 320, "dark"],
     ["en", 390, "dark"],
     ["ar", 390, "dark"],
     ["en", 1440, "light"],
     ["ar", 1440, "dark"],
   ]) {
     const ctx = await browser.newContext({
-      viewport: { width, height: width === 390 ? 844 : 1000 },
+      viewport: { width, height: width === 320 ? 700 : width === 390 ? 844 : 900 },
       colorScheme: theme,
       reducedMotion: "reduce",
       acceptDownloads: true,
@@ -139,6 +141,12 @@ try {
         false,
         `${name} overflow`,
       );
+      const clearance = await p.evaluate(() => {
+        const shell = document.querySelector(".v2-shell:not([hidden])")?.getBoundingClientRect();
+        const dock = document.querySelector(".v2-dock")?.getBoundingClientRect();
+        return shell && dock ? shell.bottom <= dock.top + 1 : false;
+      });
+      assert.equal(clearance, true, `${name} dock clearance`);
     };
     await snap("first-home");
     assert.equal(
@@ -171,8 +179,12 @@ try {
       .click();
     await p.locator(".discovery-map .score-map").waitFor();
     await p.waitForTimeout(1500);
+    assert.equal(await p.locator(".selected-area-marker").count(), 1);
     await snap("map");
-    await p.locator(".v2-dock button").first().click();
+    // Invoke the control directly only to bypass Next's development toolbar, which
+    // overlaps the bottom-left Home control at 320 px. Production has no such portal.
+    await p.locator(".v2-dock button").first().evaluate((button) => button.click());
+    await p.locator("#dashboard").waitFor({ state: "visible" });
     await p.locator(".featured-grid button").nth(1).click();
     await p.locator("dialog[open]").waitFor();
     await p.keyboard.press("Escape");
@@ -227,7 +239,9 @@ try {
       )
       .waitFor();
     await snap("recap");
-    assert.ok(await p.locator(".share-preview polyline").count());
+    assert.equal(await p.locator(".share-preview").getAttribute("data-route"), "metrics");
+    assert.equal(await p.locator(".share-preview polyline").count(), 0);
+    const shareImages = [];
     for (let i = 0; i < 3; i++) {
       await p.locator(".activity-share .v2-segment button").nth(i).click();
       const download = p.waitForEvent("download");
@@ -235,9 +249,12 @@ try {
       const d = await download;
       await d.saveAs(`${out}/${locale}-${width}-share-${i}.png`);
       const bytes = readFileSync(`${out}/${locale}-${width}-share-${i}.png`);
+      shareImages.push(bytes);
       assert.equal(bytes.readUInt32BE(16), 1080);
       assert.equal(bytes.readUInt32BE(20), 1440);
     }
+    assert.equal(shareImages[0].equals(shareImages[1]), false);
+    assert.equal(shareImages[1].equals(shareImages[2]), false);
     const fallback = p.waitForEvent("download");
     await p.locator(".activity-share .track-actions button").last().click();
     await fallback;
@@ -264,13 +281,17 @@ try {
     await p.locator(".track-heading button").click();
     await p.locator(".track-history button").first().click();
     await p.locator(".recap-title").waitFor();
-    await p.locator(".v2-dock button").first().click();
+    await p.locator(".v2-dock button").first().evaluate((button) => button.click());
+    await p.locator("#dashboard").waitFor({ state: "visible" });
     await p.locator(".personal-progress .progress-metrics").waitFor();
     await snap("returning-home");
     await p.locator(".profile-entry").click();
     await snap("profile");
     await p.keyboard.press("Escape");
-    await p.locator(".ask-dock").click();
+    await p.locator(".ask-dock").evaluate((button) => button.click());
+    await p.locator(".v2-ai").waitFor();
+    assert.equal(await p.locator("#ai-reference-area").inputValue(), "amman-central");
+    assert.equal(await p.locator(".v2-ai").getByText(/near me|بالقرب مني/i).count(), 0);
     await snap("ask");
     await p.keyboard.press("Escape");
     await p

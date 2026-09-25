@@ -67,6 +67,7 @@ test("Bilingual share model contains normalized drawing only and real metrics", 
       const model = shareModel(activity, locale, template);
       assert.equal(model.distance, "2.80");
       assert.equal(model.duration, "00:30:00");
+      assert.equal(model.routeUseful, false);
       assert.ok(
         model.route.flat().every((p) => p.every((v) => v >= 0.09 && v <= 0.91)),
       );
@@ -79,6 +80,17 @@ test("Bilingual share model contains normalized drawing only and real metrics", 
     shareModel({ ...activity, points: [], distanceM: 0 }, "ar", "map").pace,
     "—",
   );
+});
+test("Share model only marks privacy-safe geometry useful when it has real two-axis shape", () => {
+  const shaped = Array.from({ length: 41 }, (_, i) => ({
+    ...points[0],
+    latitude: 31.95 + Math.sin(i / 3) * 0.004,
+    longitude: 35.85 + i * 0.001,
+    timestamp: i * 10000,
+  }));
+  const model = shareModel({ ...activity, points: shaped, distanceM: 5000 }, "en", "map");
+  assert.equal(model.routeUseful, true);
+  assert.ok(model.route.flat().length >= 6);
 });
 test("Progress handles empty, single and partial weeks without fabricated comparisons", () => {
   const now = new Date("2026-09-23T12:00:00+03:00");

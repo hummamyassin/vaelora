@@ -197,7 +197,7 @@ export function ProfilePanel({
             <div className="profile-stats">
               <div>
                 <strong>{totals.count}</strong>
-                <span>{t("Activities", "أنشطة")}</span>
+                <span>{t("Activities", totals.count === 1 ? "نشاط" : totals.count === 2 ? "نشاطان" : totals.count <= 10 ? "أنشطة" : "نشاطًا")}</span>
               </div>
               <div>
                 <strong>{(totals.distanceM / 1000).toFixed(1)}</strong>
@@ -268,7 +268,7 @@ export function ProfilePanel({
           </>
         )}
       </section>
-      <PersonalProgress activities={activities} locale={profile.locale} onOpen={onActivity}/>
+      <PersonalProgress activities={activities} locale={profile.locale} onOpen={onActivity} mode="bests" />
       <button className="profile-recent" onClick={onPlaces}>
         {t("Saved Areas", "المناطق المحفوظة")}
         <ArrowUpRight size={18} />

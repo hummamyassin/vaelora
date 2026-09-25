@@ -77,42 +77,25 @@ export function ActivityShare({
           </button>
         ))}
       </div>
-      <div className="share-preview" data-template={template}>
+      <div className="share-preview" data-template={template} data-route={model.routeUseful ? "route" : "metrics"}>
         <strong>VAELORA</strong>
-        <span>{model.activity}</span>
-        <svg
-          viewBox="0 0 100 100"
-          role="img"
-          aria-label={t(
-            "Privacy-protected route sketch",
-            "رسم المسار بعد حماية الخصوصية",
-          )}
-        >
-          {model.route.map((path, i) => (
-            <polyline
-              key={i}
-              points={path.map(([x, y]) => `${x * 100},${y * 100}`).join(" ")}
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          ))}
-        </svg>
-        {!model.route.length && (
-          <small>
-            {t("Route hidden for privacy", "المسار مخفي لحماية الخصوصية")}
-          </small>
+        <span className="share-activity">{model.activity}</span>
+        {template === "map" && model.routeUseful ? (
+          <svg viewBox="0 0 100 100" role="img" aria-label={t("Privacy-protected route sketch", "رسم المسار بعد حماية الخصوصية")}>
+            {model.route.map((path, i) => <polyline key={i} points={path.map(([x, y]) => `${x * 100},${y * 100}`).join(" ")} fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />)}
+          </svg>
+        ) : (
+          <div className="share-motif" aria-label={t("VAELORA geometric illustration; not a route", "رسم هندسي من VAELORA؛ وليس مسارًا")}>
+            <i /><i /><i />
+          </div>
         )}
-        <b dir="ltr">
-          {model.distance} {t("km", "كم")}
-        </b>
-        {template !== "minimal" && (
-          <span dir="ltr">
-            {model.duration} · {model.pace} /{t("km", "كم")}
-          </span>
-        )}
+        {!model.routeUseful && template === "map" && <small>{t("Metrics shown · route hidden for privacy", "تُعرض المقاييس · المسار مخفي لحماية الخصوصية")}</small>}
+        <div className="share-primary"><b dir="ltr">{model.distance}</b><span>{t("km", "كم")}</span></div>
+        <div className="share-secondary" dir="ltr">
+          <span><b>{model.duration}</b>{t("Active time", "الوقت النشط")}</span>
+          {model.pace !== "—" && <span><b>{model.pace}</b>{t("Average pace /km", "متوسط الوتيرة /كم")}</span>}
+        </div>
+        {(model.temperature != null || model.score != null) && template !== "minimal" && <span className="share-conditions" dir="ltr">{model.temperature != null ? `${model.temperature}°C` : ""}{model.temperature != null && model.score != null ? " · " : ""}{model.score != null ? `VAELORA ${model.score}/100` : ""}</span>}
       </div>
       <div className="track-actions">
         <button disabled={busy} onClick={() => void exportImage(false)}>

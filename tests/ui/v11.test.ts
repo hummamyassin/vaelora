@@ -17,7 +17,11 @@ test("V1.1 coverage maps each production ID once and every area has Arabic cavea
     assert.match(areaDescription("ar",area), /[\u0600-\u06ff]/);
     assert.equal(areaName("en",area),area.name);
   }
-  for(const [en,ar] of Object.values(messages)) { assert.ok(en.trim()); assert.match(ar,/[\u0600-\u06ff]/); }
+  for(const [key,[en,ar]] of Object.entries(messages)) {
+    assert.ok(en.trim());
+    if (key === "brand") assert.equal(ar, "VAELORA");
+    else assert.match(ar, /[\u0600-\u06ff]/);
+  }
 });
 test("Haversine is geographic, symmetric, bounded and rejects invalid positions",()=>{
   const a={latitude:0,longitude:0}, b={latitude:0,longitude:1};

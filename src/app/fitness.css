@@ -137,10 +137,12 @@
   align-items: center;
   gap: 10px;
   font-size: 13px;
+  min-height: 44px;
+  padding: 7px 10px;
 }
 .track-wake input {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   margin: 0;
   accent-color: var(--text-primary);
 }
@@ -707,10 +709,22 @@
   flex-wrap: wrap;
   justify-content: space-between;
   gap: 8px;
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.7;
   color: var(--on-strong-muted);
   margin: 16px 0 0;
+}
+.track-recovery {
+  border: 2px solid var(--brand-accent);
+  box-shadow: var(--shadow);
+  margin-top: 18px;
+}
+.track-recovery .v2-kicker {
+  color: var(--brand-accent);
+}
+.track-recovery .track-actions button:first-of-type {
+  background: var(--brand-accent);
+  color: var(--background);
 }
 .track-gps > span:first-child {
   color: var(--route);
@@ -838,6 +852,25 @@
   outline: 2px solid var(--on-strong);
   outline-offset: 3px;
 }
+.selected-area-marker {
+  width: 52px;
+  height: 52px;
+  z-index: 3;
+  background: var(--route) !important;
+  color: #fff !important;
+  border-color: #fff !important;
+  box-shadow: 0 0 0 6px #a6264935, 0 8px 20px var(--shadow-color);
+}
+.score-map .map-loading {
+  display: grid;
+  place-items: center;
+  inset: 0;
+  margin: 0;
+  z-index: 4;
+  background: linear-gradient(135deg, var(--surface-elevated), var(--surface));
+  color: var(--text-secondary);
+  font-size: 14px;
+}
 .area-cluster-marker {
   width: 44px;
   height: 44px;
@@ -890,7 +923,7 @@
     font-size: 19px;
   }
   .track-gps {
-    font-size: 10px;
+    font-size: 12px;
     gap: 5px;
   }
   .track-app[data-session="live"] .track-heading h1 {

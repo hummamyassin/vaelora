@@ -8,18 +8,22 @@ export function PersonalProgress({
   activities,
   locale,
   onOpen,
+  mode = "full",
 }: {
   activities: RecordedActivity[];
   locale: "en" | "ar";
   onOpen?: (id: string) => void;
+  mode?: "full" | "bests";
 }) {
   const p = personalProgress(activities),
     ar = locale === "ar",
-    t = (en: string, a: string) => (ar ? a : en);
+    t = (en: string, a: string) => (ar ? a : en),
+    activityNoun = (count: number) =>
+      !ar ? (count === 1 ? "Activity" : "Activities") : count === 1 ? "نشاط" : count === 2 ? "نشاطان" : count <= 10 ? "أنشطة" : "نشاطًا";
   return (
     <section className="personal-progress">
-      <p className="v2-kicker">{t("KEEP YOUR RHYTHM", "حافظ على إيقاعك")}</p>
-      <h2>{t("This week", "هذا الأسبوع")}</h2>
+      <p className="v2-kicker">{mode === "bests" ? t("PERSONAL BESTS", "أفضل إنجازاتك") : t("KEEP YOUR RHYTHM", "حافظ على إيقاعك")}</p>
+      <h2>{mode === "bests" ? t("Your best efforts", "أفضل أنشطتك") : t("This week", "هذا الأسبوع")}</h2>
       {!activities.length ? (
         <p>
           {t(
@@ -29,10 +33,10 @@ export function PersonalProgress({
         </p>
       ) : (
         <>
-          <div className="progress-metrics">
+          {mode === "full" && <div className="progress-metrics">
             <div>
               <b>{p.week.count}</b>
-              <span>{t("Activities", "أنشطة")}</span>
+              <span>{activityNoun(p.week.count)}</span>
             </div>
             <div>
               <b>{(p.week.distanceM / 1000).toFixed(2)}</b>
@@ -40,13 +44,13 @@ export function PersonalProgress({
             </div>
             <div>
               <b>{durationLabel(p.week.activeMs)}</b>
-              <span>{t("Active time", "وقت نشط")}</span>
+              <span>{t("Active time", "الوقت النشط")}</span>
             </div>
-          </div>
-          {p.previous && (
+          </div>}
+          {mode === "full" && p.previous && (
             <p>
               {t("Previous full week", "الأسبوع السابق كاملًا")}:{" "}
-              {p.previous.count} {t("activities", "أنشطة")} ·{" "}
+              {p.previous.count} {activityNoun(p.previous.count).toLocaleLowerCase()} ·{" "}
               {(p.previous.distanceM / 1000).toFixed(2)} {t("km", "كم")} ·{" "}
               {durationLabel(p.previous.activeMs)}
             </p>
@@ -59,7 +63,7 @@ export function PersonalProgress({
                     ? t("Walking", "المشي")
                     : t("Running", "الجري")}
                 </h3>
-                {p[kind].paceSeconds !== null && (
+                {mode === "full" && p[kind].paceSeconds !== null && (
                   <p>
                     {t("Weekly average pace", "متوسط الوتيرة الأسبوعي")}:{" "}
                     <bdi>
@@ -84,7 +88,7 @@ export function PersonalProgress({
               </div>
             ))}
           </div>
-          {p.recent && onOpen && (
+          {mode === "full" && p.recent && onOpen && (
             <button onClick={() => onOpen(p.recent!.id)}>
               {t("Revisit your latest activity", "راجع نشاطك الأخير")} ↗
             </button>

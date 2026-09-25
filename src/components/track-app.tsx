@@ -275,6 +275,11 @@ export function TrackApp({
     return () => cancelAnimationFrame(frame);
   }, [openActivityId, history, state, onActivityOpened]);
   function start() {
+    if (drafts.length) {
+      setNotice("unfinished");
+      document.querySelector(".track-recovery")?.scrollIntoView({ block: "center" });
+      return;
+    }
     if (
       engine.current &&
       ["recording", "paused"].includes(engine.current.data.state)
@@ -404,6 +409,11 @@ export function TrackApp({
                     "The share card could not be created. Try again; your activity is still saved.",
                     "تعذر إنشاء بطاقة المشاركة. حاول مجددًا؛ نشاطك ما زال محفوظًا.",
                   )
+                : notice === "unfinished"
+                  ? text(
+                      "Resume or discard the unfinished activity before starting another one.",
+                      "استأنف النشاط غير المكتمل أو احذفه قبل بدء نشاط جديد.",
+                    )
                 : text(
                     "GPS signal interrupted. Missing points are not invented; recording resumes with a route gap.",
                     "انقطعت إشارة GPS. لن نختلق نقاطًا مفقودة؛ يُستأنف المسار مع فجوة.",
@@ -454,7 +464,7 @@ export function TrackApp({
           </div>
         </section>
       )}
-      {!summary && (!a || state === "idle" || state === "finished") && (
+      {!summary && drafts.length === 0 && (!a || state === "idle" || state === "finished") && (
         <section className="track-ready v21-panel">
           <div className="v2-segment">
             {(["walking", "running"] as const).map((k) => (
@@ -500,8 +510,9 @@ export function TrackApp({
         </section>
       )}
       {!summary && drafts.length > 0 && (!a || state === "finished") && (
-        <section className="v21-panel">
-          <h2>{text("Unfinished activity", "نشاط غير مكتمل")}</h2>
+        <section className="v21-panel track-recovery" aria-labelledby="recovery-title">
+          <p className="v2-kicker">{text("CONTINUE WHERE YOU LEFT OFF", "تابع من حيث توقفت")}</p>
+          <h2 id="recovery-title">{text("Unfinished activity found", "عُثر على نشاط غير مكتمل")}</h2>
           <p>
             {text(
               "Recovered at the last local checkpoint. Unobserved time and movement are excluded.",
@@ -526,7 +537,7 @@ export function TrackApp({
                   refresh();
                 }}
               >
-                {text("Recover paused", "استعادة متوقفًا مؤقتًا")}
+                {text("Resume activity", "استئناف النشاط")}
               </button>
               <button
                 onClick={() => {
@@ -544,7 +555,7 @@ export function TrackApp({
                       .catch(() => setStorageError(true));
                 }}
               >
-                {text("Discard", "حذف")}
+                {text("Discard activity", "حذف النشاط")}
               </button>
             </div>
           ))}

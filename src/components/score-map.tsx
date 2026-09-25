@@ -27,7 +27,8 @@ export function ScoreMap({
 }) {
   const container = useRef<HTMLDivElement>(null),
     mapRef = useRef<ml.Map | null>(null),
-    [failed, setFailed] = useState(false);
+    [failed, setFailed] = useState(false),
+    [loaded, setLoaded] = useState(false);
   useMapLabels(container, locale);
   useEffect(() => {
     let map: ml.Map;
@@ -60,8 +61,13 @@ export function ScoreMap({
     const resize = new ResizeObserver(() => map.resize());
     resize.observe(container.current!);
     map.addControl(new ml.NavigationControl({ showCompass: false }));
+    const ready = () => setLoaded(true);
+    map.once("render", ready);
+    map.once("load", ready);
     map.on("error", () => setFailed(true));
     return () => {
+      map.off("render", ready);
+      map.off("load", ready);
       resize.disconnect();
       map.remove();
       mapRef.current = null;
@@ -80,6 +86,38 @@ export function ScoreMap({
       marker.remove();
     };
   }, [origin, locale]);
+  useEffect(() => {
+    const map = mapRef.current;
+    const row = rows.find((r) => r.area.id === selectedAreaId);
+    if (!map || !row) return;
+    const score = row.days[0][activity].score;
+    const el = document.createElement("button");
+    el.className = "area-score-marker selected-area-marker";
+    el.type = "button";
+    el.dataset.selected = "true";
+    el.dataset.area = row.area.name[locale];
+    el.textContent = `${score ?? "—"}`;
+    el.title = `${locale === "ar" ? "المكان المحدد" : "Selected place"}: ${row.area.name[locale]} · ${score ?? "—"}/100`;
+    el.setAttribute("aria-label", el.title);
+    el.onclick = () => onSelect(row.area.id);
+    const marker = new ml.Marker({ element: el })
+      .setLngLat([row.area.longitude, row.area.latitude])
+      .addTo(map);
+    const focus = () =>
+      map.easeTo({
+        center: [row.area.longitude, row.area.latitude],
+        zoom: Math.max(map.getZoom(), 12),
+        duration: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+          ? 0
+          : 350,
+      });
+    if (map.loaded()) focus();
+    else map.once("load", focus);
+    return () => {
+      map.off("load", focus);
+      marker.remove();
+    };
+  }, [rows, activity, locale, selectedAreaId, onSelect]);
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
@@ -101,7 +139,7 @@ export function ScoreMap({
         visible.add(key);
         if (markers.has(key)) continue;
         const r = rows.find((row) => row.area.id === props.areaId);
-        if (!cluster && !r) continue;
+        if (!cluster && (!r || r.area.id === selectedAreaId)) continue;
         const el = document.createElement("button");
         el.className = cluster ? "area-cluster-marker" : "area-score-marker";
         el.type = "button";
@@ -228,6 +266,11 @@ export function ScoreMap({
           {locale === "ar"
             ? "خلفية الخريطة غير متاحة. قارن بطاقات المناطق أدناه."
             : "Map background unavailable. Compare area cards below."}
+        </p>
+      )}
+      {!loaded && !failed && (
+        <p className="map-loading" role="status">
+          {locale === "ar" ? "جارٍ تجهيز الخريطة…" : "Preparing the map…"}
         </p>
       )}
     </div>

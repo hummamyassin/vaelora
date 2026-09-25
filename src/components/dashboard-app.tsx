@@ -1250,6 +1250,7 @@ export function DashboardApp() {
             </details>
           </footer>
         </details>
+        <PwaStatus locale={locale} />
       </div>
       <div className="v2-shell" hidden={view !== "track"}>
         <TrackApp
@@ -1288,6 +1289,7 @@ export function DashboardApp() {
             };
           }}
         />
+        <PwaStatus locale={locale} />
       </div>
       {view !== "home" && view !== "track" && (
         <div className="v2-shell">
@@ -1316,9 +1318,9 @@ export function DashboardApp() {
               }}
             />
           )}
+          <PwaStatus locale={locale} />
         </div>
       )}
-      <PwaStatus locale={locale} />
       {ready && !profile.onboarding && (
         <Onboarding profile={{ ...profile, locale }} save={updateProfile} />
       )}
@@ -1363,7 +1365,7 @@ export function DashboardApp() {
         </button>
         <button className="ask-dock" onClick={() => setSheet("ai")}>
           <Sparkles size={20} />
-          {text("Ask VAELORA", "اسأل VAELORA")}
+          {text("Ask", "اسأل")}
         </button>
       </nav>
       {sheet && (
@@ -1569,12 +1571,28 @@ export function DashboardApp() {
               </p>
               <p className="ai-grounding">
                 {text("AI planning reference", "مرجع التخطيط للذكاء الاصطناعي")}
-                : {area.name[locale]}.{" "}
+                : <strong>{area.name[locale]}</strong>.{" "}
                 {text(
                   "Dynamic GPS cells and activity routes are never sent to the model.",
                   "لا تُرسل خلايا GPS الديناميكية أو مسارات الأنشطة إلى النموذج.",
                 )}
               </p>
+              <label className="ai-reference" htmlFor="ai-reference-area">
+                <span>{text("Reference area", "المنطقة المرجعية")}</span>
+                <select
+                  id="ai-reference-area"
+                  value={areaId}
+                  onChange={(e) => {
+                    setAreaId(e.target.value);
+                    setOrigin(null);
+                    setAnswer(null);
+                  }}
+                >
+                  {weatherAreas.map((option) => (
+                    <option key={option.id} value={option.id}>{option.name[locale]}</option>
+                  ))}
+                </select>
+              </label>
               <div className="v2-suggestions">
                 {[
                   text(
@@ -1582,8 +1600,8 @@ export function DashboardApp() {
                     "متى أفضل وقت للمشي اليوم؟",
                   ),
                   text(
-                    "Where should I run near me?",
-                    "أين يمكنني الجري بالقرب مني؟",
+                    `Where should I run around ${area.name.en}?`,
+                    `أين يمكنني الجري قرب ${area.name.ar}؟`,
                   ),
                   text(
                     "Compare Shafa Badran and Jubaiha",
@@ -1667,6 +1685,19 @@ export function DashboardApp() {
                         ))}
                       </ol>
                     </details>
+                  )}
+                  {!answer.status.endsWith("error") && (
+                    <div className="ai-recovery" aria-label={text("Try another plan", "جرّب خطة أخرى")}>
+                      <button onClick={() => { setPrompt(text(`What is the best time tomorrow around ${area.name.en}?`, `ما أفضل وقت غدًا قرب ${area.name.ar}؟`)); document.getElementById("v2-prompt")?.focus(); }}>
+                        {text("Check tomorrow", "تحقق من ظروف الغد")}
+                      </button>
+                      <button onClick={() => document.getElementById("ai-reference-area")?.focus()}>
+                        {text("Choose another area", "اختر منطقة أخرى")}
+                      </button>
+                      <button onClick={() => setSheet("filters")}>
+                        {text("Adjust preferences", "عدّل التفضيلات")}
+                      </button>
+                    </div>
                   )}
                 </div>
               )}

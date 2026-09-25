@@ -24,6 +24,7 @@ import type {
 import { LocationArt } from "./location-art";
 import { PersonalProgress } from "./personal-progress";
 import { AppDialog } from "./app-dialog";
+import { planningState } from "../domain/recommendation/plan-state";
 const ScoreMap = dynamic(() => import("./score-map").then((m) => m.ScoreMap), {
   ssr: false,
 });
@@ -32,6 +33,7 @@ export interface DiscoveryMapData {
   name: string;
   places: DiscoveryResponse["places"];
   activity: ActivityKind;
+  selectedAreaId?: string;
 }
 export function DiscoveryMap({
   data,
@@ -41,7 +43,9 @@ export function DiscoveryMap({
   locale: Locale;
 }) {
   const activity = data.activity;
-  const [selected, setSelected] = useState("");
+  const [selected, setSelected] = useState(
+    data.selectedAreaId ?? data.places[0]?.area.id ?? "",
+  );
   const rows = data.places.map((p) => ({
     area: {
       ...p.area,
@@ -57,13 +61,13 @@ export function DiscoveryMap({
   const place = data.places.find((p) => p.area.id === selected);
   return (
     <section className="discovery-map">
-      <h2>{locale === "ar" ? "استكشف بالقرب من موقعك" : "Explore nearby"}</h2>
-      <p>
-        {data.name} ·{" "}
-        {locale === "ar"
-          ? "نقطة حمراء: الموقع المحدد · الأرقام: مؤشر ملاءمة المكان للفترة المقترحة"
-          : "Red point: selected location · numbers: place fit for the proposed window"}
-      </p>
+      <header className="map-heading">
+        <p className="v2-kicker">
+          {locale === "ar" ? "أماكن مدروسة بالقرب منك" : "REVIEWED PLACES NEARBY"}
+        </p>
+        <h2>{locale === "ar" ? "استكشف الأماكن القريبة" : "Explore nearby"}</h2>
+        <p>{data.name}</p>
+      </header>
       <ScoreMap
         rows={rows}
         activity={activity}
@@ -72,6 +76,12 @@ export function DiscoveryMap({
         selectedAreaId={selected}
         onSelect={setSelected}
       />
+      <div className="map-legend" aria-label={locale === "ar" ? "دليل الخريطة" : "Map legend"}>
+        <span><i data-kind="selected" />{locale === "ar" ? "المكان المحدد" : "Selected place"}</span>
+        <span><i data-kind="origin" />{locale === "ar" ? "نقطة البحث" : "Search origin"}</span>
+        <span><i data-kind="score" />{locale === "ar" ? "مؤشر ملاءمة مدروس" : "Reviewed place fit"}</span>
+        <span><i data-kind="cluster" />{locale === "ar" ? "مجموعة أماكن" : "Place cluster"}</span>
+      </div>
       {place && (
         <div className="v21-panel">
           <h3>{areaName(locale, place.area)}</h3>
@@ -186,10 +196,11 @@ export function DiscoveryHome({
             name,
             activity,
             places: data?.request.activity === activity ? data.places : [],
+            selectedAreaId: selected ?? undefined,
           }
         : null,
     );
-  }, [point, name, activity, data, onMapData]);
+  }, [point, name, activity, data, selected, onMapData]);
   const cell = point ? locationContext(point)?.cellId : null,
     key = JSON.stringify({
       cellId: cell,
@@ -314,6 +325,12 @@ export function DiscoveryHome({
   );
   const current = data?.outlook.current,
     plan = data?.plan;
+  const planState = planningState({
+    hasLocation: !!point,
+    loading: busy,
+    failed,
+    status: plan?.status,
+  });
   const best = nearby.find(
     (p) => p.plan.status === "now" || p.plan.status === "later",
   );
@@ -338,6 +355,16 @@ export function DiscoveryHome({
           : plan.status === "later"
             ? t("A better window is ahead.", "فترة أفضل بانتظارك.")
             : t("No suitable window today.", "لا تتوفر فترة ملائمة اليوم.");
+  const planAction =
+    planState === "recommended"
+      ? t("Start recommended activity", "ابدأ النشاط الموصى به")
+      : planState === "weather-unavailable"
+        ? t("Start tracking — conditions unavailable", "ابدأ التسجيل — تعذّر تقييم الطقس")
+        : planState === "no-window"
+          ? t("Track without a recommendation", "سجّل نشاطًا دون توصية")
+          : planState === "location-unavailable"
+            ? t("Track without a location plan", "سجّل نشاطًا دون خطة مكانية")
+            : t("Start tracking", "ابدأ التسجيل");
   const featured = activityAreas.filter((a) =>
     ["sports-city", "king-hussein-park", "national-gallery-park"].includes(
       a.id,
@@ -369,7 +396,7 @@ export function DiscoveryHome({
   };
   return (
     <div className="discovery-home">
-      <section className="daily-plan" aria-busy={busy}>
+      <section className="daily-plan" aria-busy={busy} data-plan-state={planState}>
         <div className="plan-heading">
           <p className="v2-kicker">{t("YOUR PLAN FOR TODAY", "خطتك لليوم")}</p>
           <span>{name || t("GREATER AMMAN", "عمّان الكبرى")}</span>
@@ -437,29 +464,24 @@ export function DiscoveryHome({
             {t("km approx.", "كم تقريبًا")}
           </p>
         )}
-        <button className="quick-start" onClick={onStart}>
-          {t("Start Activity", "ابدأ النشاط")} <ArrowUpRight size={20} />
+        <button className="quick-start" onClick={onStart} data-recommended={planState === "recommended"}>
+          {planAction} <ArrowUpRight size={20} />
         </button>
-        <small>
+        <small className="plan-safety">
           {t(
-            "Start uses GPS to record your route locally. Keep the screen visible while tracking.",
-            "يستخدم البدء GPS لتسجيل مسارك محليًا. أبقِ الشاشة ظاهرة أثناء التتبّع.",
+            "When you start, GPS records your route locally. Forecasts do not guarantee route safety.",
+            "عند بدء النشاط، يُستخدم GPS لتسجيل مسارك محليًا. لا تضمن التوقعات سلامة المسار.",
           )}
         </small>
-        <small>
-          {t(
-            "Conditions are forecasts, not route safety. Check access and your surroundings.",
-            "الظروف توقعات وليست ضمانًا لسلامة المسار. تحقق من الدخول ومحيطك.",
-          )}
-        </small>
-        {point && (
-          <small>
+        <details className="plan-details">
+          <summary>{t("Planning & privacy details", "تفاصيل التخطيط والخصوصية")}</summary>
+          <p>
             {t(
-              "Area characteristics not yet verified. Nearby place facts are reviewed separately.",
-              "خصائص المنطقة غير موثّقة بعد. تُراجع معلومات الأماكن القريبة بشكل مستقل.",
+              "Keep this page visible while tracking. Check access and your surroundings. Area-level conditions and reviewed place facts are handled separately.",
+              "أبقِ هذه الصفحة ظاهرة أثناء التتبّع، وتحقق من إمكانية الدخول ومحيطك. تُعرض ظروف المنطقة ومعلومات الأماكن الموثّقة كلٌّ على حدة.",
             )}
-          </small>
-        )}
+          </p>
+        </details>
       </section>
       <section className="discovery-location">
         <div className="section-heading">
@@ -476,12 +498,16 @@ export function DiscoveryHome({
               : t("Use my location", "استخدم موقعي")}
           </button>
         </div>
-        <p>
+        <p className="location-reassurance">
           {t(
-            "Location helps find nearby places and local weather. Precise GPS stays here; only an approximate weather cell is sent for forecasts. Search terms go to Photon / OpenStreetMap.",
-            "يساعد الموقع في إيجاد أماكن قريبة وطقس محلي. تبقى إحداثيات GPS الدقيقة هنا؛ تُرسل خلية تقريبية للتوقعات فقط. تُرسل كلمات البحث إلى Photon / OpenStreetMap.",
+            "Your precise GPS stays on this device; forecasts use an approximate area.",
+            "يبقى موقع GPS الدقيق على هذا الجهاز، وتستخدم التوقعات منطقة تقريبية.",
           )}
         </p>
+        <details className="location-details">
+          <summary>{t("How location and search work", "كيف نستخدم الموقع والبحث")}</summary>
+          <p>{t("Location finds nearby places and local weather. Search terms are sent to Photon / OpenStreetMap.", "يساعد الموقع في إيجاد أماكن قريبة وطقس محلي. تُرسل كلمات البحث إلى Photon / OpenStreetMap.")}</p>
+        </details>
         {geoCopy[geo] && (
           <p role="status" className="v21-notice">
             {geoCopy[geo]}
@@ -586,7 +612,7 @@ export function DiscoveryHome({
               </select>
               <button
                 onClick={() =>
-                  onMap({ point, name, activity, places: data?.places ?? [] })
+                  onMap({ point, name, activity, places: data?.places ?? [], selectedAreaId: selected ?? best?.area.id })
                 }
               >
                 {t("View map", "عرض الخريطة")} ↗
@@ -664,7 +690,7 @@ export function DiscoveryHome({
                 environment={a.environment}
               />
               <span>
-                {t("Reviewed place profile", "معلومات مكان مراجعة")}{" "}
+                {t("Reviewed place profile", "معلومات مكان موثّقة")}{" "}
                 <ArrowUpRight size={17} />
               </span>
             </button>

@@ -83,11 +83,21 @@ export function shareModel(
       ]),
     );
   }
+  const flatDrawing = drawing.flat();
+  const drawingWidth = flatDrawing.length
+    ? Math.max(...flatDrawing.map((p) => p[0])) - Math.min(...flatDrawing.map((p) => p[0]))
+    : 0;
+  const drawingHeight = flatDrawing.length
+    ? Math.max(...flatDrawing.map((p) => p[1])) - Math.min(...flatDrawing.map((p) => p[1]))
+    : 0;
+  const routeUseful =
+    flatDrawing.length >= 6 && drawingWidth >= 0.08 && drawingHeight >= 0.08;
   const valid = a.points.length >= 2 && a.distanceM >= 50;
   return {
     template,
     locale,
     route: drawing,
+    routeUseful,
     activity:
       locale === "ar"
         ? a.activity === "walking"
@@ -99,5 +109,7 @@ export function shareModel(
     distance: valid ? (a.distanceM / 1000).toFixed(2) : "—",
     duration: durationLabel(a.activeMs),
     pace: valid ? paceLabel(metrics(a).averagePaceSeconds) : "—",
+    score: a.conditions?.score ?? null,
+    temperature: a.conditions?.temperatureC ?? null,
   };
 }
