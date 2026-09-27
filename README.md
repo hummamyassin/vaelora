@@ -57,9 +57,37 @@ Weather primarily helps determine **when** conditions are suitable and secondari
 
 ## Product screenshots
 
-Current production screenshots are not committed to the repository. Final images will be added here after they are selected from the current production interface.
+### Plan
 
-Planned coverage: **Home / Planning · Map · Activity Tracking · Activity Summary · Ask VAELORA**
+<p align="center">
+  <img src="public/screenshots/Home%20%20VAELORA%20Score.jpeg" width="300" alt="VAELORA Home showing the daily plan and nearby activity discovery">
+  <img src="public/screenshots/Plan%20Your%20Activity.jpeg" width="300" alt="VAELORA activity plan showing the score, best window, and start activity action">
+</p>
+<p align="center"><sub><strong>Home and nearby discovery</strong> · <strong>VAELORA Score and best window</strong></sub></p>
+
+### Understand conditions
+
+<p align="center">
+  <img src="public/screenshots/Hour-by-Hour%20Weather.jpeg" width="300" alt="VAELORA hour-by-hour weather intelligence with activity scores and conditions">
+  <img src="public/screenshots/Map%20Scores.jpeg" width="300" alt="VAELORA MapLibre map showing clustered area scores and a selected place">
+</p>
+<p align="center"><sub><strong>Hour-by-hour weather intelligence</strong> · <strong>Area scores on the map</strong></sub></p>
+
+### Ask
+
+<p align="center">
+  <img src="public/screenshots/Ask%20VAELORA.jpeg" width="300" alt="Ask VAELORA interface with reference area, suggested prompts, and question input">
+  <img src="public/screenshots/AI%20Answer.jpeg" width="300" alt="Grounded Ask VAELORA answer showing deterministic score, time window, and reviewed place">
+</p>
+<p align="center"><sub><strong>Grounded outdoor planning</strong> · <strong>Tool-backed recommendation answer</strong></sub></p>
+
+### Track and share
+
+<p align="center">
+  <img src="public/screenshots/Live%20Activity%20Tracking.jpeg" width="300" alt="VAELORA live GPS walking activity with timer, distance, pace, controls, and map">
+  <img src="public/screenshots/Privacy%20Share%20Card.jpeg" width="300" alt="VAELORA privacy-aware activity share card with route hidden and local metrics">
+</p>
+<p align="center"><sub><strong>Live GPS activity tracking</strong> · <strong>Privacy-aware share card</strong></sub></p>
 
 ## Technology
 
