@@ -2,15 +2,15 @@ import type { MetadataRoute } from "next";
 export default function manifest(): MetadataRoute.Manifest {
   return {
     id: "/",
-    name: "VAELORA — Plan, Track, Analyze",
+    name: "VAELORA: Plan, Track, Analyze",
     short_name: "VAELORA",
     description:
       "Outdoor planning and local walking/running activity recording.",
     start_url: "/",
     scope: "/",
     display: "standalone",
-    background_color: "#f2f2ee",
-    theme_color: "#4b1723",
+    background_color: "#eceff1",
+    theme_color: "#0d1724",
     icons: [
       {
         src: "/icons/icon-192.png",

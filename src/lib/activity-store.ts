@@ -2,6 +2,7 @@ import {
   validateActivity,
   type RecordedActivity,
 } from "../domain/tracking/activity.ts";
+import { planImport } from "../domain/tracking/backup.ts";
 const databaseName = "vaelora-activities";
 function changed() {
   if (typeof window !== "undefined")
@@ -75,6 +76,33 @@ export async function loadDrafts() {
     s.getAll(),
   );
   return data.map(validateActivity).sort((a, b) => b.updatedAt - a.updatedAt);
+}
+/** Adds validated finished activities; IDs already stored are left untouched. */
+export async function importActivities(incoming: readonly RecordedActivity[]) {
+  const rows = incoming.map(validateActivity);
+  if (rows.some((a) => a.state !== "finished"))
+    throw new Error("Activity is not finished");
+  const db = await openDatabase();
+  let result = { added: 0, skipped: 0 };
+  try {
+    await new Promise<void>((resolve, reject) => {
+      const tx = db.transaction("activities", "readwrite"),
+        store = tx.objectStore("activities"),
+        keys = store.getAllKeys();
+      keys.onsuccess = () => {
+        const plan = planImport(rows, keys.result as string[]);
+        for (const a of plan.add) store.add(a);
+        result = { added: plan.add.length, skipped: plan.skipped };
+      };
+      tx.oncomplete = () => resolve();
+      tx.onerror = tx.onabort = () =>
+        reject(new Error("Activities could not be imported"));
+    });
+  } finally {
+    db.close();
+  }
+  if (result.added) changed();
+  return result;
 }
 export async function deleteActivity(id: string) {
   await transact("activities", "readwrite", (s) => s.delete(id));

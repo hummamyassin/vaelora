@@ -2,18 +2,29 @@
 import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import {
-  LocateFixed,
-  Search,
-  ArrowUpRight,
-  Footprints,
   Activity,
+  ArrowUpRight,
+  ChevronRight,
+  Footprints,
+  LocateFixed,
+  Map as MapIcon,
+  RefreshCw,
+  Search,
 } from "lucide-react";
 import { activityAreas } from "../data/activity-areas";
 import { weatherAreas } from "../data/weather-areas";
 import { locationContext } from "../lib/dynamic-location";
 import { rankNearby } from "../domain/recommendation/nearby";
 import { distanceKm, type Coordinates } from "../lib/geography";
-import { areaName, areaDescription, label, type Locale } from "../lib/i18n";
+import {
+  areaDescription,
+  areaName,
+  label,
+  numberText,
+  translator,
+  type Locale,
+} from "../lib/i18n";
+import { homeCopy } from "../lib/copy/home";
 import type { DiscoveryResponse } from "../server/recommendations/discovery";
 import type { SearchPlace } from "../server/geocoding";
 import type {
@@ -23,7 +34,8 @@ import type {
 } from "../domain/tracking/activity";
 import { LocationArt } from "./location-art";
 import { PersonalProgress } from "./personal-progress";
-import { AppDialog } from "./app-dialog";
+import { Sheet } from "./app-dialog";
+import { Meteogram } from "./meteogram";
 import { planningState } from "../domain/recommendation/plan-state";
 import {
   isRefreshDue,
@@ -33,6 +45,14 @@ import {
 const ScoreMap = dynamic(() => import("./score-map").then((m) => m.ScoreMap), {
   ssr: false,
 });
+/** Current Home plan, shared read-only with Ask VAELORA. */
+export interface PlanSummary {
+  place: string;
+  headline: string;
+  window: { start: string; end: string } | null;
+  score: number | null;
+  hours: DiscoveryResponse["outlook"]["hours"];
+}
 export interface DiscoveryMapData {
   point: Coordinates;
   name: string;
@@ -40,6 +60,15 @@ export interface DiscoveryMapData {
   activity: ActivityKind;
   selectedAreaId?: string;
 }
+const ammanClock = (locale: Locale) => (value: string) =>
+  new Intl.DateTimeFormat(locale === "ar" ? "ar-JO-u-nu-latn" : "en-GB", {
+    timeZone: "Asia/Amman",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).format(new Date(value));
+const featuredIds = ["sports-city", "king-hussein-park", "national-gallery-park"];
+
 export function DiscoveryMap({
   data,
   locale,
@@ -47,6 +76,7 @@ export function DiscoveryMap({
   data: DiscoveryMapData;
   locale: Locale;
 }) {
+  const c = translator(homeCopy, locale);
   const activity = data.activity;
   const [selected, setSelected] = useState(
     data.selectedAreaId ?? data.places[0]?.area.id ?? "",
@@ -64,53 +94,69 @@ export function DiscoveryMap({
     ],
   }));
   const place = data.places.find((p) => p.area.id === selected);
+  const clock = ammanClock(locale);
   return (
-    <section className="discovery-map">
-      <header className="map-heading">
-        <p className="v2-kicker">
-          {locale === "ar" ? "أماكن مدروسة بالقرب منك" : "REVIEWED PLACES NEARBY"}
-        </p>
-        <h2>{locale === "ar" ? "استكشف الأماكن القريبة" : "Explore nearby"}</h2>
-        <p>{data.name}</p>
-      </header>
-      <ScoreMap
-        rows={rows}
-        activity={activity}
-        locale={locale}
-        origin={data.point}
-        selectedAreaId={selected}
-        onSelect={setSelected}
-      />
-      <div className="map-legend" aria-label={locale === "ar" ? "دليل الخريطة" : "Map legend"}>
-        <span><i data-kind="selected" />{locale === "ar" ? "المكان المحدد" : "Selected place"}</span>
-        <span><i data-kind="origin" />{locale === "ar" ? "نقطة البحث" : "Search origin"}</span>
-        <span><i data-kind="score" />{locale === "ar" ? "مؤشر ملاءمة مدروس" : "Reviewed place fit"}</span>
-        <span><i data-kind="cluster" />{locale === "ar" ? "مجموعة أماكن" : "Place cluster"}</span>
+    <section className="map-screen" aria-labelledby="map-title">
+      <h1 className="screen-title" id="map-title">
+        {data.name === c("currentArea") ? c("mapTitleGps") : c("mapTitle", { name: data.name })}
+      </h1>
+      <div className="map-stage">
+        <ScoreMap
+          rows={rows}
+          activity={activity}
+          locale={locale}
+          origin={data.point}
+          selectedAreaId={selected}
+          onSelect={setSelected}
+        />
+        <div className="map-legend" aria-label={c("viewMap")}>
+          <span><i data-kind="selected" />{c("mapLegendSelected")}</span>
+          <span><i data-kind="origin" />{c("mapLegendOrigin")}</span>
+          <span><i data-kind="score" />{c("mapLegendScore")}</span>
+          <span><i data-kind="cluster" />{c("mapLegendCluster")}</span>
+        </div>
       </div>
+      {!data.places.length && <p className="section-note">{c("mapEmpty")}</p>}
       {place && (
-        <div className="v21-panel">
-          <h3>{areaName(locale, place.area)}</h3>
-          <p>{areaDescription(locale, place.area)}</p>
-          <p>
-            {label(locale, place.area.terrain)} ·{" "}
-            {place.area.surfaces.map((s) => label(locale, s)).join(" · ")}
+        <article className="map-card" aria-live="polite">
+          <div className="map-card-head">
+            <h2>{areaName(locale, place.area)}</h2>
+            <span className="score-chip num" data-tone={place.score == null ? "unknown" : place.score >= 70 ? "good" : place.score >= 50 ? "fair" : "poor"}>
+              {place.score ?? "–"}
+            </span>
+          </div>
+          <p className="row-meta">
+            {numberText(locale, distanceKm(data.point, place.area), 1)} {locale === "ar" ? "كم" : "km"} ·{" "}
+            {place.plan.status === "now"
+              ? c("goodNowShort")
+              : place.plan.window
+                ? c("bestAt", { time: clock(place.plan.window.start) })
+                : c("noUsable")}
           </p>
+          <p>{areaDescription(locale, place.area)}</p>
+          <p className="row-meta">
+            {label(locale, place.area.terrain)} · {place.area.surfaces.map((s) => label(locale, s)).join(" · ")}
+          </p>
+        </article>
+      )}
+      {data.places.length > 1 && (
+        <div className="map-list" role="group" aria-label={c("featured")}>
+          {data.places.map((p) => (
+            <button
+              key={p.area.id}
+              className="chip"
+              aria-pressed={selected === p.area.id}
+              onClick={() => setSelected(p.area.id)}
+            >
+              {areaName(locale, p.area)} <bdi className="num">{p.score ?? "–"}</bdi>
+            </button>
+          ))}
         </div>
       )}
-      <div className="map-place-list">
-        {data.places.map((p) => (
-          <button
-            key={p.area.id}
-            aria-pressed={selected === p.area.id}
-            onClick={() => setSelected(p.area.id)}
-          >
-            {areaName(locale, p.area)} <bdi>{p.score ?? "—"}/100</bdi>
-          </button>
-        ))}
-      </div>
     </section>
   );
 }
+
 export function DiscoveryHome({
   locale,
   activity,
@@ -126,6 +172,9 @@ export function DiscoveryHome({
   active,
   onClear,
   onMapData,
+  selectedPlace,
+  onSelectPlace,
+  onPlan,
 }: {
   locale: Locale;
   activity: ActivityKind;
@@ -141,9 +190,12 @@ export function DiscoveryHome({
   active: boolean;
   onClear: () => void;
   onMapData: (data: DiscoveryMapData | null) => void;
+  selectedPlace: string | null;
+  onSelectPlace: (id: string | null) => void;
+  onPlan?: (plan: PlanSummary | null) => void;
 }) {
   const ar = locale === "ar",
-    t = (en: string, a: string) => (ar ? a : en);
+    c = translator(homeCopy, locale);
   const [point, setPoint] = useState<Coordinates | null>(null),
     [name, setName] = useState(""),
     [source, setSource] = useState<"gps" | "manual">("manual"),
@@ -159,8 +211,11 @@ export function DiscoveryHome({
     [busy, setBusy] = useState(false),
     [failed, setFailed] = useState(false),
     [refreshFailed, setRefreshFailed] = useState(false),
-    [refresh, setRefresh] = useState(0),
-    [selected, setSelected] = useState<string | null>(null);
+    [refresh, setRefresh] = useState(0);
+  const selected =
+    selectedPlace && activityAreas.some((a) => a.id === selectedPlace)
+      ? selectedPlace
+      : null;
   const [placeData, setPlaceData] = useState<DiscoveryResponse | null>(null),
     [placeLoading, setPlaceLoading] = useState(false),
     [placeFailed, setPlaceFailed] = useState(false),
@@ -345,8 +400,8 @@ export function DiscoveryHome({
     setGeo("ready");
     setResults([]);
     setSearchStatus("");
-    setSelected(null);
-    document.querySelector(".daily-plan")?.scrollIntoView({ block: "start" });
+    onSelectPlace(null);
+    document.querySelector(".plan")?.scrollIntoView({ block: "start" });
   }
   function locate() {
     setGeo("locating");
@@ -362,7 +417,7 @@ export function DiscoveryHome({
         }
         choose(
           { latitude: p.coords.latitude, longitude: p.coords.longitude },
-          t("Your current area", "منطقتك الحالية"),
+          c("currentArea"),
           "gps",
         );
       },
@@ -407,271 +462,267 @@ export function DiscoveryHome({
   const best = nearby.find(
     (p) => p.plan.status === "now" || p.plan.status === "later",
   );
-  const clock = (value: string) =>
-    new Intl.DateTimeFormat(ar ? "ar-JO" : "en-GB", {
-      timeZone: "Asia/Amman",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    }).format(new Date(value));
-  const planCopy = !point
-    ? t("Choose your area to plan today.", "حدّد منطقتك لتخطط ليومك.")
+  const clock = ammanClock(locale);
+  const headline = !point
+    ? c("chooseArea")
     : busy
-      ? t("Checking your best time…", "نبحث عن الوقت الأنسب…")
-      : failed || !plan || plan.status === "insufficient"
-        ? t(
-            "Conditions unavailable. Try again when online.",
-            "الظروف غير متاحة. أعد المحاولة عند الاتصال.",
-          )
-        : plan.status === "now"
-          ? t("A good moment to move.", "وقت مناسب للحركة.")
-          : plan.status === "later"
-            ? t("A better window is ahead.", "فترة أفضل بانتظارك.")
-            : t("No suitable window today.", "لا تتوفر فترة ملائمة اليوم.");
+      ? c("checking")
+      : planState === "weather-unavailable"
+        ? c("unavailable")
+        : plan?.status === "now"
+          ? c("goodNow")
+          : plan?.status === "later" && plan.window
+            ? c("betterLater", { time: clock(plan.window.start) })
+            : c("noWindow");
+  const subline = !point
+    ? c("chooseAreaSub")
+    : busy
+      ? null
+      : planState === "weather-unavailable"
+        ? c("unavailableSub")
+        : planState === "no-window"
+          ? c("noWindowSub", { n: minutes })
+          : null;
   const planAction =
     planState === "recommended"
       ? plan?.status === "now"
-        ? t(`Start ${minutes} min ${activity === "walking" ? "Walk" : "Run"}`, `ابدأ ${activity === "walking" ? "المشي" : "الجري"} لمدة ${minutes} دقيقة`)
-        : t("Track now · best window is later", "سجّل الآن · الفترة الأفضل لاحقًا")
+        ? c(activity === "walking" ? "startWalk" : "startRun", { n: minutes })
+        : c("trackLater")
       : planState === "weather-unavailable"
-        ? t("Start tracking — conditions unavailable", "ابدأ التسجيل — تعذّر تقييم الطقس")
+        ? c("trackNoWeather")
         : planState === "no-window"
-          ? t("Track without a recommendation", "سجّل نشاطًا دون توصية")
+          ? c("trackNoWindow")
           : planState === "location-unavailable"
-            ? t("Track without a location plan", "سجّل نشاطًا دون خطة مكانية")
-            : t("Start tracking", "ابدأ التسجيل");
-  const featured = activityAreas.filter((a) =>
-    ["sports-city", "king-hussein-park", "national-gallery-park"].includes(
-      a.id,
-    ),
-  );
+            ? c("trackNoLocation")
+            : c("trackDefault");
+  const featured = activityAreas.filter((a) => featuredIds.includes(a.id));
   const detail = activityAreas.find((a) => a.id === selected);
   const detailWeather = placeData?.places.find((p) => p.area.id === selected);
   const geoCopy: Record<string, string> = {
-    denied: t(
-      "Location permission denied. Search or choose an area below.",
-      "لم يُسمح بالموقع. ابحث أو اختر منطقة أدناه.",
-    ),
-    timeout: t(
-      "Location timed out. Try again or select an area.",
-      "انتهت مهلة تحديد الموقع. حاول مجددًا أو اختر منطقة.",
-    ),
-    unavailable: t(
-      "Location is unavailable on this device. Use search.",
-      "الموقع غير متاح على هذا الجهاز. استخدم البحث.",
-    ),
-    poor: t(
-      "GPS accuracy is too low. Try outdoors or choose an area.",
-      "دقة الموقع منخفضة. حاول في مكان مكشوف أو اختر منطقة.",
-    ),
-    outside: t(
-      "Outside VAELORA’s current Amman service area. Select a supported area to plan there.",
-      "أنت خارج نطاق خدمة VAELORA الحالي في عمّان. اختر منطقة مدعومة للتخطيط فيها.",
-    ),
+    denied: c("geoDenied"),
+    timeout: c("geoTimeout"),
+    unavailable: c("geoUnavailable"),
+    poor: c("geoPoor"),
+    outside: c("geoOutside"),
   };
+  const score = plan?.window?.score ?? current?.score ?? null;
+  const scoreTone = score == null ? "unknown" : score >= 80 ? "good" : score >= 60 ? "fair" : "poor";
+  const activityLabel = activity === "walking" ? c("walk") : c("run");
+  const planWindow = plan?.window ?? null;
+  useEffect(() => {
+    onPlan?.(
+      point && live && !busy
+        ? { place: name, headline, window: planWindow, score, hours: live.outlook.hours }
+        : null,
+    );
+  }, [onPlan, point, live, busy, name, headline, planWindow, score]);
   return (
-    <div className="discovery-home">
-      <section className="daily-plan" aria-busy={busy} data-plan-state={planState}>
-        <div className="plan-heading">
-          <span className="plan-day">{t("Today’s outdoor plan", "خطة اليوم في الخارج")}</span>
-          <span>{name || t("GREATER AMMAN", "عمّان الكبرى")}</span>
+    <div className="home">
+      <section
+        className="plan"
+        aria-busy={busy}
+        aria-labelledby="plan-headline"
+        data-plan-state={planState}
+      >
+        <div className="plan-top">
+          <span className="plan-place">{name || c("greaterAmman")}</span>
+          {live && receivedAt !== null && (
+            <span
+              className="plan-updated"
+              role={refreshFailed ? "status" : undefined}
+              data-stale={refreshFailed || undefined}
+            >
+              {refreshFailed
+                ? c("staleRefresh", { time: clock(new Date(receivedAt).toISOString()) })
+                : c("updated", { time: clock(new Date(receivedAt).toISOString()) })}
+            </span>
+          )}
         </div>
-        <h2>{planCopy}</h2>
         <div className="plan-controls">
-        <div className="v2-segment plan-sports" aria-label={t("Activity", "النشاط")}>
-          {(["walking", "running"] as const).map((k) => (
-            <button
-              key={k}
-              onClick={() => {
-                onSnapshot(null);
-                setActivity(k);
-              }}
-              aria-pressed={activity === k}
-            >
-              {k === "walking" ? (
-                <Footprints size={18} />
+          <div className="seg seg-band" role="group" aria-label={c("activity")}>
+            {(["walking", "running"] as const).map((k) => (
+              <button
+                key={k}
+                onClick={() => {
+                  onSnapshot(null);
+                  setActivity(k);
+                }}
+                aria-pressed={activity === k}
+              >
+                {k === "walking" ? <Footprints aria-hidden /> : <Activity aria-hidden />}
+                {k === "walking" ? c("walk") : c("run")}
+              </button>
+            ))}
+          </div>
+          <div className="seg seg-band" role="group" aria-label={c("duration")}>
+            {[30, 60, 90].map((value) => (
+              <button
+                key={value}
+                aria-pressed={minutes === value}
+                aria-label={c("minLong", { n: value })}
+                onClick={() => {
+                  onSnapshot(null);
+                  setMinutes(value);
+                }}
+              >
+                <span className="num">{value}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="plan-decision">
+          <h2 className="plan-headline" id="plan-headline">
+            {headline}
+          </h2>
+          {subline && <p className="plan-sub">{subline}</p>}
+        </div>
+        {point && !busy && (
+          <div className="plan-figures">
+            <div className="plan-window">
+              <span className="plan-label">{c("window")}</span>
+              {plan?.window ? (
+                <strong className="plan-window-time num">
+                  <bdi>
+                    {clock(plan.window.start)}
+                    <span className="plan-dash">-</span>
+                    {clock(plan.window.end)}
+                  </bdi>
+                </strong>
               ) : (
-                <Activity size={18} />
-              )}{" "}
-              {k === "walking" ? t("Walk", "مشي") : t("Run", "جري")}
-            </button>
-          ))}
-        </div>
-        <label className="plan-duration">
-          <span>{t("Duration", "المدة")}</span>
-          <select value={minutes} onChange={(e) => { onSnapshot(null); setMinutes(Number(e.target.value)); }}>
-            {[30, 60, 90].map((value) => <option key={value} value={value}>{value} {t("min", "دقيقة")}</option>)}
-          </select>
-        </label>
-        </div>
-        <div className="plan-facts">
-          <div className="plan-score">
-            <span>{t("VAELORA Score", "مؤشر VAELORA")}</span>
-            <strong><bdi>{plan?.window?.score ?? current?.score ?? "—"}</bdi><small>/100</small></strong>
-            <small>{plan?.window ? t("Full outing window", "فترة النشاط كاملة") : t("Conditions now", "الظروف الآن")}</small>
-          </div>
-          {plan?.window && (
-            <div>
-              <span>{t("Best window", "أفضل فترة")}</span>
-              <bdi>
-                {clock(plan.window.start)} – {clock(plan.window.end)}
-              </bdi>
+                <strong className="plan-window-time plan-window-none">–</strong>
+              )}
             </div>
-          )}
-        </div>
-        {current && (
+            <div className="plan-score" data-tone={scoreTone}>
+              <span className="plan-label">{c("score")}</span>
+              <strong className="num">
+                <bdi>{score ?? "–"}</bdi>
+                <small>/100</small>
+              </strong>
+              <span className="plan-score-note">
+                {plan?.window ? c("scoreWindow") : c("scoreNow")}
+              </span>
+            </div>
+          </div>
+        )}
+        {busy && (
+          <div className="plan-skeleton" role="status" aria-label={c("checking")}>
+            <span className="skeleton skeleton-band" />
+            <span className="skeleton skeleton-band skeleton-tall" />
+          </div>
+        )}
+        {point && !busy && live && (
+          <Meteogram
+            hours={live.outlook.hours}
+            window={plan?.window ?? null}
+            locale={locale}
+            activityLabel={activityLabel}
+            clock={clock}
+          />
+        )}
+        {current && !busy && (
           <p className="plan-weather">
-            <bdi>{current.conditions.temperatureC ?? "—"}°C</bdi> ·{" "}
-            {t("Wind", "الرياح")}{" "}
-            <bdi>
-              {current.conditions.windKmh ?? "—"} {t("km/h", "كم/س")}
-            </bdi>{" "}
-            · {t("Humidity", "الرطوبة")}{" "}
-            <bdi>{current.conditions.relativeHumidityPercent ?? "—"}%</bdi>
+            <span className="num">{current.conditions.temperatureC ?? "–"}°C</span>
+            <span>
+              {c("wind")} <bdi className="num">{c("kmh", { n: current.conditions.windKmh ?? "–" })}</bdi>
+            </span>
+            <span>
+              {c("humidity")} <bdi className="num">{current.conditions.relativeHumidityPercent ?? "–"}%</bdi>
+            </span>
           </p>
         )}
-        {live && receivedAt !== null && (
-          <small
-            className="plan-updated"
-            role={refreshFailed ? "status" : undefined}
-            data-stale={refreshFailed || undefined}
-          >
-            {refreshFailed
-              ? t(
-                  `Couldn’t refresh · showing conditions from ${clock(new Date(receivedAt).toISOString())}`,
-                  `تعذّر التحديث · نعرض ظروف الساعة ${clock(new Date(receivedAt).toISOString())}`,
-                )
-              : t(
-                  `Updated ${clock(new Date(receivedAt).toISOString())}`,
-                  `آخر تحديث ${clock(new Date(receivedAt).toISOString())}`,
-                )}
-          </small>
+        {(failed || refreshFailed || (data && !live)) && point && (
+          <button className="btn btn-band btn-sm plan-retry" onClick={() => setRefresh((n) => n + 1)}>
+            <RefreshCw aria-hidden /> {c("retry")}
+          </button>
         )}
-        {point && (
-          <div className="plan-evidence" aria-label={t("Location data status", "حالة بيانات الموقع")}>
-            <span><b>{t("Dynamic conditions", "الظروف المتغيرة")}</b>{t("Weather and time evaluated", "تم تقييم الطقس والوقت")}</span>
-            <span><b>{t("Area characteristics", "خصائص المنطقة")}</b>{t("Not yet verified", "لم تُوثّق بعد")}</span>
-          </div>
-        )}
-        {best && (
-          <p>
-            {t("Nearby option", "خيار قريب")}:{" "}
-            <button
-              className="text-link"
-              onClick={() => setSelected(best.area.id)}
-            >
-              {areaName(locale, best.area)}
-            </button>{" "}
-            · {point ? distanceKm(point, best.area).toFixed(1) : ""}{" "}
-            {t("km approx.", "كم تقريبًا")}
-          </p>
-        )}
-        <button className="quick-start" onClick={onStart} data-recommended={planState === "recommended" && plan?.status === "now"}>
-          {planAction} <ArrowUpRight size={20} />
+        <button
+          className="btn btn-lg btn-block plan-start"
+          onClick={onStart}
+          data-recommended={planState === "recommended" && plan?.status === "now"}
+        >
+          {planAction}
+          <ArrowUpRight aria-hidden className="flip-rtl" />
         </button>
-        <small className="plan-safety">
-          {t(
-            "When you start, GPS records your route locally. Forecasts do not guarantee route safety.",
-            "عند بدء النشاط، يُستخدم GPS لتسجيل مسارك محليًا. لا تضمن التوقعات سلامة المسار.",
-          )}
-        </small>
-        <details className="plan-details">
-          <summary>{t("Planning & privacy details", "تفاصيل التخطيط والخصوصية")}</summary>
-          <p>
-            {t(
-              "Keep this page visible while tracking. Check access and your surroundings. Area-level conditions and reviewed place facts are handled separately.",
-              "أبقِ هذه الصفحة ظاهرة أثناء التتبّع، وتحقق من إمكانية الدخول ومحيطك. تُعرض ظروف المنطقة ومعلومات الأماكن الموثّقة كلٌّ على حدة.",
-            )}
-          </p>
-        </details>
+        <p className="plan-note">{c("startNote")}</p>
+        {best && (
+          <button className="plan-nearby" onClick={() => onSelectPlace(best.area.id)}>
+            <span className="plan-label">{c("nearbyOption")}</span>
+            <span className="plan-nearby-name">{areaName(locale, best.area)}</span>
+            <span className="num">{c("kmApprox", { n: numberText(locale, distanceKm(point!, best.area), 1) })}</span>
+            <ChevronRight aria-hidden className="flip-rtl" />
+          </button>
+        )}
       </section>
-      <section className="discovery-location">
-        <div className="section-heading">
-          <div>
-            <h2>{t("Near you", "بالقرب منك")}</h2>
-          </div>
-          <button onClick={locate} disabled={geo === "locating"}>
-            <LocateFixed size={18} />
-            {geo === "locating"
-              ? t("Locating…", "جارٍ التحديد…")
-              : t("Use my location", "استخدم موقعي")}
+
+      <section className="section near" aria-labelledby="near-title">
+        <div className="section-head">
+          <h2 className="section-title" id="near-title">{c("nearYou")}</h2>
+          <button className="btn btn-secondary btn-sm" onClick={locate} disabled={geo === "locating"}>
+            <LocateFixed aria-hidden />
+            {geo === "locating" ? c("locating") : c("useLocation")}
           </button>
         </div>
-        <p className="location-reassurance">
-          {t(
-            "Your precise GPS stays on this device; forecasts use an approximate area.",
-            "يبقى موقع GPS الدقيق على هذا الجهاز، وتستخدم التوقعات منطقة تقريبية.",
-          )}
-        </p>
-        <details className="location-details">
-          <summary>{t("How location and search work", "كيف نستخدم الموقع والبحث")}</summary>
-          <p>{t("Location finds nearby places and local weather. Search terms are sent to Photon / OpenStreetMap.", "يساعد الموقع في إيجاد أماكن قريبة وطقس محلي. تُرسل كلمات البحث إلى Photon / OpenStreetMap.")}</p>
-        </details>
+        <p className="section-note">{c("locationNote")}</p>
         {geoCopy[geo] && (
-          <p role="status" className="v21-notice">
+          <p role="status" className="notice" data-tone="caution">
             {geoCopy[geo]}
           </p>
         )}
         <form
-          className="discovery-search"
+          className="search-row near-search"
           onSubmit={(e) => {
             e.preventDefault();
             void search();
           }}
         >
           <label className="sr-only" htmlFor="discovery-query">
-            {t("Search Amman", "ابحث في عمّان")}
+            {c("searchLabel")}
           </label>
           <input
             id="discovery-query"
+            className="input"
             value={query}
             maxLength={100}
             minLength={2}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder={t(
-              "Search an area or place…",
-              "ابحث عن منطقة أو مكان…",
-            )}
+            placeholder={c("searchPlaceholder")}
+            enterKeyHint="search"
           />
-          <button
-            disabled={searching || query.trim().length < 2}
-            aria-label={t("Search", "بحث")}
-          >
-            <Search size={20} />
-            {searching ? "…" : t("Search", "بحث")}
+          <button className="btn btn-primary" disabled={searching || query.trim().length < 2}>
+            <Search aria-hidden />
+            <span className="sr-only">{c("search")}</span>
           </button>
         </form>
-        <div className="search-results">
-          {results.map((p, i) => (
-            <button key={i} onClick={() => choose(p, p.name, "manual")}>
-              {p.name}
-              <ArrowUpRight size={17} />
-            </button>
-          ))}
-        </div>
+        <p className="fine">{c("searchNote")}</p>
+        {results.length > 0 && (
+          <div className="rows search-results">
+            {results.map((p, i) => (
+              <button className="row-btn" key={i} onClick={() => choose(p, p.name, "manual")}>
+                <span className="row-main">
+                  <span className="row-title">{p.name}</span>
+                </span>
+                <ChevronRight className="row-chevron flip-rtl" aria-hidden />
+              </button>
+            ))}
+          </div>
+        )}
         {searchStatus && (
-          <p role="status">
+          <p role="status" className="notice" data-tone={searchStatus === "error" ? "danger" : "caution"}>
             {searchStatus === "outside"
-              ? t("Results are outside VAELORA’s Greater Amman coverage. Try a supported area.", "النتائج خارج نطاق VAELORA في عمّان الكبرى. جرّب منطقة مدعومة.")
+              ? c("searchOutside")
               : searchStatus === "empty"
-              ? t(
-                  "No matching place in our service area. Try another name.",
-                  "لا توجد نتيجة ضمن نطاق الخدمة. جرّب اسمًا آخر.",
-                )
-              : t(
-                  "Search unavailable or busy. Try again, or use a reference area below.",
-                  "البحث غير متاح أو مشغول. أعد المحاولة أو اختر منطقة مرجعية أدناه.",
-                )}
+                ? c("searchEmpty")
+                : c("searchError")}
           </p>
         )}
-        <details className="reference-picker">
-          <summary>
-            {t("Choose a reference area instead", "أو اختر منطقة مرجعية")}
-          </summary>
-          <div>
+        <details className="disclosure reference-picker">
+          <summary>{c("orArea")}</summary>
+          <div className="chips">
             {weatherAreas.map((a) => (
               <button
                 key={a.id}
+                className="chip"
+                aria-pressed={point?.latitude === a.latitude && point?.longitude === a.longitude}
                 onClick={() => choose(a, a.name[locale], "manual")}
               >
                 {a.name[locale]}
@@ -680,133 +731,134 @@ export function DiscoveryHome({
           </div>
         </details>
         {point && (
-          <>
-            <div className="section-heading">
-              <span>
-                {source === "gps"
-                  ? t("From your location", "من موقعك")
-                  : t("From selected area", "من المنطقة المحددة")}
+          <div className="near-results">
+            <div className="near-toolbar">
+              <span className="near-origin">
+                {source === "gps" ? c("fromGps") : c("fromArea", { name })}
               </span>
-              <button
-                onClick={() => {
-                  setPoint(null);
-                  setName("");
-                  clearData();
-                  setGeo("idle");
-                  setBusy(false);
-                  onSnapshot(null);
-                  onClear();
-                }}
-              >
-                {t("Clear location", "مسح الموقع")}
-              </button>
-              <select
-                aria-label={t("Nearby radius", "نطاق البحث القريب")}
-                value={radius}
-                onChange={(e) => setRadius(+e.target.value)}
-              >
-                {[3, 5, 10].map((r) => (
-                  <option key={r} value={r}>
-                    {r} {t("km", "كم")}
-                  </option>
-                ))}
-              </select>
-              <button
-                onClick={() =>
-                  onMap({ point, name, activity, places: live?.places ?? [], selectedAreaId: selected ?? best?.area.id })
-                }
-              >
-                {t("View map", "عرض الخريطة")} ↗
-              </button>
-            </div>
-            <small>
-              {t(
-                "Approximate straight-line distances, not travel times. Ranked by available window, reviewed fit, evidence, then distance.",
-                "مسافات تقريبية بخط مستقيم، وليست أوقات وصول. الترتيب حسب الفترة المتاحة، والملاءمة المراجعة، والمصادر، ثم المسافة.",
-              )}
-            </small>
-            {(failed || refreshFailed || (data && !live)) && (
-              <button onClick={() => setRefresh((n) => n + 1)}>
-                {t("Retry conditions", "إعادة تحميل الظروف")}
-              </button>
-            )}
-            <div className="nearby-cards">
-              {nearby.slice(0, 4).map((p, i) => (
+              <div className="near-actions">
+                <label className="near-radius">
+                  <span className="sr-only">{c("radius")}</span>
+                  <select className="input" value={radius} onChange={(e) => setRadius(+e.target.value)}>
+                    {[3, 5, 10].map((r) => (
+                      <option key={r} value={r}>
+                        {r} {ar ? "كم" : "km"}
+                      </option>
+                    ))}
+                  </select>
+                </label>
                 <button
-                  className="nearby-card"
-                  key={p.area.id}
-                  onClick={() => setSelected(p.area.id)}
+                  className="btn btn-secondary btn-sm"
+                  onClick={() =>
+                    onMap({ point, name, activity, places: live?.places ?? [], selectedAreaId: selected ?? best?.area.id })
+                  }
                 >
-                  <span className="nearby-number">{i + 1}</span>
-                  <span>
-                    <strong>{areaName(locale, p.area)}</strong>
-                    <small>
-                      {distanceKm(point, p.area).toFixed(1)}{" "}
-                      {t("km approx.", "كم تقريبًا")} ·{" "}
-                      {p.plan.status === "now"
-                        ? t("Good now", "مناسب الآن")
-                        : p.plan.window
-                          ? `${t("Best at", "الأفضل عند")} ${clock(p.plan.window.start)}`
-                          : t("No usable window", "لا توجد فترة متاحة")}
-                    </small>
-                    <small>
-                      {p.area.verificationStatus === "verified"
-                        ? t("Verified evidence", "مصادر موثّقة")
-                        : t("Source-supported", "مدعوم بمصادر")}{" "}
-                      · {label(locale, p.fit)}
-                    </small>
-                  </span>
-                  <b>
-                    {p.score ?? "—"}
-                    <small>{t("place fit", "ملاءمة المكان")}</small>
-                  </b>
+                  <MapIcon aria-hidden />
+                  {c("viewMap")}
                 </button>
-              ))}
+                <button
+                  className="btn btn-ghost btn-sm"
+                  onClick={() => {
+                    setPoint(null);
+                    setName("");
+                    clearData();
+                    setGeo("idle");
+                    setBusy(false);
+                    onSnapshot(null);
+                    onClear();
+                  }}
+                >
+                  {c("clear")}
+                </button>
+              </div>
             </div>
-            {!busy && live && !nearby.length && (
-              <p>
-                {t(
-                  "No reviewed places match within this radius. Your area’s conditions remain available; try 10 km or change your preferences.",
-                  "لا توجد أماكن مراجعة مطابقة ضمن هذا النطاق. تظل ظروف منطقتك متاحة؛ جرّب ١٠ كم أو غيّر تفضيلاتك.",
-                )}
-              </p>
+            <p className="fine">{c("areaFacts")}</p>
+            {failed && <p className="notice" data-tone="danger">{c("conditionsFailed")}</p>}
+            {busy ? (
+              <div className="rows" aria-hidden="true">
+                {[0, 1, 2].map((i) => (
+                  <div className="row" key={i}>
+                    <span className="skeleton skeleton-line" />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              nearby.length > 0 && (
+                <ol className="rows nearby-list">
+                  {nearby.slice(0, 4).map((p, i) => {
+                    const tone = p.plan.status === "now" ? "good" : p.plan.window ? "fair" : "poor";
+                    return (
+                      <li key={p.area.id}>
+                        <button className="row-btn nearby-card" onClick={() => onSelectPlace(p.area.id)}>
+                          <span className="nearby-rank num">{i + 1}</span>
+                          <span className="row-main">
+                            <span className="row-title">{areaName(locale, p.area)}</span>
+                            <span className="row-meta">
+                              <bdi className="num">{c("kmApprox", { n: numberText(locale, distanceKm(point, p.area), 1) })}</bdi>
+                              {" · "}
+                              {p.area.verificationStatus === "verified" ? c("verified") : c("supported")}
+                              {" · "}
+                              {label(locale, p.fit)}
+                            </span>
+                            <span className="tag" data-tone={tone}>
+                              {p.plan.status === "now"
+                                ? c("goodNowShort")
+                                : p.plan.window
+                                  ? c("bestAt", { time: clock(p.plan.window.start) })
+                                  : c("noUsable")}
+                            </span>
+                          </span>
+                          <span className="row-end nearby-score">
+                            <b className="num">{p.score ?? "–"}</b>
+                            <small>{c("placeFit")}</small>
+                          </span>
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ol>
+              )
             )}
-          </>
+            {!busy && live && !nearby.length && <p className="empty-line">{c("noneInRadius")}</p>}
+            <p className="fine">{c("rankNote")}</p>
+          </div>
         )}
       </section>
-      <section className="featured-places">
-        <div className="section-heading">
-          <div>
-            <h2>{t("Featured places", "أماكن مختارة")}</h2>
-          </div>
+
+      <section className="section featured" aria-labelledby="featured-title">
+        <div className="section-head">
+          <h2 className="section-title" id="featured-title">{c("featured")}</h2>
+          <span className="section-note">{c("featuredNote")}</span>
         </div>
-        <div className="featured-grid">
+        <div className="featured-rail">
           {featured.map((a) => (
-            <button key={a.id} onClick={() => setSelected(a.id)}>
+            <button className="featured-card" key={a.id} onClick={() => onSelectPlace(a.id)}>
               <LocationArt
                 areaId={a.id}
                 locale={locale}
                 name={areaName(locale, a)}
                 environment={a.environment}
               />
-              <span>
-                {t("Reviewed place profile", "معلومات مكان موثّقة")}{" "}
-                <ArrowUpRight size={17} />
+              <span className="featured-foot">
+                <span>{label(locale, a.terrain)}</span>
+                <span className="featured-open">
+                  {c("openProfile")}
+                  <ArrowUpRight aria-hidden className="flip-rtl" />
+                </span>
               </span>
             </button>
           ))}
         </div>
       </section>
-      <PersonalProgress
-        activities={activities}
-        locale={locale}
-        onOpen={onOpen}
-      />
+
+      <PersonalProgress activities={activities} locale={locale} onOpen={onOpen} />
+
       {detail && (
-        <AppDialog
+        <Sheet
           title={areaName(locale, detail)}
-          close={() => setSelected(null)}
-          closeLabel={t("Close", "إغلاق")}
+          close={() => onSelectPlace(null)}
+          closeLabel={ar ? "إغلاق" : "Close"}
+          className="place-sheet"
         >
           <LocationArt
             areaId={detail.id}
@@ -814,80 +866,74 @@ export function DiscoveryHome({
             name={areaName(locale, detail)}
             environment={detail.environment}
           />
-          <p>{areaDescription(locale, detail)}</p>
-          <p>
-            {label(locale, detail.terrain)} ·{" "}
-            {detail.surfaces.map((s) => label(locale, s)).join(" · ")}
-          </p>
-          <p>
-            {t("Walking", "المشي")}: {label(locale, detail.suitability.walking)}{" "}
-            · {t("Running", "الجري")}:{" "}
-            {label(locale, detail.suitability.running)}
-          </p>
-          {placeLoading ? (
-            <p role="status">{t("Checking conditions…", "جارٍ فحص الظروف…")}</p>
-          ) : placeFailed ? (
-            <p role="status">
-              {t(
-                "Couldn’t check conditions for this place.",
-                "تعذّر فحص الظروف لهذا المكان.",
-              )}{" "}
-              <button
-                className="text-link"
-                onClick={() => setPlaceRetry((n) => n + 1)}
-              >
-                {t("Try again", "حاول مجددًا")}
-              </button>
-            </p>
-          ) : placeData?.outlook.current ? (
-            <p>
-              {t("Area conditions now", "ظروف المنطقة الآن")}:{" "}
-              {placeData.outlook.current.score ?? "—"}/100 ·{" "}
-              {placeData.outlook.current.conditions.temperatureC ?? "—"}°C ·{" "}
-              {t("Wind", "الرياح")}{" "}
-              {placeData.outlook.current.conditions.windKmh ?? "—"}{" "}
-              {t("km/h", "كم/س")}
-            </p>
-          ) : (
-            <p>
-              {t(
-                "Current conditions unavailable.",
-                "الظروف الحالية غير متاحة.",
-              )}
-            </p>
-          )}
-          {detailWeather?.plan.window && (
-            <p>
-              {t("Best window", "أفضل فترة")}:{" "}
-              <bdi>
-                {clock(detailWeather.plan.window.start)} –{" "}
-                {clock(detailWeather.plan.window.end)}
-              </bdi>{" "}
-              · {detailWeather.score}/100
-            </p>
-          )}
-          <p>
-            {t(
-              "Check current access locally. A reviewed profile is not a surveyed route or safety guarantee.",
-              "تحقق من إمكانية الدخول محليًا. المعلومات المراجعة ليست مسارًا ممسوحًا أو ضمانًا للسلامة.",
-            )}
-          </p>
-          <button
-            onClick={() => choose(detail, areaName(locale, detail), "manual")}
-          >
-            {t("Plan around this place", "خطّط بالقرب من هذا المكان")}
-          </button>
-          <details>
-            <summary>{t("Place evidence", "مصادر المكان")}</summary>
-            {detail.evidence.map((e) => (
-              <p key={e.url}>
-                <a href={e.url} target="_blank" rel="noreferrer">
-                  {new URL(e.url).hostname} ↗
-                </a>
+          <p className="place-description">{areaDescription(locale, detail)}</p>
+          <dl className="place-facts">
+            <div>
+              <dt>{c("terrain")}</dt>
+              <dd>{label(locale, detail.terrain)}</dd>
+            </div>
+            <div>
+              <dt>{c("surface")}</dt>
+              <dd>{detail.surfaces.map((s) => label(locale, s)).join(" · ")}</dd>
+            </div>
+            <div>
+              <dt>{c("walkingFit")}</dt>
+              <dd>{label(locale, detail.suitability.walking)}</dd>
+            </div>
+            <div>
+              <dt>{c("runningFit")}</dt>
+              <dd>{label(locale, detail.suitability.running)}</dd>
+            </div>
+          </dl>
+          <div className="place-conditions">
+            {placeLoading ? (
+              <p role="status" className="row-meta">{c("checkingPlace")}</p>
+            ) : placeFailed ? (
+              <p role="status" className="notice" data-tone="danger">
+                {c("placeFailed")}{" "}
+                <button className="btn btn-secondary btn-sm" onClick={() => setPlaceRetry((n) => n + 1)}>
+                  {c("tryAgain")}
+                </button>
               </p>
-            ))}
+            ) : placeData?.outlook.current ? (
+              <p>
+                <span className="plan-label">{c("conditionsNow")}</span>
+                <span className="place-now num">
+                  <bdi>{placeData.outlook.current.score ?? "–"}/100</bdi> ·{" "}
+                  <bdi>{placeData.outlook.current.conditions.temperatureC ?? "–"}°C</bdi> · {c("wind")}{" "}
+                  <bdi>{c("kmh", { n: placeData.outlook.current.conditions.windKmh ?? "–" })}</bdi>
+                </span>
+              </p>
+            ) : (
+              <p className="row-meta">{c("placeNoCurrent")}</p>
+            )}
+            {detailWeather?.plan.window && (
+              <p>
+                <span className="plan-label">{c("bestWindow")}</span>
+                <span className="place-now num">
+                  <bdi>
+                    {clock(detailWeather.plan.window.start)} - {clock(detailWeather.plan.window.end)}
+                  </bdi>{" "}
+                  · {detailWeather.score}/100
+                </span>
+              </p>
+            )}
+          </div>
+          <p className="fine">{c("placeCaution")}</p>
+          <button className="btn btn-primary btn-block" onClick={() => choose(detail, areaName(locale, detail), "manual")}>
+            {c("planHere")}
+          </button>
+          <details className="disclosure">
+            <summary>{c("evidence")}</summary>
+            <div className="disclosure-body">
+              {detail.evidence.map((e) => (
+                <a key={e.url} href={e.url} target="_blank" rel="noreferrer">
+                  {new URL(e.url).hostname}
+                </a>
+              ))}
+            </div>
           </details>
-        </AppDialog>
+        </Sheet>
       )}
     </div>
   );

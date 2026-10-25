@@ -65,7 +65,7 @@ export function shareModel(
 ) {
   const paths = privateRoute(a.points),
     points = paths.flat();
-  const date = new Intl.DateTimeFormat(locale === "ar" ? "ar-JO" : "en-GB", {
+  const date = new Intl.DateTimeFormat(locale === "ar" ? "ar-JO-u-nu-latn" : "en-GB", {
     timeZone: "Asia/Amman",
     day: "numeric",
     month: "short",

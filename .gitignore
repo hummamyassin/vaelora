@@ -25,3 +25,7 @@ Thumbs.db
 .playwright-cli/
 /public/offline-assets.js
 /public/maplibre/
+# Local design-review captures
+/.impeccable/review/
+/.impeccable/mocks/
+/.impeccable/questions/

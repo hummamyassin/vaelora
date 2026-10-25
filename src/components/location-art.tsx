@@ -1,12 +1,4 @@
-import {
-  MapPin,
-  Trees,
-  Building2,
-  Footprints,
-  Activity,
-  Navigation,
-} from "lucide-react";
-import { label, t, type Locale } from "../lib/i18n";
+import { t, type Locale } from "../lib/i18n";
 export function LocationArt({
   areaId,
   locale,
@@ -32,16 +24,6 @@ export function LocationArt({
             : environment === "walking"
               ? "walking"
               : "featured";
-  const Icon =
-    theme === "park" || theme === "nature"
-      ? Trees
-      : theme === "urban"
-        ? Building2
-        : theme === "running"
-          ? Activity
-          : theme === "walking"
-            ? Footprints
-            : MapPin;
   return (
     <span
       className={`location-photo location-art ${hero ? "hero-photo" : ""}`}
@@ -76,13 +58,6 @@ export function LocationArt({
             ))}
           </g>
         </svg>
-        <span className="identity-category">
-          <Icon size={19} />
-          {["park", "urban", "woodland"].includes(environment ?? "")
-            ? label(locale, environment!)
-            : t(locale, "areaProfile")}
-          <Navigation size={14} />
-        </span>
         <strong>{name ?? "VAELORA"}</strong>
         <small>{t(locale, "photoNeutral")}</small>
       </span>

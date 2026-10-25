@@ -54,40 +54,38 @@ Weather primarily helps determine **when** conditions are suitable and secondari
 - Optional guest profile and preferences stored on the device
 - Responsive mobile and desktop layouts with reduced-motion support
 - Installable PWA with a public offline shell for local tracking and history workflows
+- App-like navigation: screens, place profiles, recaps and sheets have hash routes, so Back, Forward and refresh behave like an installed app without interrupting a recording
+- Local backup and restore: export all finished activities as a JSON file, import with strict validation and duplicate protection, and request persistent browser storage
+- A forecast-chart design system: an hourly meteogram strip brackets the recommended window in one reserved course colour, with Archivo and Readex Pro self-hosted for Latin and Arabic
 
 ## Product screenshots
+
+Captured from the production build with synthetic forecast data and simulated GPS.
 
 ### Plan
 
 <p align="center">
-  <img src="public/screenshots/Home%20%20VAELORA%20Score.jpeg" width="300" alt="VAELORA Home showing the daily plan and nearby activity discovery">
-  <img src="public/screenshots/Plan%20Your%20Activity.jpeg" width="300" alt="VAELORA activity plan showing the score, best window, and start activity action">
+  <img src="docs/screenshots/v24/en-390-located-home-viewport.png" width="260" alt="Home plan band with the decision, outing window, VAELORA Score, meteogram strip and Start button">
+  <img src="docs/screenshots/v24/en-390-place.png" width="260" alt="Reviewed place profile with terrain, surface, fit, current conditions and evidence">
+  <img src="docs/screenshots/v24/ar-390-located-home-viewport.png" width="260" alt="Arabic right-to-left Home in dark theme">
 </p>
-<p align="center"><sub><strong>Home and nearby discovery</strong> · <strong>VAELORA Score and best window</strong></sub></p>
+<p align="center"><sub><strong>Plan band and meteogram</strong> · <strong>Reviewed place</strong> · <strong>Arabic RTL</strong></sub></p>
 
-### Understand conditions
+### Track, recap and profile
 
 <p align="center">
-  <img src="public/screenshots/Hour-by-Hour%20Weather.jpeg" width="300" alt="VAELORA hour-by-hour weather intelligence with activity scores and conditions">
-  <img src="public/screenshots/Map%20Scores.jpeg" width="300" alt="VAELORA MapLibre map showing clustered area scores and a selected place">
+  <img src="docs/screenshots/v24/en-390-live.png" width="260" alt="Live recording with state, timer, distance, pace, GPS quality, route map and controls">
+  <img src="docs/screenshots/v24/en-390-recap-viewport.png" width="260" alt="Activity recap with route, distance and metrics">
+  <img src="docs/screenshots/v24/en-390-profile.png" width="260" alt="Profile with all-time stats, activity breakdown and recent activities">
 </p>
-<p align="center"><sub><strong>Hour-by-hour weather intelligence</strong> · <strong>Area scores on the map</strong></sub></p>
+<p align="center"><sub><strong>Live recorder</strong> · <strong>Recap</strong> · <strong>Profile</strong></sub></p>
 
-### Ask
+### Ask and desktop
 
 <p align="center">
-  <img src="public/screenshots/Ask%20VAELORA.jpeg" width="300" alt="Ask VAELORA interface with reference area, suggested prompts, and question input">
-  <img src="public/screenshots/AI%20Answer.jpeg" width="300" alt="Grounded Ask VAELORA answer showing deterministic score, time window, and reviewed place">
+  <img src="docs/screenshots/v24/en-390-ask-plan.png" width="260" alt="Ask VAELORA showing the current plan, meteogram, planning context and suggestions">
 </p>
-<p align="center"><sub><strong>Grounded outdoor planning</strong> · <strong>Tool-backed recommendation answer</strong></sub></p>
-
-### Track and share
-
-<p align="center">
-  <img src="public/screenshots/Live%20Activity%20Tracking.jpeg" width="300" alt="VAELORA live GPS walking activity with timer, distance, pace, controls, and map">
-  <img src="public/screenshots/Privacy%20Share%20Card.jpeg" width="300" alt="VAELORA privacy-aware activity share card with route hidden and local metrics">
-</p>
-<p align="center"><sub><strong>Live GPS activity tracking</strong> · <strong>Privacy-aware share card</strong></sub></p>
+<p align="center"><img src="docs/screenshots/v24/en-1440-located-home-viewport.png" width="800" alt="Desktop Home with the sticky plan band and nearby places"></p>
 
 ## Technology
 
@@ -129,6 +127,8 @@ VAELORA uses a local-first activity model:
 
 - Recorded GPS points, unfinished drafts, completed activities, history, and route metrics are stored in IndexedDB on the current device.
 - Guest profile data, preferences, locale, appearance, and saved area IDs use bounded browser storage. There is no account, cloud activity backup, or cross-device sync.
+- Backups are JSON files the user saves and imports locally. They contain precise routes and are never uploaded. Imports are validated with the same rules as stored activities; a damaged file imports nothing.
+- Hash routes carry only screen names, sheet names, reviewed place IDs and local activity IDs, never coordinates.
 - Dynamic nearby weather requests use a coarse validated cell identifier rather than sending the exact browser GPS coordinate to the discovery endpoint.
 - Private routes and activity history are not sent to the AI provider. Search text is sent to Photon, weather requests use Open-Meteo, and viewed map regions are requested from the tile provider.
 - Share cards are rendered locally. They remove 300-metre zones around both route endpoints, but a remaining route shape may still be recognizable; this is risk reduction, not anonymity.
@@ -139,14 +139,13 @@ See [production security and privacy controls](docs/production-security.md) and 
 
 ## Quality and validation
 
-The repository includes offline domain, dataset, weather, security, tracking, UI, and AI contract tests. The latest documented V2.3 verification records:
+The repository includes offline domain, dataset, weather, security, tracking, UI, navigation, backup and AI contract tests. The V2.4 verification (October 25, 2026) records:
 
-- **164/164** repository regression tests passed
+- **182/182** repository tests passed, including backup/restore, hash routing, copy coverage and refresh-policy cases
 - **28/28** fixed AI replay evaluations and **16/16** V2 grounding/contract checks passed
 - Dataset validation passed for 35 researched candidates, 11 production places, and 9 weather reference areas
-- TypeScript, zero-warning ESLint, production build, and PWA asset generation passed
-- English and Arabic RTL Playwright flows passed at 390×844 and desktop widths
-- PWA and resilience checks covered public-shell caching, offline local recording, draft recovery, denied or poor GPS, and corrupt storage
+- TypeScript, zero-warning ESLint, production build (Turbopack), and PWA asset generation passed
+- Synthetic Playwright flows passed against the production build in English and Arabic at 320, 390, 430 and 1440 px, light and dark: onboarding, location states, plan and meteogram, routed place sheet, map, Back/Forward/refresh, recording across navigation, pause/resume, recap, three PNG exports, GPX, progress, profile, backup export/import and errors, Ask, with no horizontal overflow or page errors
 
 These results use synthetic or mocked inputs where documented. Browser GPS validation is not physical-device field certification, and offline AI replay evaluates contracts and grounding rather than live-model language accuracy.
 
@@ -160,11 +159,13 @@ See [V2.3 verification](docs/v23.md#completion-validation--september-23-2026), [
 - Place facts follow the evidence dataset. Unknown terrain, surface, access, opening conditions, shade, or accessibility are not inferred.
 - Recommendations are provisional comfort guidance, not medical advice, route verification, or a guarantee of safety or access.
 - Weather, search, AI, and new map tiles require connectivity. Previously cached public shell assets and device-local data have narrower offline behavior.
-- Device-local activities and profiles can be lost if browser storage is cleared or evicted; there is no cloud backup.
+- Device-local activities and profiles can be lost if browser storage is cleared. VAELORA requests persistent storage and offers a manual JSON backup, but there is no cloud copy.
 - Physical-device GPS accuracy, battery use, install prompts, and background behavior still require device-specific testing.
 
 ## Documentation
 
+- [V2.4 redesign, navigation, backup and CI](docs/v24-redesign.md)
+- [Product context](PRODUCT.md) and [design system](DESIGN.md)
 - [V2.3 real-user architecture, privacy, and QA](docs/v23.md)
 - [V2.2 product experience](docs/v2.2-product.md)
 - [V2.1 tracking, analysis, PWA, and privacy architecture](docs/v2.1-product.md)
@@ -190,13 +191,17 @@ Open [http://localhost:3000](http://localhost:3000). Planning, maps, weather, an
 ### Validation commands
 
 ```sh
-npm run validate:data
+npm run validate
 npm test
-npm run eval:agent
+npm run eval
 npm run typecheck
 npm run lint
 npm run build
 ```
+
+The same checks run in GitHub Actions on every pull request and on pushes to `main` ([.github/workflows/ci.yml](.github/workflows/ci.yml)). CI reads no secrets; AI checks use the offline replay evaluation.
+
+`npm run qa:browser` runs the synthetic Playwright flows in English and Arabic at 320, 390, 430 and 1440 px. It needs Playwright (`VAELORA_PLAYWRIGHT_MODULE` may point to an installed copy), Microsoft Edge (`VAELORA_BROWSER_CHANNEL` to override) and a running server (`VAELORA_QA_URL`, default http://localhost:3001). It is not part of CI.
 
 `npm run smoke:weather` performs a controlled live Open-Meteo check. `npm run smoke:agent` uses a configured live provider; neither is required for offline unit tests. Never commit `.env.local` or API credentials.
 

@@ -41,11 +41,31 @@ export const messages = {
   built: ["Built for Jordan. Made for your next move.", "من أجل الأردن. لنشاطك القادم."], dataCredit: ["Forecasts: Open-Meteo · Map: © OpenStreetMap contributors", "التوقعات: Open-Meteo · الخريطة: © مساهمو OpenStreetMap"], pause: ["Pause motion", "إيقاف الحركة"], resume: ["Resume motion", "تشغيل الحركة"], more: ["All Top Matches", "كل الخيارات المتكافئة"],
 } as const;
 export type MessageKey = keyof typeof messages;
+/** One English/Arabic pair. Feature dictionaries live in src/lib/copy/. */
+export type Entry = readonly [en: string, ar: string];
+export type Dictionary = Record<string, Entry>;
+export type Vars = Record<string, string | number>;
+export function tr(locale: Locale, entry: Entry, vars?: Vars): string {
+  const text = entry[locale === "ar" ? 1 : 0];
+  return vars ? text.replace(/\{(\w+)\}/g, (m, k) => (k in vars ? String(vars[k]) : m)) : text;
+}
+/** Bind a feature dictionary to a locale: `const c = translator(homeCopy, locale); c("start")`. */
+export function translator<D extends Dictionary>(dict: D, locale: Locale) {
+  return (key: keyof D, vars?: Vars) => tr(locale, dict[key], vars);
+}
+/** Missing-value placeholder for display (domain helpers return an em dash). */
+export function shown(value: string) {
+  return value === "—" ? "–" : value;
+}
+/** Arabic plural forms for counted nouns: [1, 2, 3-10, 11+]. */
+export function arabicCount(n: number, forms: readonly [string, string, string, string]) {
+  return n === 1 ? forms[0] : n === 2 ? forms[1] : n >= 3 && n <= 10 ? forms[2] : forms[3];
+}
 export function t(locale: Locale, key: MessageKey): string { return messages[key][locale === "ar" ? 1 : 0]; }
 export function label(locale: Locale, value: string): string { return Object.hasOwn(messages, value) ? t(locale, value as MessageKey) : t(locale, "unavailable"); }
 export function areaName(locale: Locale, area: { id: string; name: string }): string { return locale === "ar" ? arabicAreas[area.id]?.name ?? t(locale, "unavailable") : area.name; }
 export function areaDescription(locale: Locale, area: { id: string; description: string }): string { return locale === "ar" ? arabicAreas[area.id]?.description ?? t(locale, "unavailable") : area.description; }
-export function numberText(locale: Locale, value: number | null | undefined, digits = 0): string { return value == null || !Number.isFinite(value) ? t(locale, "unavailable") : new Intl.NumberFormat(locale === "ar" ? "ar-JO" : "en-JO", { maximumFractionDigits: digits }).format(value); }
+export function numberText(locale: Locale, value: number | null | undefined, digits = 0): string { return value == null || !Number.isFinite(value) ? t(locale, "unavailable") : new Intl.NumberFormat(locale === "ar" ? "ar-JO-u-nu-latn" : "en-JO", { maximumFractionDigits: digits }).format(value); }
 export function windowText(start: string, end: string): string { return `${start.slice(11, 16)}–${end.slice(11, 16)}`; }
 /** Unknown terrain is not an assertion about the area's separate evidence status. */
 export function terrainText(locale: Locale, terrain: string): string { return terrain === "unknown" ? t(locale,"terrainUnknown") : `${t(locale,"terrain")}: ${terrain === "flat" ? t(locale,"terrainFlat") : label(locale,terrain)}`; }

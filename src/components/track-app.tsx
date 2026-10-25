@@ -6,7 +6,7 @@ import {
   useImperativeHandle,
   type Ref,
 } from "react";
-import { Navigation } from "lucide-react";
+import { Activity, ChevronRight, Footprints, Pause, Play, Square } from "lucide-react";
 import { ActivityShare } from "./activity-share";
 import dynamic from "next/dynamic";
 import {
@@ -27,10 +27,13 @@ import {
   saveActivity,
   saveDraft,
 } from "../lib/activity-store";
-import type { Locale } from "../lib/i18n";
+import { requestPersistence } from "../lib/storage-persistence";
+import { shown, translator, type Locale } from "../lib/i18n";
+import { gpsQualityCopy, trackCopy } from "../lib/copy/track";
+const shownPace = (seconds: number | null) => shown(paceLabel(seconds));
 const RouteMap = dynamic(
   () => import("./tracking-map").then((m) => m.TrackingMap),
-  { ssr: false, loading: () => <p>…</p> },
+  { ssr: false, loading: () => <div className="track-map track-map-loading" /> },
 );
 function download(blob: Blob, name: string) {
   const url = URL.createObjectURL(blob),
@@ -40,26 +43,6 @@ function download(blob: Blob, name: string) {
   a.click();
   setTimeout(() => URL.revokeObjectURL(url), 30000);
 }
-const qualityCopy: Record<string, [string, string]> = {
-  waiting: ["Waiting for GPS…", "بانتظار إشارة GPS…"],
-  good: ["GPS recording", "تسجيل GPS مستمر"],
-  poor: [
-    "Low GPS accuracy · point excluded",
-    "دقة GPS منخفضة · استُبعدت النقطة",
-  ],
-  jump: ["GPS jump excluded", "استُبعدت قفزة في الموقع"],
-  stale: ["Old GPS reading excluded", "استُبعدت قراءة GPS قديمة"],
-  stationary: ["No reliable movement yet", "لم تُرصد حركة موثوقة بعد"],
-  invalid: ["Invalid GPS point excluded", "استُبعدت نقطة GPS غير صالحة"],
-  interrupted: [
-    "Recording interrupted · resume when ready",
-    "انقطع التسجيل · استأنف عندما تكون جاهزًا",
-  ],
-  limit: [
-    "Recording limit reached · finish to save",
-    "بلغ التسجيل الحد الأقصى · أنهِ النشاط لحفظه",
-  ],
-};
 export function TrackApp({
   locale,
   snapshot,
@@ -67,8 +50,8 @@ export function TrackApp({
   onSession,
   preferredActivity = "walking",
   plannedMinutes,
-  openActivityId,
-  onActivityOpened,
+  recapId = null,
+  onRecapChange,
   startRef,
 }: {
   locale: Locale;
@@ -77,12 +60,14 @@ export function TrackApp({
   onSession: (busy: boolean) => void;
   preferredActivity?: ActivityKind;
   plannedMinutes?: number;
-  openActivityId?: string | null;
-  onActivityOpened: (id: null) => void;
+  /** Saved activity recap requested by the route (Back, refresh, deep link). */
+  recapId?: string | null;
+  /** Reports the recap on screen so the route can follow it. */
+  onRecapChange?: (id: string | null) => void;
   startRef?: Ref<() => void>;
 }) {
   const ar = locale === "ar",
-    text = (en: string, arabic: string) => (ar ? arabic : en);
+    c = translator(trackCopy, locale);
   const engine = useRef<ActivityRecorder | null>(null),
     watch = useRef<number | null>(null),
     writes = useRef(Promise.resolve()),
@@ -263,19 +248,54 @@ export function TrackApp({
       return () => cancelAnimationFrame(frame);
     }
   }, [preferredActivity, state]);
+  // Route to recap: open a saved activity once per requested ID (Back, refresh,
+  // deep link), never while a session is live. Local closes are not reopened.
+  const openedFor = useRef<string | null>(null);
   useEffect(() => {
-    if (!openActivityId || state === "recording" || state === "paused") return;
-    const item = history.find((a) => a.id === openActivityId);
+    if (!recapId || state === "recording" || state === "paused") return;
+    if (openedFor.current === recapId) return;
+    const item = history.find((a) => a.id === recapId);
     if (!item) return;
     const frame = requestAnimationFrame(() => {
+      openedFor.current = recapId;
       setSummary(item);
       setSaved(true);
       setShowHistory(false);
       setDeleteConfirm(false);
-      onActivityOpened(null);
     });
     return () => cancelAnimationFrame(frame);
-  }, [openActivityId, history, state, onActivityOpened]);
+  }, [recapId, history, state]);
+  // Back from a saved recap closes it. Unsaved recaps stay so nothing is lost.
+  const previousRecap = useRef(recapId);
+  useEffect(() => {
+    const was = previousRecap.current;
+    previousRecap.current = recapId;
+    if (!recapId) openedFor.current = null;
+    if (!was || recapId || !summary || !saved || saving) return;
+    const frame = requestAnimationFrame(() => {
+      setSummary(null);
+      engine.current = null;
+      setExportConfirm(false);
+      setDeleteConfirm(false);
+      refresh();
+    });
+    return () => cancelAnimationFrame(frame);
+    // Only a change of recapId may close the recap.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [recapId]);
+  const recapChange = useRef(onRecapChange);
+  useEffect(() => {
+    recapChange.current = onRecapChange;
+  }, [onRecapChange]);
+  const summaryId = summary?.state === "finished" ? summary.id : null;
+  const reported = useRef<string | null>(null);
+  useEffect(() => {
+    // Report closes only for a recap this component opened, so a deep link
+    // waiting for history to load is never cleared.
+    if (summaryId === reported.current || (!summaryId && !reported.current)) return;
+    reported.current = summaryId;
+    recapChange.current?.(summaryId);
+  }, [summaryId]);
   function start() {
     if (drafts.length) {
       setNotice("unfinished");
@@ -317,6 +337,8 @@ export function TrackApp({
     try {
       await writes.current;
       await saveActivity(data);
+      // Ask once history exists; browsers that decline keep best-effort storage.
+      void requestPersistence();
       setSaved(true);
       setStorageError(false);
       setHistory(await loadActivities());
@@ -356,152 +378,136 @@ export function TrackApp({
     active && display.currentSpeedMps != null
       ? display.currentSpeedMps * 3.6
       : null;
+  const live = !summary && (active || state === "paused");
+  const kindLabel = (k: ActivityKind) => (k === "walking" ? c("walking") : c("running"));
+  const dateTime = (ms: number) =>
+    new Date(ms).toLocaleString(ar ? "ar-JO-u-nu-latn" : "en-GB", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    });
+  const noticeText =
+    notice === "gps-denied"
+      ? c("gpsDenied")
+      : notice === "wake-unavailable"
+        ? c("wakeUnavailable")
+        : notice === "share-error"
+          ? c("shareError")
+          : notice === "unfinished"
+            ? c("unfinished")
+            : c("gpsInterrupted");
   return (
     <section
       className="track-app"
-      data-session={
-        !summary && (active || state === "paused") ? "live" : "idle"
-      }
-      aria-label={text("VAELORA Track", "تتبّع النشاط")}
+      data-session={live ? "live" : "idle"}
+      aria-label={c("label")}
     >
-      <header className="track-heading">
-        <div>
-          <p className="v2-kicker">
-            {text("Plan · Track · Analyze", "خطّط · تتبّع · حلّل")}
-          </p>
-          <h1>
+      {!live && (
+        <header className="screen-head track-heading">
+          <h1 className="screen-title">
             {summary
-              ? text("Your activity, recorded.", "نشاطك، كما سجّلته.")
-              : text("Move at your rhythm.", "تحرّك بإيقاعك.")}
+              ? summary.activity === "walking"
+                ? c("walkDone")
+                : c("runDone")
+              : c("title")}
           </h1>
-        </div>
-        <button
-          className="v21-quiet"
-          onClick={() => setShowHistory(!showHistory)}
-        >
-          {text("Activity History", "سجل الأنشطة")} ({history.length})
-        </button>
-      </header>
-      <p className="track-privacy">
-        {text(
-          "Your recorded route stays on this device.",
-          "يبقى مسار نشاطك محفوظًا على هذا الجهاز.",
-        )}
-      </p>
-      {storageError && (
-        <p role="alert" className="v21-notice">
-          {text(
-            "Device storage is unavailable or contains an unsupported record. Keep this page open; retry saving or export your completed activity. Existing data was not erased.",
-            "تخزين الجهاز غير متاح أو يحتوي سجلًا غير مدعوم. أبقِ الصفحة مفتوحة، ثم أعد الحفظ أو صدّر النشاط المكتمل. لم نمسح البيانات الموجودة.",
+          {!summary && (
+            <button
+              className="btn btn-secondary btn-sm"
+              aria-expanded={showHistory}
+              onClick={() => setShowHistory(!showHistory)}
+            >
+              {c("history")} <span className="num">{history.length}</span>
+            </button>
           )}
-        </p>
+        </header>
       )}
-      {!online && (
-        <p role="status" className="v21-notice">
-          {text(
-            "Offline · GPS and the local timer can continue. Weather, AI and map tiles need a connection.",
-            "دون اتصال · يمكن استمرار GPS والمؤقت المحلي. الطقس والذكاء الاصطناعي وخلفية الخريطة تحتاج اتصالًا.",
-          )}
-        </p>
-      )}
-      {notice && (
-        <p role="status" className="v21-notice">
-          {notice === "gps-denied"
-            ? text(
-                "Location permission unavailable. Allow location in browser settings, then Resume. The activity is paused.",
-                "إذن الموقع غير متاح. اسمح به في إعدادات المتصفح ثم استأنف. النشاط متوقف مؤقتًا.",
-              )
-            : notice === "wake-unavailable"
-              ? text(
-                  "Keep-screen-on is unavailable. Keep this page visible while recording.",
-                  "إبقاء الشاشة مضاءة غير متاح. أبقِ الصفحة ظاهرة أثناء التسجيل.",
-                )
-              : notice === "share-error"
-                ? text(
-                    "The share card could not be created. Try again; your activity is still saved.",
-                    "تعذر إنشاء بطاقة المشاركة. حاول مجددًا؛ نشاطك ما زال محفوظًا.",
-                  )
-                : notice === "unfinished"
-                  ? text(
-                      "Resume or discard the unfinished activity before starting another one.",
-                      "استأنف النشاط غير المكتمل أو احذفه قبل بدء نشاط جديد.",
-                    )
-                : text(
-                    "GPS signal interrupted. Missing points are not invented; recording resumes with a route gap.",
-                    "انقطعت إشارة GPS. لن نختلق نقاطًا مفقودة؛ يُستأنف المسار مع فجوة.",
-                  )}
-        </p>
-      )}
-      {showHistory && (
-        <section className="v21-panel">
-          <h2>{text("Activity History", "سجل الأنشطة")}</h2>
-          {!history.length && (
-            <p>
-              {text(
-                "Your first walk or run starts here.",
-                "ابدأ هنا أول نشاط مشي أو جري.",
-              )}
+      {(storageError || !online || notice) && (
+        <div className="stack-notices">
+          {storageError && (
+            <p role="alert" className="notice" data-tone="danger">
+              {c("storageError")}
             </p>
           )}
-          <div className="track-history">
-            {history.map((item) => (
-              <button
-                key={item.id}
-                disabled={active || state === "paused"}
-                onClick={() => {
-                  setSummary(item);
-                  setSaved(true);
-                  setShowHistory(false);
-                  setDeleteConfirm(false);
-                }}
-              >
-                <strong>
-                  {item.activity === "walking"
-                    ? text("Walking", "المشي")
-                    : text("Running", "الجري")}{" "}
-                  · {(item.distanceM / 1000).toFixed(2)} {text("km", "كم")}
-                </strong>
-                <span>
-                  {new Date(item.startedAt).toLocaleDateString(
-                    ar ? "ar-JO" : "en-GB",
-                  )}{" "}
-                  · <bdi>{durationLabel(item.activeMs)}</bdi> ·{" "}
-                  <bdi>
-                    {paceLabel(metrics(item).averagePaceSeconds)}{" "}
-                    {text("/km", "/كم")}
-                  </bdi>
-                </span>
-              </button>
-            ))}
-          </div>
+          {!online && (
+            <p role="status" className="notice" data-tone="caution">
+              {c("offline")}
+            </p>
+          )}
+          {notice && (
+            <p role="status" className="notice" data-tone="caution">
+              {noticeText}
+            </p>
+          )}
+        </div>
+      )}
+      {showHistory && !live && (
+        <section className="track-history-panel" aria-label={c("history")}>
+          {!history.length ? (
+            <p className="empty-line">{c("historyEmpty")}</p>
+          ) : (
+            <div className="rows track-history">
+              {history.map((item) => (
+                <button
+                  key={item.id}
+                  className="row-btn"
+                  disabled={active || state === "paused"}
+                  onClick={() => {
+                    setSummary(item);
+                    setSaved(true);
+                    setShowHistory(false);
+                    setDeleteConfirm(false);
+                  }}
+                >
+                  <span className="tag" data-tone={item.activity}>
+                    {kindLabel(item.activity)}
+                  </span>
+                  <span className="row-main">
+                    <span className="row-title num">
+                      <bdi>
+                        {(item.distanceM / 1000).toFixed(2)} {c("km")}
+                      </bdi>
+                    </span>
+                    <span className="row-meta">
+                      {new Date(item.startedAt).toLocaleDateString(ar ? "ar-JO-u-nu-latn" : "en-GB")}
+                      {" · "}
+                      <bdi className="num">{durationLabel(item.activeMs)}</bdi>
+                      {" · "}
+                      <bdi className="num">
+                        {shownPace(metrics(item).averagePaceSeconds)} {c("perKm")}
+                      </bdi>
+                    </span>
+                  </span>
+                  <ChevronRight className="row-chevron flip-rtl" aria-hidden />
+                </button>
+              ))}
+            </div>
+          )}
         </section>
       )}
       {!summary && drafts.length === 0 && (!a || state === "idle" || state === "finished") && (
-        <section className="track-ready v21-panel">
-          <div className="v2-segment">
+        <section className="track-ready" aria-labelledby="ready-title">
+          <div className="track-ready-head">
+            <h2 id="ready-title" className="track-ready-title">
+              {c("readyTitle")}
+            </h2>
+            {plannedMinutes && (
+              <span className="tag">{c("planned", { n: plannedMinutes })}</span>
+            )}
+          </div>
+          <p className="track-ready-body">{c("readyBody")}</p>
+          <div className="seg seg-band track-kind-seg" role="group" aria-label={c("label")}>
             {(["walking", "running"] as const).map((k) => (
-              <button
-                key={k}
-                aria-pressed={kind === k}
-                onClick={() => setKind(k)}
-              >
-                {k === "walking"
-                  ? text("Walking", "المشي")
-                  : text("Running", "الجري")}
+              <button key={k} aria-pressed={kind === k} onClick={() => setKind(k)}>
+                {k === "walking" ? <Footprints aria-hidden /> : <Activity aria-hidden />}
+                {kindLabel(k)}
               </button>
             ))}
           </div>
-          <div className="track-ready-orbit" aria-hidden="true">
-            <Navigation size={44} />
-          </div>
-          <h2>{text("A little movement. Yours.", "خطوات بسيطة، تخصّك.")}</h2>
-          <p>
-            {text(
-              "Location draws your route and measures distance. Choose an activity, then start when you’re ready.",
-              "نستخدم الموقع لرسم مسارك وقياس المسافة. اختر نشاطك وابدأ عندما تكون جاهزًا.",
-            )}
-          </p>
-          <label className="track-wake">
+          <label className="check check-band track-wake">
             <input
               type="checkbox"
               checked={keepAwake}
@@ -510,33 +516,30 @@ export function TrackApp({
                 keepAwakeRef.current = e.target.checked;
               }}
             />
-            {text(
-              "Keep screen on, when supported",
-              "إبقاء الشاشة مضاءة، عند توفر الدعم",
-            )}
+            {c("keepAwake")}
           </label>
-          <button className="track-start" onClick={start}>
-            {text("Start Activity", "ابدأ النشاط")}{" "}
-            <span aria-hidden="true">↗</span>
+          <button className="btn btn-course btn-lg btn-block track-start" onClick={start}>
+            <Play aria-hidden />
+            {c("start")}
           </button>
         </section>
       )}
       {!summary && drafts.length > 0 && (!a || state === "finished") && (
-        <section className="v21-panel track-recovery" aria-labelledby="recovery-title">
-          <p className="v2-kicker">{text("CONTINUE WHERE YOU LEFT OFF", "تابع من حيث توقفت")}</p>
-          <h2 id="recovery-title">{text("Unfinished activity found", "عُثر على نشاط غير مكتمل")}</h2>
-          <p>
-            {text(
-              "Recovered at the last local checkpoint. Unobserved time and movement are excluded.",
-              "استُعيد النشاط عند آخر حفظ محلي. لم نحتسب الوقت والحركة غير المسجلين.",
-            )}
-          </p>
+        <section className="panel track-recovery" aria-labelledby="recovery-title">
+          <h2 id="recovery-title" className="section-title">
+            {c("recoveryTitle")}
+          </h2>
+          <p className="section-note">{c("recoveryBody")}</p>
           {drafts.map((d) => (
             <div key={d.id} className="track-actions">
-              <span>
-                <bdi>{durationLabel(d.activeMs)}</bdi>
+              <span className="recovery-meta">
+                <span className="tag" data-tone={d.activity}>
+                  {kindLabel(d.activity)}
+                </span>
+                <bdi className="num">{durationLabel(d.activeMs)}</bdi>
               </span>
               <button
+                className="btn btn-primary"
                 onClick={() => {
                   engine.current = new ActivityRecorder(
                     d.activity,
@@ -549,285 +552,297 @@ export function TrackApp({
                   refresh();
                 }}
               >
-                {text("Resume activity", "استئناف النشاط")}
+                {c("resume")}
               </button>
               <button
+                className="btn btn-ghost"
                 onClick={() => {
-                  if (
-                    window.confirm(
-                      text(
-                        "Delete this unfinished activity from this device?",
-                        "هل تريد حذف هذا النشاط غير المكتمل من الجهاز؟",
-                      ),
-                    )
-                  )
+                  if (window.confirm(c("discardConfirm")))
                     void deleteDraft(d.id)
                       .then(() => loadDrafts())
                       .then(setDrafts)
                       .catch(() => setStorageError(true));
                 }}
               >
-                {text("Discard activity", "حذف النشاط")}
+                {c("discard")}
               </button>
             </div>
           ))}
         </section>
       )}
-      {current && (summary || state === "recording" || state === "paused") && (
-        <div className="track-session" data-recap={!!summary}>
-          {summary && (
-            <h2 className="recap-title">
-              {text("Your activity recap", "ملخص نشاطك")}
-            </h2>
-          )}
-          <section
-            className="track-live"
-            data-state={visualState}
-          >
-            <div className="track-state">
-              <span className={active && !summary ? "recording-dot" : ""} />
-              {summary
-                ? text("Completed", "مكتمل")
-                : visualState === "acquiring"
-                  ? text("GPS acquiring", "جارٍ التقاط إشارة GPS")
+      {current && live && (
+        <div className="track-session" data-recap="false">
+          <section className="track-live" data-state={visualState}>
+            <div className="track-status">
+              <span className="track-state">
+                <span className="state-dot" aria-hidden="true" />
+                {visualState === "acquiring"
+                  ? c("acquiring")
                   : visualState === "degraded"
-                    ? text("GPS degraded", "إشارة GPS ضعيفة")
+                    ? c("degraded")
                     : active
-                      ? text("Recording", "جارٍ التسجيل")
-                      : text("Paused", "متوقف مؤقتًا")}{" "}
-              ·{" "}
-              {current.activity === "walking"
-                ? text("Walking", "المشي")
-                : text("Running", "الجري")}
+                      ? c("recording")
+                      : c("paused")}
+              </span>
+              <span className="track-kind">
+                {kindLabel(current.activity)}
+                {plannedMinutes ? ` · ${c("planned", { n: plannedMinutes })}` : ""}
+              </span>
             </div>
-            {!summary && plannedMinutes && (
-              <p className="track-plan-context">
-                {text(`${plannedMinutes} min plan`, `خطة لمدة ${plannedMinutes} دقيقة`)}
-              </p>
-            )}
-            {summary && (
-              <p>
-                {new Date(current.startedAt).toLocaleString(
-                  ar ? "ar-JO" : "en-GB",
-                )}
-              </p>
-            )}
             <div className="track-timer">
-              <strong data-testid="active-time">
+              <strong data-testid="active-time" className="num">
                 <bdi>{durationLabel(current.activeMs)}</bdi>
               </strong>
-              <span>{text("Active time", "الوقت النشط")}</span>
+              <span className="track-label">{c("activeTime")}</span>
             </div>
-            <div className="track-metrics">
-              <div>
-                <strong data-testid="track-distance">
-                  {(current.distanceM / 1000).toFixed(2)}{" "}
-                  <small>{text("km", "كم")}</small>
+            <div className="track-primary">
+              <div className="track-metric">
+                <strong data-testid="track-distance" className="num">
+                  {(current.distanceM / 1000).toFixed(2)} <small>{c("km")}</small>
                 </strong>
-                <span>
-                  {text("Distance · GPS estimate", "المسافة · تقدير GPS")}
+                <span className="track-label">
+                  {c("distance")} · {c("distanceNote")}
                 </span>
               </div>
-              <div>
-                <strong>
-                  <bdi>{paceLabel(stats?.averagePaceSeconds ?? null)}</bdi>{" "}
-                  <small>{text("/km", "/كم")}</small>
+              <div className="track-metric">
+                <strong className="num">
+                  <bdi>{shownPace(stats?.averagePaceSeconds ?? null)}</bdi> <small>{c("perKm")}</small>
                 </strong>
-                <span>{text("Average pace", "متوسط الوتيرة")}</span>
+                <span className="track-label">{c("avgPace")}</span>
               </div>
-              <div className="track-speed">
-                <strong>
-                  {stats?.averageSpeedKmh?.toFixed(1) ?? "—"}{" "}
-                  <small>{text("km/h", "كم/س")}</small>
-                </strong>
-                <span>{text("Average speed", "متوسط السرعة")}</span>
-              </div>
-              {!summary && (
-                <div className="track-speed">
-                  <strong>
-                    {currentSpeed?.toFixed(1) ?? "—"}{" "}
-                    <small>{text("km/h", "كم/س")}</small>
-                  </strong>
-                  <span>{text("Current speed", "السرعة الحالية")}</span>
-                </div>
-              )}
             </div>
-            {!summary && (
-              <p
-                className="track-gps"
-                role="status"
-                data-quality={active ? display.quality : "paused"}
-              >
-                <span>
-                  {!active
-                    ? text("GPS paused", "تتبّع الموقع متوقف مؤقتًا")
-                    : (qualityCopy[display.quality] ?? qualityCopy.waiting)[
-                        ar ? 1 : 0
-                      ]}{" "}
-                  ·{" "}
-                  {display.accuracy != null
-                    ? `±${Math.round(display.accuracy)} ${text("m", "م")}`
-                    : "—"}
-                </span>
-                <span>
-                  {text("Current pace", "الوتيرة الحالية")}{" "}
+            <dl className="track-secondary">
+              <div>
+                <dt>{c("currentPace")}</dt>
+                <dd className="num">
                   <bdi>
-                    {paceLabel(
-                      currentSpeed && currentSpeed > 0
-                        ? 3600 / currentSpeed
-                        : null,
-                    )}{" "}
-                    {text("/km", "/كم")}
+                    {shownPace(currentSpeed && currentSpeed > 0 ? 3600 / currentSpeed : null)} {c("perKm")}
                   </bdi>
-                </span>
-              </p>
-            )}
+                </dd>
+              </div>
+              <div>
+                <dt>{c("currentSpeed")}</dt>
+                <dd className="num">
+                  {currentSpeed?.toFixed(1) ?? "–"} {c("kmh")}
+                </dd>
+              </div>
+              <div>
+                <dt>{c("avgSpeed")}</dt>
+                <dd className="num">
+                  {stats?.averageSpeedKmh?.toFixed(1) ?? "–"} {c("kmh")}
+                </dd>
+              </div>
+            </dl>
+            <p
+              className="track-gps"
+              role="status"
+              data-quality={active ? display.quality : "paused"}
+            >
+              <span>
+                {!active
+                  ? c("gpsPaused")
+                  : (gpsQualityCopy[display.quality as keyof typeof gpsQualityCopy] ?? gpsQualityCopy.waiting)[
+                      ar ? 1 : 0
+                    ]}
+              </span>
+              <span className="num">
+                {display.accuracy != null
+                  ? `±${Math.round(display.accuracy)} ${c("m")}`
+                  : "–"}
+              </span>
+            </p>
           </section>
           <RouteMap
             points={current.points}
             revision={revision}
-            finished={!!summary}
+            finished={false}
             locale={locale}
           />
-          {!summary && (
-            <div className="track-controls">
-              <button onClick={active ? pause : resume}>
-                {active
-                  ? text("Pause", "إيقاف مؤقت")
-                  : text("Resume", "استئناف")}
+          <div className="track-controls">
+            <button
+              className={`btn btn-lg ${active ? "btn-band" : "btn-course"}`}
+              onClick={active ? pause : resume}
+            >
+              {active ? <Pause aria-hidden /> : <Play aria-hidden />}
+              {active ? c("pause") : c("resumeShort")}
+            </button>
+            <button className="btn btn-lg btn-band" onClick={() => void finish()}>
+              <Square aria-hidden />
+              {c("finish")}
+            </button>
+          </div>
+        </div>
+      )}
+      {current && summary && (
+        <div className="track-session recap" data-recap="true">
+          <p className="recap-title">
+            {c("recapTitle")} · {dateTime(current.startedAt)}
+          </p>
+          <RouteMap
+            points={current.points}
+            revision={revision}
+            finished
+            locale={locale}
+          />
+          <section className="track-live recap-metrics" data-state="finished">
+            <div className="recap-hero">
+              <strong data-testid="track-distance" className="num">
+                {(current.distanceM / 1000).toFixed(2)}
+              </strong>
+              <span className="recap-hero-unit">{c("km")}</span>
+              <span className="tag" data-tone={current.activity}>
+                {kindLabel(current.activity)}
+              </span>
+            </div>
+            <div className="stats recap-stats">
+              <div className="stat">
+                <span className="stat-value" data-testid="active-time">
+                  <bdi>{durationLabel(current.activeMs)}</bdi>
+                </span>
+                <span className="stat-label">{c("activeTime")}</span>
+              </div>
+              <div className="stat">
+                <span className="stat-value">
+                  <bdi>{shownPace(stats?.averagePaceSeconds ?? null)}</bdi>
+                  <span className="stat-unit">{c("perKm")}</span>
+                </span>
+                <span className="stat-label">{c("avgPace")}</span>
+              </div>
+              <div className="stat">
+                <span className="stat-value">
+                  {stats?.averageSpeedKmh?.toFixed(1) ?? "–"}
+                  <span className="stat-unit">{c("kmh")}</span>
+                </span>
+                <span className="stat-label">{c("avgSpeed")}</span>
+              </div>
+            </div>
+          </section>
+          <section className="recap-conditions" aria-labelledby="conditions-title">
+            <h2 id="conditions-title" className="mini-title">
+              {c("conditions")}
+            </h2>
+            {summary.conditions ? (
+              <div className="recap-conditions-body">
+                {summary.conditions.score != null && (
+                  <span
+                    className="score-chip num"
+                    data-tone={summary.conditions.score >= 80 ? "good" : summary.conditions.score >= 60 ? "fair" : "poor"}
+                  >
+                    {summary.conditions.score}
+                  </span>
+                )}
+                <div>
+                  <p className="num">
+                    <bdi>
+                      {c("conditionsLine", {
+                        area: summary.conditions.areaName,
+                        temp: summary.conditions.temperatureC ?? "–",
+                        wind: summary.conditions.windKmh ?? "–",
+                      })}
+                    </bdi>
+                  </p>
+                  <p className="fine">{c("conditionsNote")}</p>
+                </div>
+              </div>
+            ) : (
+              <p className="section-note">{c("noConditions")}</p>
+            )}
+          </section>
+          <p
+            role="status"
+            className="save-status"
+            data-saved={saved && !saving ? "true" : "false"}
+          >
+            {saving ? c("saving") : saved ? c("saved") : c("notSaved")}
+          </p>
+          <div className="track-actions recap-actions">
+            {!saved && (
+              <button
+                className="btn btn-primary"
+                onClick={() => void persist(summary)}
+                disabled={saving}
+              >
+                {c("retrySave")}
               </button>
-              <button onClick={() => void finish()}>
-                {text("Finish", "إنهاء النشاط")}
+            )}
+            <button
+              className="btn btn-secondary"
+              disabled={!saved || saving}
+              onClick={() => {
+                setSummary(null);
+                engine.current = null;
+                setExportConfirm(false);
+                setDeleteConfirm(false);
+                refresh();
+              }}
+            >
+              {c("newActivity")}
+            </button>
+            <button
+              className="btn btn-secondary"
+              disabled={!summary.points.length}
+              aria-expanded={exportConfirm}
+              onClick={() => setExportConfirm(!exportConfirm)}
+            >
+              {c("gpx")}
+            </button>
+            <button
+              className="btn btn-ghost"
+              disabled={!saved || saving}
+              aria-expanded={deleteConfirm}
+              onClick={() => setDeleteConfirm(!deleteConfirm)}
+            >
+              {c("delete")}
+            </button>
+          </div>
+          {exportConfirm && (
+            <div className="notice" data-tone="caution">
+              <p>{c("gpxWarning")}</p>
+              <button
+                className="btn btn-primary btn-sm"
+                onClick={() => {
+                  download(
+                    new Blob([exportGPX(summary)], {
+                      type: "application/gpx+xml",
+                    }),
+                    `vaelora-${summary.id}.gpx`,
+                  );
+                  setExportConfirm(false);
+                }}
+              >
+                {c("exportRoute")}
               </button>
             </div>
           )}
-          {summary && (
-            <section className="v21-panel track-summary">
-              <h2>{text("Conditions at start", "الظروف عند البداية")}</h2>
-              {summary.conditions ? (
-                <p>
-                  {summary.conditions.areaName} ·{" "}
-                  {summary.conditions.temperatureC ?? "—"}°C ·{" "}
-                  {text("Wind", "الرياح")} {summary.conditions.windKmh ?? "—"}{" "}
-                  {text("km/h", "كم/س")} · VAELORA{" "}
-                  {summary.conditions.score ?? "—"}/100
-                  <br />
-                  <small>
-                    {text(
-                      "Area forecast snapshot, not measured along your route.",
-                      "لقطة توقعات المنطقة، وليست قياسات على طول المسار.",
-                    )}
-                  </small>
-                </p>
-              ) : (
-                <p>
-                  {text(
-                    "No weather snapshot was available. Your recorded metrics are unaffected.",
-                    "لم تتوفر لقطة للطقس. لا يؤثر ذلك على مقاييس نشاطك المسجلة.",
-                  )}
-                </p>
-              )}
-              <p role="status">
-                {saving
-                  ? text("Saving on this device…", "جارٍ الحفظ على الجهاز…")
-                  : saved
-                    ? text("Saved on this device", "محفوظ على هذا الجهاز")
-                    : text("Not saved yet", "لم يُحفظ بعد")}
-              </p>
-              <div className="track-actions">
-                {!saved && (
-                  <button
-                    onClick={() => void persist(summary)}
-                    disabled={saving}
-                  >
-                    {text("Retry save", "إعادة الحفظ")}
-                  </button>
-                )}
-                <button
-                  disabled={!summary.points.length}
-                  onClick={() => setExportConfirm(!exportConfirm)}
-                >
-                  GPX ↓
-                </button>
-                <button
-                  disabled={!saved || saving}
-                  onClick={() => {
-                    setSummary(null);
-                    engine.current = null;
-                    setExportConfirm(false);
-                    setDeleteConfirm(false);
-                    refresh();
-                  }}
-                >
-                  {text("New activity", "نشاط جديد")}
-                </button>
-                <button
-                  disabled={!saved || saving}
-                  onClick={() => setDeleteConfirm(!deleteConfirm)}
-                >
-                  {text("Delete activity", "حذف النشاط")}
-                </button>
-              </div>
-              <ActivityShare activity={summary} locale={locale} />
-              {exportConfirm && (
-                <div className="v21-notice">
-                  <p>
-                    {text(
-                      "GPX contains precise location history. Share it only with people you trust.",
-                      "يتضمن GPX سجل مواقع دقيقًا. شاركه فقط مع من تثق بهم.",
-                    )}
-                  </p>
-                  <button
-                    onClick={() => {
-                      download(
-                        new Blob([exportGPX(summary)], {
-                          type: "application/gpx+xml",
-                        }),
-                        `vaelora-${summary.id}.gpx`,
-                      );
-                      setExportConfirm(false);
-                    }}
-                  >
-                    {text("Export precise route", "تصدير المسار الدقيق")}
-                  </button>
-                </div>
-              )}
-              {deleteConfirm && (
-                <div className="v21-notice">
-                  <p>
-                    {text(
-                      "Permanently delete this activity from this device?",
-                      "هل تريد حذف هذا النشاط نهائيًا من الجهاز؟",
-                    )}
-                  </p>
-                  <button
-                    onClick={() =>
-                      void deleteActivity(summary.id)
-                        .then(() => loadActivities())
-                        .then((h) => {
-                          setHistory(h);
-                          setSummary(null);
-                          engine.current = null;
-                          setDeleteConfirm(false);
-                          refresh();
-                        })
-                        .catch(() => setStorageError(true))
-                    }
-                  >
-                    {text("Confirm deletion", "تأكيد الحذف")}
-                  </button>
-                </div>
-              )}
-            </section>
+          {deleteConfirm && (
+            <div className="notice" data-tone="danger">
+              <p>{c("deleteConfirm")}</p>
+              <button
+                className="btn btn-primary btn-sm"
+                onClick={() =>
+                  void deleteActivity(summary.id)
+                    .then(() => loadActivities())
+                    .then((h) => {
+                      setHistory(h);
+                      setSummary(null);
+                      engine.current = null;
+                      setDeleteConfirm(false);
+                      refresh();
+                    })
+                    .catch(() => setStorageError(true))
+                }
+              >
+                {c("confirmDelete")}
+              </button>
+              <button className="btn btn-ghost btn-sm" onClick={() => setDeleteConfirm(false)}>
+                {c("cancel")}
+              </button>
+            </div>
           )}
+          <ActivityShare activity={summary} locale={locale} />
         </div>
       )}
-      <p className="track-limit">
-        {text(
-          "Keep this page visible. Reliable background GPS while the screen is locked is not guaranteed in a Web/PWA. Leaving the app pauses recording; resume explicitly when you return. Drafts save locally every 5 seconds.",
-          "أبقِ الصفحة ظاهرة. لا يُضمن استمرار GPS في الخلفية عند قفل الشاشة في تطبيقات الويب. مغادرة التطبيق توقف التسجيل مؤقتًا؛ استأنف عند العودة. يُحفظ النشاط محليًا كل 5 ثوانٍ.",
-        )}
-      </p>
+      {!summary && <p className="fine track-limit">{c("limits")}</p>}
     </section>
   );
 }

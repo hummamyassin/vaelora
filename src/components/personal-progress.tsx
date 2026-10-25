@@ -1,9 +1,21 @@
+import { ChevronRight } from "lucide-react";
 import { personalProgress } from "../domain/tracking/progress";
 import {
   durationLabel,
   paceLabel,
   type RecordedActivity,
 } from "../domain/tracking/activity";
+import { shown, arabicCount, translator, type Locale } from "../lib/i18n";
+import { progressCopy } from "../lib/copy/profile";
+const shownPace = (seconds: number | null) => shown(paceLabel(seconds));
+
+const km = (m: number) => (m / 1000).toFixed(2);
+const activityCount = (locale: Locale, n: number) =>
+  locale === "ar"
+    ? `${n} ${arabicCount(n, ["نشاط", "نشاطان", "أنشطة", "نشاطًا"])}`
+    : `${n} ${n === 1 ? "activity" : "activities"}`;
+
+/** Weekly progress from finished local activities only. No streaks or badges. */
 export function PersonalProgress({
   activities,
   locale,
@@ -11,87 +23,119 @@ export function PersonalProgress({
   mode = "full",
 }: {
   activities: RecordedActivity[];
-  locale: "en" | "ar";
+  locale: Locale;
   onOpen?: (id: string) => void;
   mode?: "full" | "bests";
 }) {
   const p = personalProgress(activities),
-    ar = locale === "ar",
-    t = (en: string, a: string) => (ar ? a : en),
-    activityNoun = (count: number) =>
-      !ar ? (count === 1 ? "Activity" : "Activities") : count === 1 ? "نشاط" : count === 2 ? "نشاطان" : count <= 10 ? "أنشطة" : "نشاطًا";
+    c = translator(progressCopy, locale),
+    ar = locale === "ar";
+  const sports = (["walking", "running"] as const).map((kind) => ({
+    kind,
+    ...p[kind],
+  }));
+  if (mode === "bests")
+    return (
+      <section className="progress-bests" aria-labelledby="bests-title">
+        <h3 className="mini-title" id="bests-title">{c("bests")}</h3>
+        <div className="sport-grid">
+          {sports.map((s) => (
+            <div className="sport-cell" data-kind={s.kind} key={s.kind}>
+              <span className="sport-name">{c(s.kind)}</span>
+              <span className="sport-line">
+                {s.longest ? c("longest", { km: km(s.longest.distanceM) }) : c("noLongest")}
+              </span>
+            </div>
+          ))}
+        </div>
+      </section>
+    );
+  const maxDistance = Math.max(1, p.walking.distanceM, p.running.distanceM);
   return (
-    <section className="personal-progress">
-      <h2>{mode === "bests" ? t("Your best efforts", "أفضل أنشطتك") : t("This week", "هذا الأسبوع")}</h2>
+    <section className="section progress personal-progress" aria-labelledby="progress-title">
+      <div className="section-head">
+        <h2 className="section-title" id="progress-title">{c("thisWeek")}</h2>
+        <span className="section-note">{c("weekNote")}</span>
+      </div>
       {!activities.length ? (
-        <p>
-          {t(
-            "Your first walk is a fresh start. Finish an activity to see your progress here — only on this device.",
-            "خطوتك الأولى بداية جديدة. أكمل نشاطًا لتظهر هنا إحصاءات تقدمك، على هذا الجهاز فقط.",
-          )}
-        </p>
+        <div className="empty">
+          <h3>{c("emptyTitle")}</h3>
+          <p>{c("emptyBody")}</p>
+        </div>
       ) : (
         <>
-          {mode === "full" && <div className="progress-metrics">
-            <div>
-              <b>{p.week.count}</b>
-              <span>{activityNoun(p.week.count)}</span>
+          <div className="stats progress-metrics">
+            <div className="stat">
+              <span className="stat-value">{p.week.count}</span>
+              <span className="stat-label">{c("activities")}</span>
             </div>
-            <div>
-              <b>{(p.week.distanceM / 1000).toFixed(2)}</b>
-              <span>{t("Kilometres", "كيلومترات")}</span>
+            <div className="stat">
+              <span className="stat-value">
+                {km(p.week.distanceM)}
+                <span className="stat-unit">{c("km")}</span>
+              </span>
+              <span className="stat-label">{c("distance")}</span>
             </div>
-            <div>
-              <b>{durationLabel(p.week.activeMs)}</b>
-              <span>{t("Active time", "الوقت النشط")}</span>
+            <div className="stat">
+              <span className="stat-value">
+                <bdi>{durationLabel(p.week.activeMs)}</bdi>
+              </span>
+              <span className="stat-label">{c("activeTime")}</span>
             </div>
-          </div>}
-          {mode === "full" && p.previous && (
-            <p>
-              {t("Previous full week", "الأسبوع السابق كاملًا")}:{" "}
-              {p.previous.count} {activityNoun(p.previous.count).toLocaleLowerCase()} ·{" "}
-              {(p.previous.distanceM / 1000).toFixed(2)} {t("km", "كم")} ·{" "}
-              {durationLabel(p.previous.activeMs)}
-            </p>
-          )}
-          <div className="progress-sports">
-            {(["walking", "running"] as const).map((kind) => (
-              <div key={kind}>
-                <h3>
-                  {kind === "walking"
-                    ? t("Walking", "المشي")
-                    : t("Running", "الجري")}
-                </h3>
-                {mode === "full" && <p className="progress-distance"><bdi>{(p[kind].distanceM / 1000).toFixed(2)}</bdi> {t("km this week", "كم هذا الأسبوع")}</p>}
-                {mode === "full" && p[kind].paceSeconds !== null && (
-                  <p>
-                    {t("Weekly average pace", "متوسط الوتيرة الأسبوعي")}:{" "}
-                    <bdi>
-                      {paceLabel(p[kind].paceSeconds)} /{t("km", "كم")}
-                    </bdi>
-                  </p>
-                )}
-                {p[kind].longest ? (
-                  <p>
-                    {t("Longest this month", "الأطول هذا الشهر")}:{" "}
-                    {(p[kind].longest!.distanceM / 1000).toFixed(2)}{" "}
-                    {t("km", "كم")}
-                  </p>
-                ) : (
-                  <small>
-                    {t(
-                      "No eligible distance recorded this month.",
-                      "لا توجد مسافة مؤهلة مسجلة هذا الشهر.",
-                    )}
-                  </small>
-                )}
+          </div>
+          <div className="sport-bars">
+            {sports.map((s) => (
+              <div className="sport-bar" data-kind={s.kind} key={s.kind}>
+                <div className="sport-bar-head">
+                  <span className="sport-name">{c(s.kind)}</span>
+                  <span className="num">
+                    <bdi>{c("weekDistance", { km: km(s.distanceM) })}</bdi>
+                  </span>
+                </div>
+                <span className="sport-bar-track" aria-hidden="true">
+                  <span style={{ width: s.distanceM > 0 ? `max(6px, ${(s.distanceM / maxDistance) * 100}%)` : 0 }} />
+                </span>
+                <span className="sport-line">
+                  {s.paceSeconds !== null && (
+                    <bdi>{c("avgPace", { pace: shownPace(s.paceSeconds) })}</bdi>
+                  )}
+                  {s.paceSeconds !== null && " · "}
+                  {s.longest ? c("longest", { km: km(s.longest.distanceM) }) : c("noLongest")}
+                </span>
               </div>
             ))}
           </div>
-          {mode === "full" && p.recent && onOpen && (
-            <button onClick={() => onOpen(p.recent!.id)}>
-              {t("Revisit your latest activity", "راجع نشاطك الأخير")} ↗
-            </button>
+          {p.previous && (
+            <p className="section-note">
+              {c("previous", {
+                count: activityCount(locale, p.previous.count),
+                km: km(p.previous.distanceM),
+                time: durationLabel(p.previous.activeMs),
+              })}
+            </p>
+          )}
+          {p.recent && onOpen && (
+            <div className="rows progress-recent">
+              <button className="row-btn" onClick={() => onOpen(p.recent!.id)}>
+                <span className="row-main">
+                  <span className="row-meta">{c("latest")}</span>
+                  <span className="row-title">
+                    {c(p.recent.activity)} ·{" "}
+                    {new Date(p.recent.startedAt).toLocaleDateString(ar ? "ar-JO-u-nu-latn" : "en-GB", {
+                      weekday: "short",
+                      day: "numeric",
+                      month: "short",
+                    })}
+                  </span>
+                </span>
+                <span className="row-end num">
+                  <bdi>
+                    {km(p.recent.distanceM)} {c("km")}
+                  </bdi>
+                </span>
+                <ChevronRight className="row-chevron flip-rtl" aria-hidden />
+              </button>
+            </div>
           )}
         </>
       )}

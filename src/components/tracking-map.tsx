@@ -4,7 +4,8 @@ import * as ml from "../lib/maplibre";
 import type { Feature } from "geojson";
 import type { GPSPoint } from "../domain/tracking/activity";
 import { routeSegments } from "../domain/tracking/export";
-import type { Locale } from "../lib/i18n";
+import { translator, type Locale } from "../lib/i18n";
+import { trackCopy } from "../lib/copy/track";
 import {useMapLabels} from "./use-map-labels";
 export function TrackingMap({
   points,
@@ -23,7 +24,7 @@ export function TrackingMap({
   const [follow, setFollow] = useState(true),
     [ready, setReady] = useState(false),
     [failed, setFailed] = useState(false);
-  const ar = locale === "ar";
+  const c = translator(trackCopy, locale);
   useMapLabels(container,locale);
   useEffect(() => {
     let map: ml.Map;
@@ -91,10 +92,10 @@ export function TrackingMap({
             color("--route-start"),
             "finish",
             color("--route-finish"),
-            color("--route-outline"),
+            color("--route"),
           ],
           "circle-stroke-width": 3,
-          "circle-stroke-color": color("--on-strong"),
+          "circle-stroke-color": color("--route-outline"),
         },
       });
       setReady(true);
@@ -156,10 +157,7 @@ export function TrackingMap({
     });
   }, [points, revision, finished, ready, follow]);
   return (
-    <div
-      className="track-map"
-      aria-label={ar ? "مسار GPS المسجل" : "Recorded GPS route"}
-    >
+    <div className="track-map" role="group" aria-label={c("routeLabel")}>
       <div ref={container} className="track-map-canvas" />
       {!finished && (
         <button
@@ -170,27 +168,16 @@ export function TrackingMap({
             setFollow(!follow);
           }}
         >
-          {ar
-            ? follow
-              ? "متابعة الموقع"
-              : "متابعة موقعي"
-            : follow
-              ? "Following position"
-              : "Follow position"}
+          <span className="track-follow-dot" aria-hidden="true" />
+          {follow ? c("following") : c("follow")}
         </button>
       )}
       <span className="track-map-key">
-        {ar
-          ? "● البداية · ● الموقع / النهاية · دون مطابقة للشوارع"
-          : "● Start · ● Position / finish · No street snapping"}
+        <span><i data-kind="start" />{c("mapStart")}</span>
+        <span><i data-kind="end" />{c("mapPosition")}</span>
+        <span className="track-map-key-text">{c("mapNoSnap")}</span>
       </span>
-      {failed && (
-        <p className="track-map-error">
-          {ar
-            ? "خلفية الخريطة غير متاحة. يبقى التسجيل المحلي مستمرًا."
-            : "Map background unavailable. Local recording continues."}
-        </p>
-      )}
+      {failed && <p className="track-map-error">{c("mapError")}</p>}
     </div>
   );
 }

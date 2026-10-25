@@ -1,14 +1,19 @@
 "use client";
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
+import { ArrowUpRight, RefreshCw, Trash2 } from "lucide-react";
 import { weatherAreas } from "../data/weather-areas";
 import { distanceKm, type Coordinates } from "../lib/geography";
-import type { Locale } from "../lib/i18n";
+import { numberText, translator, type Locale } from "../lib/i18n";
+import { toolsCopy } from "../lib/copy/tools";
 import type { PlanningResponse } from "../server/recommendations/planning";
 import { parseSavedAreas, type SavedArea } from "../lib/saved-areas";
 const ScoreMap = dynamic(() => import("./score-map").then((m) => m.ScoreMap), {
   ssr: false,
 });
+const tone = (s: number | null | undefined) =>
+  s == null ? "unknown" : s >= 80 ? "good" : s >= 60 ? "fair" : "poor";
+
 export function PlanningTools({
   mode,
   locale,
@@ -25,7 +30,7 @@ export function PlanningTools({
   onSelect: (id: string) => void;
 }) {
   const ar = locale === "ar",
-    text = (e: string, a: string) => (ar ? a : e);
+    c = translator(toolsCopy, locale);
   const [ids, setIds] = useState([
       areaId,
       weatherAreas.find((a) => a.id !== areaId)!.id,
@@ -89,274 +94,224 @@ export function PlanningTools({
     }
   }
   const clock = (s: string) =>
-    new Date(s).toLocaleTimeString(ar ? "ar-JO" : "en-GB", {
+    new Date(s).toLocaleTimeString(ar ? "ar-JO-u-nu-latn" : "en-GB", {
       timeZone: "Asia/Amman",
       hour: "2-digit",
       minute: "2-digit",
       hour12: false,
     });
+  const areaLabel = (id: string) => weatherAreas.find((a) => a.id === id)!.name[locale];
+  const title = mode === "compare" ? c("compare") : mode === "map" ? c("map") : mode === "outlook" ? c("outlook") : c("saved");
+  const note =
+    mode === "compare" ? c("compareNote") : mode === "map" ? c("mapNote") : mode === "outlook" ? c("outlookNote") : c("savedNote");
   return (
-    <section className="planning-tools" data-mode={mode}>
-      <header>
-        <p className="v2-kicker">
-          {text("MORE ROOM TO MOVE", "خيارات أوسع للحركة")}
-        </p>
-        <h1>
-          {mode === "compare"
-            ? text("Compare areas", "مقارنة المناطق")
-            : mode === "map"
-              ? text("Scores on the map", "المؤشرات على الخريطة")
-              : mode === "outlook"
-                ? text("Your next three days", "أيامك الثلاثة المقبلة")
-                : text("Your saved areas", "مناطقك المحفوظة")}
-        </h1>
+    <section className="planning-tools" data-mode={mode} aria-labelledby="tools-title">
+      <header className="screen-head tools-head">
+        <div>
+          <h1 className="screen-title" id="tools-title">
+            {title}
+          </h1>
+          <p className="screen-lede">{note}</p>
+        </div>
       </header>
       {mode === "saved" ? (
-        <section className="v21-panel">
-          <p>
-            {text(
-              "Save a supported area, not your exact GPS location.",
-              "احفظ منطقة مدعومة، وليس موقع GPS الدقيق.",
-            )}
-          </p>
-          <label>
-            {text("Label for selected area", "تسمية المنطقة المختارة")}
-            <input
-              value={name}
-              maxLength={40}
-              onChange={(e) => setName(e.target.value)}
-              placeholder={text(
-                "Home, work, favorite…",
-                "المنزل، العمل، المفضلة…",
-              )}
-            />
-          </label>
-          <button
-            className="v21-primary"
-            onClick={() => {
+        <section className="saved-tool">
+          <form
+            className="saved-form"
+            onSubmit={(e) => {
+              e.preventDefault();
               save([
                 ...saved.filter((s) => s.areaId !== areaId),
-                {
-                  areaId,
-                  label:
-                    name.trim() ||
-                    weatherAreas.find((a) => a.id === areaId)!.name[locale],
-                },
+                { areaId, label: name.trim() || areaLabel(areaId) },
               ]);
               setName("");
             }}
           >
-            {text("Save", "حفظ")} ·{" "}
-            {weatherAreas.find((a) => a.id === areaId)!.name[locale]}
-          </button>
+            <label className="field">
+              {c("label", { area: areaLabel(areaId) })}
+              <input
+                value={name}
+                maxLength={40}
+                onChange={(e) => setName(e.target.value)}
+                placeholder={c("labelPlaceholder")}
+              />
+            </label>
+            <button className="btn btn-primary" type="submit">
+              {c("save", { area: areaLabel(areaId) })}
+            </button>
+          </form>
           {storageError && (
-            <p role="alert">
-              {text(
-                "Saved areas could not be read or saved. Existing data was not erased.",
-                "تعذرت قراءة المناطق المحفوظة أو حفظها. لم نمسح البيانات الموجودة.",
-              )}
+            <p role="alert" className="notice" data-tone="danger">
+              {c("storageError")}
             </p>
           )}
-          {!saved.length && (
-            <p>{text("No saved areas yet.", "لا توجد مناطق محفوظة بعد.")}</p>
-          )}
-          {saved.map((s) => (
-            <div className="saved-area" key={s.areaId}>
-              <button onClick={() => onSelect(s.areaId)}>
-                <strong>{s.label}</strong>
-                <span>
-                  {weatherAreas.find((a) => a.id === s.areaId)!.name[locale]}
-                </span>
-              </button>
-              <label>
-                <span className="sr-only">{text("Rename", "إعادة تسمية")}</span>
-                <input
-                  aria-label={text("Rename ", "إعادة تسمية ") + s.label}
-                  defaultValue={s.label}
-                  maxLength={40}
-                  onBlur={(e) => {
-                    if (e.target.value.trim())
-                      save(
-                        saved.map((x) =>
-                          x.areaId === s.areaId
-                            ? { ...x, label: e.target.value.trim() }
-                            : x,
-                        ),
-                      );
-                  }}
-                />
-              </label>
-              <button
-                onClick={() => save(saved.filter((x) => x.areaId !== s.areaId))}
-              >
-                {text("Remove", "إزالة")}
-              </button>
+          {!saved.length ? (
+            <p className="empty-line">{c("none")}</p>
+          ) : (
+            <div className="rows">
+              {saved.map((s) => (
+                <div className="row saved-area" key={s.areaId}>
+                  <button className="row-main saved-open" onClick={() => onSelect(s.areaId)}>
+                    <span className="row-title">{s.label}</span>
+                    <span className="row-meta">{areaLabel(s.areaId)}</span>
+                  </button>
+                  <label className="saved-rename">
+                    <span className="sr-only">{c("rename", { label: s.label })}</span>
+                    <input
+                      className="input"
+                      aria-label={c("rename", { label: s.label })}
+                      defaultValue={s.label}
+                      maxLength={40}
+                      onBlur={(e) => {
+                        if (e.target.value.trim())
+                          save(
+                            saved.map((x) =>
+                              x.areaId === s.areaId ? { ...x, label: e.target.value.trim() } : x,
+                            ),
+                          );
+                      }}
+                    />
+                  </label>
+                  <button
+                    className="icon-btn"
+                    aria-label={`${c("remove")} ${s.label}`}
+                    onClick={() => save(saved.filter((x) => x.areaId !== s.areaId))}
+                  >
+                    <Trash2 aria-hidden size={18} />
+                  </button>
+                </div>
+              ))}
             </div>
-          ))}
+          )}
         </section>
       ) : (
         <>
-          {mode === "compare" && (
-            <fieldset className="compare-select">
-              <legend>
-                {text(
-                  "Choose two or three areas",
-                  "اختر منطقتين أو ثلاث مناطق",
-                )}
-              </legend>
-              {ids.map((id, i) => (
-                <label key={i}>
-                  {text("Area", "المنطقة")} {i + 1}
-                  <select
-                    value={id}
-                    onChange={(e) =>
-                      setIds((old) =>
-                        old.map((v, j) => (i === j ? e.target.value : v)),
-                      )
-                    }
-                  >
-                    {weatherAreas
-                      .filter((a) => a.id === id || !ids.includes(a.id))
-                      .map((a) => (
-                        <option key={a.id} value={a.id}>
-                          {a.name[locale]}
-                        </option>
-                      ))}
-                  </select>
-                </label>
-              ))}
-              <button
-                onClick={() =>
-                  setIds((old) =>
-                    old.length === 3
-                      ? old.slice(0, 2)
-                      : [
-                          ...old,
-                          weatherAreas.find((a) => !old.includes(a.id))!.id,
-                        ],
-                  )
-                }
-              >
-                {ids.length === 3
-                  ? text("Remove third area", "إزالة المنطقة الثالثة")
-                  : text("Add third area", "إضافة منطقة ثالثة")}
-              </button>
-            </fieldset>
-          )}
-          <div className="v2-segment">
-            {(["walking", "running"] as const).map((a) => (
-              <button
-                key={a}
-                aria-pressed={a === activity}
-                onClick={() => setActivity(a)}
-              >
-                {a === "walking"
-                  ? text("Walking", "المشي")
-                  : text("Running", "الجري")}
-              </button>
-            ))}
-          </div>
-          <p className="v21-muted">
-            {text(
-              mode === "map"
-                ? "Area forecasts, not street-level conditions. Zoom in for nearby areas; select a score to plan."
-                : "Current conditions today; best outing windows for the days ahead.",
-              mode === "map"
-                ? "توقعات للمناطق، وليست لكل شارع. كبّر الخريطة للمناطق المتقاربة، واختر مؤشرًا للتخطيط."
-                : "ظروف الساعة الحالية لليوم، وأفضل فترات الخروج للأيام المقبلة.",
+          <div className="tools-controls">
+            {mode === "compare" && (
+              <fieldset className="compare-select">
+                <legend className="sr-only">{c("chooseAreas")}</legend>
+                {ids.map((id, i) => (
+                  <label className="field" key={i}>
+                    {c("area", { n: i + 1 })}
+                    <select
+                      value={id}
+                      onChange={(e) => setIds((old) => old.map((v, j) => (i === j ? e.target.value : v)))}
+                    >
+                      {weatherAreas
+                        .filter((a) => a.id === id || !ids.includes(a.id))
+                        .map((a) => (
+                          <option key={a.id} value={a.id}>
+                            {a.name[locale]}
+                          </option>
+                        ))}
+                    </select>
+                  </label>
+                ))}
+                <button
+                  type="button"
+                  className="btn btn-ghost btn-sm"
+                  onClick={() =>
+                    setIds((old) =>
+                      old.length === 3
+                        ? old.slice(0, 2)
+                        : [...old, weatherAreas.find((a) => !old.includes(a.id))!.id],
+                    )
+                  }
+                >
+                  {ids.length === 3 ? c("removeThird") : c("addThird")}
+                </button>
+              </fieldset>
             )}
-          </p>
+            <div className="seg" role="group" aria-label={c("walking")}>
+              {(["walking", "running"] as const).map((a) => (
+                <button key={a} aria-pressed={a === activity} onClick={() => setActivity(a)}>
+                  {a === "walking" ? c("walking") : c("running")}
+                </button>
+              ))}
+            </div>
+          </div>
           {!data && !error && (
-            <p role="status">
-              {text("Checking forecasts…", "جارٍ فحص التوقعات…")}
-            </p>
+            <div className="compare-grid" role="status" aria-label={c("checking")}>
+              {[0, 1].map((i) => (
+                <span className="skeleton skeleton-card" key={i} />
+              ))}
+            </div>
           )}
           {error && (
-            <div role="alert">
-              <p>
-                {text(
-                  "Forecasts unavailable. Try again when connected.",
-                  "التوقعات غير متاحة. حاول مجددًا عند الاتصال.",
-                )}
-              </p>
-              <button onClick={() => setRetry((n) => n + 1)}>
-                {text("Try again", "حاول مجددًا")}
+            <div role="alert" className="notice" data-tone="danger">
+              <p>{c("failed")}</p>
+              <button className="btn btn-secondary btn-sm" onClick={() => setRetry((n) => n + 1)}>
+                <RefreshCw aria-hidden />
+                {c("tryAgain")}
               </button>
             </div>
           )}
           {data && mode === "map" && (
-            <ScoreMap
-              selectedAreaId={areaId}
-              rows={data.rows}
-              activity={activity}
-              locale={locale}
-              onSelect={onSelect}
-            />
+            <div className="map-stage">
+              <ScoreMap
+                selectedAreaId={areaId}
+                rows={data.rows}
+                activity={activity}
+                locale={locale}
+                onSelect={onSelect}
+              />
+            </div>
           )}
           <div className="compare-grid">
             {data?.rows.flatMap((row) =>
               row.days.map((d, index) => {
                 const s = d[activity];
                 return (
-                  <article key={row.area.id + d.date} className="compare-card">
-                    <span className="v2-kicker">
-                      {mode === "outlook"
-                        ? index === 0
-                          ? text("Today", "اليوم")
-                          : index === 1
-                            ? text("Tomorrow", "غدًا")
-                            : new Date(
-                                d.date + "T12:00:00+03:00",
-                              ).toLocaleDateString(ar ? "ar-JO" : "en-GB", {
-                                weekday: "long",
-                              })
-                        : text("FORECAST AREA", "منطقة التوقعات")}
-                    </span>
-                    <h2>{row.area.name[locale]}</h2>
-                    <strong className="compare-score">
-                      {s.score ?? "—"}
-                      <small>/100</small>
-                    </strong>
-                    <div className="compare-both">
-                      <span>
-                        {text("Walking", "المشي")}{" "}
-                        <b>{d.walking.score ?? "—"}</b>
+                  <article key={row.area.id + d.date} className="compare-card" data-tone={tone(s.score)}>
+                    <header className="compare-head">
+                      <span className="row-meta">
+                        {mode === "outlook"
+                          ? index === 0
+                            ? c("today")
+                            : index === 1
+                              ? c("tomorrow")
+                              : new Date(d.date + "T12:00:00+03:00").toLocaleDateString(ar ? "ar-JO-u-nu-latn" : "en-GB", {
+                                  weekday: "long",
+                                })
+                          : null}
                       </span>
-                      <span>
-                        {text("Running", "الجري")}{" "}
-                        <b>{d.running.score ?? "—"}</b>
+                      <h2 className="compare-name">{row.area.name[locale]}</h2>
+                    </header>
+                    <div className="compare-score-row">
+                      <strong className="compare-score num">
+                        {s.score ?? "–"}
+                        <small>/100</small>
+                      </strong>
+                      <span className="compare-both num">
+                        <span>
+                          {c("walking")} <b>{d.walking.score ?? "–"}</b>
+                        </span>
+                        <span>
+                          {c("running")} <b>{d.running.score ?? "–"}</b>
+                        </span>
                       </span>
                     </div>
-                    <p>
-                      {s.temperatureC ?? "—"}°C · {text("Wind", "الرياح")}{" "}
-                      {s.windKmh ?? "—"} {text("km/h", "كم/س")}
-                      <br />
-                      {text("Rain chance", "احتمال الهطول")}{" "}
-                      {s.precipitationPercent ?? "—"}%
+                    <p className="row-meta num">
+                      {s.temperatureC ?? "–"}°C · {c("wind", { n: s.windKmh ?? "–" })} ·{" "}
+                      {c("rain", { n: s.precipitationPercent ?? "–" })}
                     </p>
-                    <p>
-                      {text("Best Window", "أفضل فترة")}
-                      <br />
-                      <bdi>
-                        {s.bestWindow
-                          ? `${clock(s.bestWindow.start)}–${clock(s.bestWindow.end)}`
-                          : "—"}
-                      </bdi>{" "}
-                      · {minutes} {text("min", "دقيقة")}
+                    <p className="compare-window">
+                      <span className="row-meta">{c("bestWindow")}</span>
+                      <bdi className="num">
+                        {s.bestWindow ? `${clock(s.bestWindow.start)} - ${clock(s.bestWindow.end)}` : "–"}
+                      </bdi>
+                      <span className="row-meta">{c("min", { n: minutes })}</span>
                     </p>
-                    {!row.available && (
-                      <p>{text("Weather unavailable", "الطقس غير متاح")}</p>
-                    )}
+                    {!row.available && <p className="tag" data-tone="poor">{c("unavailable")}</p>}
                     {origin && (
-                      <p>
-                        {distanceKm(origin, row.area).toFixed(1)}{" "}
-                        {text("km", "كم")} ·{" "}
-                        {text("to reference point", "إلى النقطة المرجعية")}
+                      <p className="fine">
+                        {c("toReference", { n: numberText(locale, distanceKm(origin, row.area), 1) })}
                       </p>
                     )}
                     {mode !== "outlook" && (
-                      <button onClick={() => onSelect(row.area.id)}>
-                        {text("Plan here", "خطط هنا")} ↗
+                      <button className="btn btn-secondary btn-sm" onClick={() => onSelect(row.area.id)}>
+                        {c("planHere")}
+                        <ArrowUpRight aria-hidden className="flip-rtl" />
                       </button>
                     )}
                   </article>
