@@ -769,10 +769,6 @@
     align-items: start;
     gap: 28px;
   }
-  .daily-plan {
-    position: sticky;
-    top: 20px;
-  }
   .featured-places,
   .discovery-home > .personal-progress {
     grid-column: 1/-1;
