@@ -81,7 +81,8 @@
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
-  :lang(ar),
+  /* Set on the root only, so components (and bdi-isolated figures) can choose their face. */
+  html:lang(ar),
   [dir="rtl"] {
     font-family: var(--font-arabic);
   }

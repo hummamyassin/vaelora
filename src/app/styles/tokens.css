@@ -6,7 +6,7 @@
  * marks motion (start, recording, the live route). The stitch colours (olive,
  * gold) also carry conditions. Layers keep specificity flat.
  */
-@layer reset, base, components, screens, utilities;
+@layer reset, base, components, screens, material, utilities;
 
 :root {
   color-scheme: light;
@@ -21,6 +21,24 @@
   --stitch-olive: #93a45a;
   --stitch-terracotta: #e07a4a;
   --stitch-gold: #c8913a;
+
+  /* Material: polished metal like the V ribbon. Light sits at the top edge,
+     depth below; text always sits on the mid-tone so contrast holds. */
+  --metal-terracotta: linear-gradient(180deg, #cf7046 0%, #b5532a 46%, #9a4320 100%);
+  --metal-gold: linear-gradient(180deg, #f0d08e 0%, #d7a24c 45%, #b07a2e 100%);
+  --metal-gold-deep: linear-gradient(180deg, #a87828 0%, #8e6420 50%, #6e4c16 100%);
+  --metal-cream: linear-gradient(180deg, #fffaf1 0%, #f4efe6 50%, #d8ccb8 100%);
+  --metal-olive: linear-gradient(180deg, #b3c178 0%, #93a45a 50%, #6f7c3c 100%);
+  --metal-olive-deep: linear-gradient(180deg, #7a8842 0%, #5f6b34 55%, #4a5428 100%);
+  --metal-thread: linear-gradient(180deg, #85786b 0%, #6b5f55 50%, #544a42 100%);
+  --metal-ink: linear-gradient(180deg, #3a332d 0%, #231f1c 55%, #1a1714 100%);
+  --metal-ink-text: linear-gradient(180deg, #4d4339 0%, #231f1c 55%, #140f0c 100%);
+  --metal-text: var(--metal-ink-text);
+  --sheen: inset 0 1px 0 rgb(255 255 255 / 0.32), inset 0 -1px 0 rgb(0 0 0 / 0.22);
+  --sheen-soft: inset 0 1px 0 rgb(255 255 255 / 0.55), inset 0 -1px 0 rgb(35 31 28 / 0.12);
+  --sheen-dark: inset 0 1px 0 rgb(244 239 230 / 0.1), inset 0 -1px 0 rgb(0 0 0 / 0.35);
+  --glow-terracotta: 0 8px 18px -8px rgb(181 83 42 / 0.6);
+  --glow-gold: 0 8px 18px -8px rgb(200 145 58 / 0.55);
 
   /* Grounds */
   --bg: #f4efe6;
@@ -104,7 +122,7 @@
     -apple-system, "Segoe UI", sans-serif;
   --font-arabic: var(--font-readex), var(--font-archivo), "Segoe UI", Tahoma,
     sans-serif;
-  --font-display: var(--font-cormorant), Georgia, "Times New Roman", serif;
+  --font-display: var(--font-cormorant), var(--font-readex), Georgia, "Times New Roman", serif;
   --text-xs: 0.75rem;
   --text-sm: 0.8125rem;
   --text-md: 0.9375rem;
@@ -166,6 +184,7 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
+    --metal-text: var(--metal-cream);
     --bg: #231f1c;
     --surface: #2b2622;
     --surface-2: #352f2a;
@@ -220,6 +239,7 @@
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
+  --metal-text: var(--metal-cream);
   --bg: #231f1c;
   --surface: #2b2622;
   --surface-2: #352f2a;

@@ -49,9 +49,18 @@ export async function createShareImage(model: Model): Promise<Blob> {
   const font = (weight: number, size: number, family = text) => {
     c.font = `${weight} ${size}px ${family}`;
   };
+  // Polished metal fill: light at the top of the glyphs, depth at the baseline.
+  const metal = (top: number, bottom: number, stops: readonly string[]) => {
+    const g = c.createLinearGradient(0, top, 0, bottom);
+    stops.forEach((color, i) => g.addColorStop(i / (stops.length - 1), color));
+    return g;
+  };
+  const creamMetal = ["#fffaf1", "#f4efe6", "#d8ccb8"] as const,
+    inkMetal = ["#4d4339", "#231f1c", "#140f0c"] as const,
+    goldMetal = ["#f0d08e", "#d7a24c", "#b07a2e"] as const,
+    goldDeepMetal = ["#a87828", "#8e6420", "#6e4c16"] as const;
   const light = model.template === "performance";
-  const fg = light ? ink : cream,
-    muted = light ? inkMuted : creamMuted,
+  const muted = light ? inkMuted : creamMuted,
     route = light ? terracotta : terracottaLight,
     accent = light ? goldDeep : gold;
   // Ground: the icon's warm radial light on deep brown, or warm cream.
@@ -93,13 +102,13 @@ export async function createShareImage(model: Model): Promise<Blob> {
   if (mark) c.drawImage(mark, pad, 84, 92, 92);
   c.textAlign = "left";
   c.direction = "ltr";
-  c.fillStyle = fg;
+  c.fillStyle = metal(104, 150, light ? inkMetal : creamMetal);
   font(600, 46, display);
   c.fillText("V A E L O R A", pad + (mark ? 118 : 0), 146);
   c.textAlign = "right";
   c.direction = ar ? "rtl" : "ltr";
   font(700, 32);
-  c.fillStyle = accent;
+  c.fillStyle = metal(92, 122, light ? goldDeepMetal : goldMetal);
   c.fillText(model.activity, W - pad, 120);
   font(500, 26);
   c.fillStyle = muted;
@@ -113,7 +122,11 @@ export async function createShareImage(model: Model): Promise<Blob> {
       [light ? cream : ink, 26],
       [route, 12],
     ] as const) {
-      c.strokeStyle = color;
+      // The route thread is polished terracotta, lit from above.
+      c.strokeStyle =
+        color === route
+          ? metal(top, top + size, light ? ["#cf7046", "#b5532a", "#9a4320"] : ["#f0a274", "#e07a4a", "#b5532a"])
+          : color;
       c.lineWidth = width;
       for (const path of model.route) {
         c.beginPath();
@@ -146,7 +159,8 @@ export async function createShareImage(model: Model): Promise<Blob> {
   const metric = (value: string, label: string, x: number, y: number, size: number, align: CanvasTextAlign) => {
     c.textAlign = align;
     c.direction = "ltr";
-    c.fillStyle = fg;
+    c.fillStyle = metal(y - size * 0.72, y, light ? inkMetal : creamMetal);
+    // Canvas cannot request lining figures, so metrics stay in the lining sans.
     font(700, size, latin);
     c.fillText(missing(value), x, y);
     c.direction = ar ? "rtl" : "ltr";
@@ -180,11 +194,11 @@ export async function createShareImage(model: Model): Promise<Blob> {
   } else {
     c.textAlign = "center";
     c.direction = "ltr";
-    c.fillStyle = cream;
+    c.fillStyle = metal(500, 720, creamMetal);
     font(700, 300, latin);
     c.fillText(missing(model.distance), W / 2, 720);
     c.direction = ar ? "rtl" : "ltr";
-    c.fillStyle = gold;
+    c.fillStyle = metal(760, 792, goldMetal);
     font(600, 36);
     c.fillText(labels.km, W / 2, 790);
     c.direction = "ltr";

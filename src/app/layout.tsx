@@ -6,6 +6,7 @@ import "./styles/tokens.css";
 import "./styles/base.css";
 import "./styles/components.css";
 import "./styles/screens.css";
+import "./styles/material.css";
 
 // Archivo carries UI and metrics, Cormorant Garamond the wordmark and display
 // lines, Readex Pro Arabic. All are self-hosted by next/font (font-src 'self').
@@ -18,7 +19,7 @@ const archivo = Archivo({
 // The identity sheet sets VAELORA in a widely tracked classical serif.
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
-  weight: ["500", "600"],
+  weight: ["500", "600", "700"],
   variable: "--font-cormorant",
   display: "swap",
 });

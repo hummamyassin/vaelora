@@ -149,3 +149,9 @@ truth; see [DESIGN.md](../DESIGN.md).
   ready panel and the share card; a single row divides the recap and closes location art; the
   VAELORA Score gains a ten-stitch meter; this week becomes seven stitched days; Ask's thinking
   state sews five stitches; the dock marks the current screen with a terracotta stitch.
+
+## V2.4.2 premium refinement
+
+- **Typography:** the wordmark serif (Cormorant Garamond, now with 700) carries key labels (tracked caps), section titles, key metrics (lining tabular figures) and primary actions. Arabic keeps Readex Pro for labels, headings and buttons; figures share the serif. Body, controls and AI answers stay in Archivo / Readex Pro.
+- **Material:** a separate `material` CSS layer adds polished metal (gradient, sheen, tinted shadow) to primary actions, selected states, the dock, key figures, meteogram bars, progress threads and map markers. Base surfaces stay flat. Contrast is checked on the mid-tone of every gradient.
+- **Share card:** metal gradient fills for the wordmark, activity, figures and route; figures stay in the lining sans because canvas cannot request lining figures.

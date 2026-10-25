@@ -163,14 +163,31 @@ The five identity colours, extended only with tints needed for contrast.
 - **Label** (Archivo 600–650, 0.75–0.8125rem).
 - **Metric** (Archivo 700, width 84, tabular): timer, distance, pace, window, score.
 
+### Brand moments (V2.4.2)
+- **Brand label** (Cormorant 700, 0.86rem, 0.14em tracking, caps): key labels such as Outing window, VAELORA Score, Active time and panel titles. Arabic uses Readex 600 without tracking or caps.
+- **Section titles** (Cormorant 600, 1.75rem); Arabic Readex 700.
+- **Key metrics** (Cormorant 700, lining tabular figures): window time, score, timer, distance and pace, recap distance, stats, place fit. Units stay in Archivo.
+- **Primary actions** (Cormorant 700, 1.15 to 1.3rem, 0.05em tracking); Arabic Readex 700.
+- Body, controls, AI answers and dense UI stay in Archivo and Readex Pro.
+
 ### Named Rules
-**The Quiet Serif Rule.** The serif appears only in the wordmark and display lines, never in controls, labels or numbers.
+**The Brand Moment Rule.** The serif carries the wordmark, display lines, key labels, key metrics and primary actions; body copy, controls and long text stay in the sans.
 
 ## Layout
 
 Single column on phones (16px gutter, 28px from 768px), 1180px maximum. From 1080px Home is two columns: the plan band, this week and reviewed places on the left, Near you on the right. Screens clear the floating dock and the safe area. Spacing is a 4px grid.
 
 ## Elevation & Depth
+
+### Material: polished metal (V2.4.2)
+Brand and action moments take the material of the V ribbon: a vertical gradient with light at the top edge and depth below, a thin sheen (top highlight, bottom shade) and a soft tinted shadow. Text always sits on the mid-tone so contrast holds.
+- **Terracotta metal**: primary actions, Start, the selected map marker, running progress.
+- **Gold metal**: the recommended window, the Ask plan window, the recap score, verified-marker rims, acceptable bars.
+- **Olive metal**: comfortable bars and the score in good conditions, walking progress.
+- **Cream metal**: the live timer and metrics on dark, selected segments on dark, the recommended-off Start.
+- **Ink metal**: the dock, selected chips, avatars, the recap score plate; metal ink text for key figures on cream.
+Base surfaces (grounds, panels, rows, inputs) stay flat. Hover shifts the gradient (light response); reduced motion keeps colour changes only.
+
 
 Flat and warm. Depth comes from the brown feature bands against cream. Shadows are warm-tinted and only for floating things: the dock, sheets, the share preview.
 

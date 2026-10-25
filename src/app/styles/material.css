@@ -1,0 +1,366 @@
+/*
+ * Premium refinement: brand typography for key moments and a metallic
+ * material on brand and action moments only. Base surfaces stay calm.
+ * Metal = a vertical gradient (light at the top edge, depth below), a thin
+ * sheen and a soft tinted shadow, like the polished V ribbon.
+ */
+@layer material {
+  /* ================= Typography ================= */
+
+  /* Brand label: the wordmark's tracked classical caps, for key labels only. */
+  .mini-title,
+  .plan-label,
+  .track-label {
+    font-family: var(--font-display);
+    font-size: 0.86rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  :lang(ar) .mini-title,
+  :lang(ar) .plan-label,
+  :lang(ar) .track-label {
+    font-family: var(--font-arabic);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  /* Section and page headings in the display serif. */
+  .section-title,
+  .home-title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: 0.005em;
+  }
+  .section-title {
+    font-size: 1.75rem;
+    line-height: 1.05;
+  }
+  .home-title {
+    font-size: 1.4rem;
+    color: var(--text);
+  }
+  :lang(ar) .section-title,
+  :lang(ar) .home-title {
+    font-family: var(--font-arabic);
+    font-weight: 700;
+    letter-spacing: 0;
+  }
+  :lang(ar) .section-title {
+    font-size: var(--text-xl);
+    line-height: 1.25;
+  }
+  :lang(ar) .home-title {
+    font-size: var(--text-lg);
+    color: var(--text-2);
+  }
+
+  /* Key metrics: the serif's lining, tabular figures, set large. */
+  .plan-window-time,
+  .plan-score strong,
+  .track-timer strong,
+  .track-metric strong,
+  .recap-hero strong,
+  .recap-score b,
+  .nearby-score b,
+  .compare-score,
+  .overview-score strong,
+  .overview-window strong,
+  .stat-value,
+  .ask-plan-window,
+  .share-primary b,
+  .share-secondary b {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-variant-numeric: lining-nums tabular-nums;
+    font-variation-settings: normal;
+    letter-spacing: 0;
+  }
+  .plan-window-time {
+    font-size: clamp(2rem, 9.2vw, 3.6rem);
+  }
+  .plan-score strong {
+    font-size: clamp(2.4rem, 10.5vw, 3rem);
+  }
+  .track-timer strong {
+    font-size: clamp(4.25rem, 21.5vw, 7.5rem);
+    line-height: 0.9;
+  }
+  .track-metric strong {
+    font-size: clamp(2.7rem, 13.5vw, 4rem);
+  }
+  .recap-hero strong {
+    font-size: clamp(4.6rem, 23vw, 7.25rem);
+  }
+  .stat-value {
+    font-size: clamp(1.55rem, 5.9vw, 2.9rem);
+  }
+  .nearby-score b,
+  .recap-score b {
+    font-size: 2rem;
+  }
+  .compare-score {
+    font-size: 4rem;
+  }
+  .overview-score strong,
+  .overview-window strong {
+    font-size: 2.9rem;
+  }
+  .share-primary b {
+    font-size: 74px;
+  }
+  .share-secondary b {
+    font-size: 24px;
+  }
+  .ask-plan-window {
+    font-size: 1.45rem;
+  }
+  /* Units and secondary marks stay in the interface sans. */
+  .stat-unit,
+  .track-metric small,
+  .plan-score small,
+  .compare-score small,
+  .overview-score small {
+    font-family: var(--font-sans);
+  }
+
+  /* Primary actions carry the brand voice. */
+  .btn-primary:not(.btn-sm),
+  .btn-course,
+  .plan-start {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+  .btn-lg.btn-course,
+  .plan-start {
+    font-size: 1.3rem;
+  }
+  :lang(ar) .btn-primary:not(.btn-sm),
+  :lang(ar) .btn-course,
+  :lang(ar) .plan-start {
+    font-family: var(--font-arabic);
+    font-size: var(--text-base);
+    letter-spacing: 0;
+  }
+  .ask-send {
+    font-family: var(--font-sans);
+  }
+
+  /* ================= Material ================= */
+
+  /* Metal text: polished figures. Contrast is checked against the darkest stop. */
+  .plan-window-time,
+  .ask-plan-window,
+  .recap-score b {
+    background: var(--metal-gold);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .track-timer strong,
+  .track-metric strong {
+    background: var(--metal-cream);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .track-live[data-state="paused"] .track-timer strong {
+    background: linear-gradient(180deg, #d8ccb8, #a39684);
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+  .recap-hero strong,
+  .stat-value,
+  .nearby-score b,
+  .overview-window strong {
+    background: var(--metal-text);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .plan-score strong {
+    background: var(--metal-olive);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .plan-score[data-tone="fair"] strong {
+    background: var(--metal-gold);
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+  .plan-score[data-tone="poor"] strong,
+  .plan-score[data-tone="unknown"] strong {
+    background: linear-gradient(180deg, #cfc4b4, #a39684);
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+  /* The unit after a clipped number keeps its own solid colour. */
+  .plan-score strong small,
+  .stat-value .stat-unit {
+    -webkit-text-fill-color: currentColor;
+  }
+  .plan-score strong small {
+    color: var(--on-band-3);
+  }
+  .stat-value .stat-unit {
+    color: var(--text-2);
+  }
+
+  /* Primary actions: polished terracotta with a light-responsive sheen. */
+  .btn-primary,
+  .btn-course,
+  .plan-start[data-recommended="true"] {
+    background: var(--metal-terracotta);
+    background-size: 100% 140%;
+    background-position: 50% 0%;
+    box-shadow: var(--sheen), var(--glow-terracotta);
+    border-color: transparent;
+    transition: background-position 360ms var(--ease-out), box-shadow var(--dur-fast) ease,
+      transform var(--dur-press) var(--ease-out);
+  }
+  .plan-start[data-recommended="false"] {
+    background: var(--metal-cream);
+    color: var(--brand-ink);
+    box-shadow: var(--sheen-soft), 0 8px 18px -10px rgb(0 0 0 / 0.5);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .btn-primary:hover:not(:disabled),
+    .btn-course:hover:not(:disabled),
+    .plan-start[data-recommended="true"]:hover {
+      background-position: 50% 100%;
+      filter: none;
+    }
+  }
+  .btn-primary:disabled,
+  .btn-course:disabled {
+    background: var(--disabled);
+    box-shadow: none;
+  }
+  .btn-band {
+    background: linear-gradient(180deg, #3a332d 0%, #2b2622 100%);
+    box-shadow: var(--sheen-dark);
+  }
+
+  /* Selected states: polished cream on dark, polished ink on light. */
+  .seg-band button[aria-pressed="true"] {
+    background: var(--metal-cream);
+    box-shadow: var(--sheen-soft), 0 4px 10px -6px rgb(0 0 0 / 0.6);
+  }
+  .seg button[aria-pressed="true"]:not(.seg-band *) {
+    background: linear-gradient(180deg, #fffdf9 0%, var(--surface-raised) 55%, #efe7da 100%);
+    box-shadow: var(--sheen-soft), var(--shadow-1);
+  }
+  :root[data-theme="dark"] .seg button[aria-pressed="true"]:not(.seg-band *) {
+    background: linear-gradient(180deg, #4a4139 0%, #3a332d 100%);
+    box-shadow: var(--sheen-dark);
+  }
+  .chip[aria-pressed="true"] {
+    background: var(--metal-ink);
+    border-color: #1a1714;
+    box-shadow: var(--sheen-dark), 0 4px 10px -6px rgb(35 31 28 / 0.6);
+  }
+  .avatar {
+    background: var(--metal-ink);
+    box-shadow: var(--sheen-dark), 0 0 0 1.5px rgb(200 145 58 / 0.55);
+  }
+
+  /* Navigation: a polished dark dock; the selected stitch is gold-to-terracotta metal. */
+  .dock {
+    background: var(--metal-ink);
+    box-shadow: var(--sheen-dark), var(--shadow-dock);
+  }
+  .dock-item[aria-current="page"] {
+    font-weight: 700;
+  }
+  .dock-item[aria-current="page"]::after {
+    background: linear-gradient(45deg, transparent 40%, #e9a35f 40% 60%, transparent 60%) 0 0 / 5.5px 5px,
+      linear-gradient(-45deg, transparent 40%, #c8653a 40% 60%, transparent 60%) 0 0 / 5.5px 5px;
+  }
+
+  /* Live state: a polished terracotta pill. */
+  .track-live[data-state="recording"] .track-state {
+    background: linear-gradient(180deg, rgb(224 122 74 / 0.28), rgb(181 83 42 / 0.16));
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.12);
+  }
+
+  /* Charts: meteogram bars and progress threads in polished metal. */
+  .meteo-col[data-tone="good"] .meteo-bar {
+    background: var(--metal-olive);
+  }
+  .meteo-col[data-tone="fair"] .meteo-bar {
+    background: var(--metal-gold);
+  }
+  .meteo-col[data-tone="poor"] .meteo-bar {
+    background: var(--metal-thread);
+  }
+  .meteo-col:not([data-tone="unknown"]) .meteo-bar {
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.4), inset 0 -1px 0 rgb(0 0 0 / 0.2);
+  }
+  .meteo-window {
+    box-shadow: 0 0 0 1px rgb(200 145 58 / 0.18), 0 -6px 16px -10px rgb(200 145 58 / 0.6);
+  }
+  .meteo-legend [data-tone="good"]::before {
+    background: var(--metal-olive);
+  }
+  .meteo-legend [data-tone="fair"]::before {
+    background: var(--metal-gold);
+  }
+  .meteo-legend [data-tone="poor"]::before {
+    background: var(--metal-thread);
+  }
+  .sport-bar-track span {
+    background: var(--metal-olive-deep);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.35);
+  }
+  .sport-bar[data-kind="running"] .sport-bar-track span {
+    background: var(--metal-terracotta);
+  }
+  .recap-score {
+    background: var(--metal-ink);
+    box-shadow: var(--sheen-dark);
+  }
+
+  /* Map accents: polished markers; tiles are never tinted. */
+  .area-score-marker {
+    border: 2px solid transparent;
+    background: var(--metal-ink) padding-box, var(--metal-gold) border-box;
+    box-shadow: 0 3px 8px rgb(35 31 28 / 0.35);
+  }
+  .area-score-marker[data-score="poor"],
+  .area-score-marker[data-score="unknown"] {
+    background: linear-gradient(180deg, #fffdf9, #efe7da) padding-box, var(--metal-gold) border-box;
+  }
+  .selected-area-marker {
+    border: 2px solid transparent;
+    background: var(--metal-terracotta) padding-box, var(--metal-cream) border-box;
+    box-shadow: var(--glow-terracotta), 0 4px 10px rgb(35 31 28 / 0.35);
+  }
+  .dynamic-origin {
+    background: radial-gradient(circle at 35% 30%, #4a4139, var(--brand-ink));
+  }
+
+  /* Narrow phones: window and score stack so neither figure clips. */
+  @media (max-width: 359px) {
+    .plan-figures {
+      grid-template-columns: 1fr;
+      gap: var(--s-3);
+    }
+    .plan-score {
+      justify-items: start;
+      text-align: start;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .btn-primary,
+    .btn-course,
+    .plan-start {
+      transition: background-color var(--dur-fast) ease;
+    }
+  }
+}
