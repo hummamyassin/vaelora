@@ -35,6 +35,7 @@ import {
 import { scoreBand } from "../domain/recommendation/score";
 import type { DashboardResponse } from "../server/recommendations/dashboard";
 import { areaName, areaDescription, label, t, type Locale } from "../lib/i18n";
+import { isRefreshDue } from "../lib/refresh-policy";
 import {
   distanceKm,
   orderNearby,
@@ -197,10 +198,16 @@ export function DashboardApp() {
     [answer, setAnswer] = useState<AgentView | null>(null),
     [asking, setAsking] = useState(false);
   const [refreshTick, setRefreshTick] = useState(0);
-  const lastRequest = useRef("");
+  const lastRequest = useRef(""),
+    lastCompletedAt = useRef<number | null>(null);
   useEffect(() => {
+    if (view !== "home") return;
     const refresh = () => {
-      if (document.visibilityState === "visible") setRefreshTick((n) => n + 1);
+      if (
+        document.visibilityState === "visible" &&
+        isRefreshDue(lastCompletedAt.current, Date.now())
+      )
+        setRefreshTick((n) => n + 1);
     };
     const timer = setInterval(refresh, 60000);
     document.addEventListener("visibilitychange", refresh);
@@ -208,7 +215,7 @@ export function DashboardApp() {
       clearInterval(timer);
       document.removeEventListener("visibilitychange", refresh);
     };
-  }, []);
+  }, [view]);
   const ar = locale === "ar",
     text = (en: string, arabic: string) => (ar ? arabic : en);
   const area = weatherAreas.find((a) => a.id === areaId)!;
@@ -392,7 +399,10 @@ export function DashboardApp() {
           setResult(null);
         }
       } finally {
-        if (!controller.signal.aborted) setLoading(false);
+        if (!controller.signal.aborted) {
+          lastCompletedAt.current = Date.now();
+          setLoading(false);
+        }
       }
     }, 150);
     return () => {

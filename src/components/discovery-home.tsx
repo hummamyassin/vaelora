@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import {
   LocateFixed,
@@ -25,6 +25,11 @@ import { LocationArt } from "./location-art";
 import { PersonalProgress } from "./personal-progress";
 import { AppDialog } from "./app-dialog";
 import { planningState } from "../domain/recommendation/plan-state";
+import {
+  isRefreshDue,
+  isWithinMaxAge,
+  refreshMode,
+} from "../lib/refresh-policy";
 const ScoreMap = dynamic(() => import("./score-map").then((m) => m.ScoreMap), {
   ssr: false,
 });
@@ -149,12 +154,28 @@ export function DiscoveryHome({
     [searchStatus, setSearchStatus] = useState(""),
     [searching, setSearching] = useState(false);
   const [data, setData] = useState<DiscoveryResponse | null>(null),
+    [receivedAt, setReceivedAt] = useState<number | null>(null),
+    [now, setNow] = useState(() => Date.now()),
     [busy, setBusy] = useState(false),
     [failed, setFailed] = useState(false),
+    [refreshFailed, setRefreshFailed] = useState(false),
     [refresh, setRefresh] = useState(0),
     [selected, setSelected] = useState<string | null>(null);
   const [placeData, setPlaceData] = useState<DiscoveryResponse | null>(null),
-    [placeLoading, setPlaceLoading] = useState(false);
+    [placeLoading, setPlaceLoading] = useState(false),
+    [placeFailed, setPlaceFailed] = useState(false),
+    [placeRetry, setPlaceRetry] = useState(0);
+  // Request bookkeeping read by effects without re-triggering them.
+  const lastKey = useRef(""),
+    handledRefresh = useRef(0),
+    lastCompletedAt = useRef<number | null>(null),
+    receivedAtRef = useRef<number | null>(null);
+  function clearData() {
+    setData(null);
+    setReceivedAt(null);
+    setRefreshFailed(false);
+    receivedAtRef.current = null;
+  }
   const selectedCell = selected
     ? locationContext(activityAreas.find((a) => a.id === selected)!)?.cellId
     : null;
@@ -163,6 +184,7 @@ export function DiscoveryHome({
     const controller = new AbortController();
     queueMicrotask(() => {
       setPlaceData(null);
+      setPlaceFailed(false);
       setPlaceLoading(true);
     });
     void fetch("/api/discovery", {
@@ -177,19 +199,24 @@ export function DiscoveryHome({
       }),
       signal: controller.signal,
     })
-      .then((r) => r.json())
-      .then((x) => {
-        if (!controller.signal.aborted && x.outlook) setPlaceData(x);
+      .then(async (r) => {
+        const x = await r.json();
+        if (!x.outlook) throw new Error();
+        return x as DiscoveryResponse;
       })
-      .catch(() => {})
+      .then((x) => {
+        if (!controller.signal.aborted) setPlaceData(x);
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) setPlaceFailed(true);
+      })
       .finally(() => {
         if (!controller.signal.aborted) setPlaceLoading(false);
       });
     return () => controller.abort();
-  }, [selectedCell, activity, minutes, preferences]);
-  useEffect(() => {
-    onSnapshot(null);
-  }, [onSnapshot]);
+  }, [selectedCell, activity, minutes, preferences, placeRetry]);
+  // Expired conditions are withdrawn at render time, even if no refresh succeeds.
+  const live = data && isWithinMaxAge(receivedAt, now) ? data : null;
   useEffect(() => {
     onMapData(
       point
@@ -197,12 +224,12 @@ export function DiscoveryHome({
             point,
             name,
             activity,
-            places: data?.request.activity === activity ? data.places : [],
+            places: live?.request.activity === activity ? live.places : [],
             selectedAreaId: selected ?? undefined,
           }
         : null,
     );
-  }, [point, name, activity, data, selected, onMapData]);
+  }, [point, name, activity, live, selected, onMapData]);
   const cell = point ? locationContext(point)?.cellId : null,
     key = JSON.stringify({
       cellId: cell,
@@ -212,21 +239,58 @@ export function DiscoveryHome({
       preferences,
     });
   useEffect(() => {
-    const timer = setInterval(() => {
-      if (active && document.visibilityState === "visible")
+    const current = live?.outlook.current;
+    onSnapshot(
+      cell && live && current
+        ? {
+            areaId: cell,
+            areaName: ar ? "توقعات المنطقة المحددة" : "Selected area forecast",
+            timestamp: Date.parse(live.evaluatedAt),
+            temperatureC: current.conditions.temperatureC ?? null,
+            windKmh: current.conditions.windKmh ?? null,
+            score: current.score,
+          }
+        : null,
+    );
+  }, [cell, live, ar, onSnapshot]);
+  useEffect(() => {
+    const tick = () => {
+      if (document.visibilityState !== "visible") return;
+      const at = Date.now();
+      setNow(at);
+      if (active && isRefreshDue(lastCompletedAt.current, at))
         setRefresh((n) => n + 1);
-    }, 60000);
-    return () => clearInterval(timer);
+    };
+    const timer = setInterval(tick, 60000);
+    document.addEventListener("visibilitychange", tick);
+    return () => {
+      clearInterval(timer);
+      document.removeEventListener("visibilitychange", tick);
+    };
   }, [active]);
   useEffect(() => {
     if (!cell || !active) return;
+    const started = Date.now();
+    const mode = refreshMode({
+      sameRequest: lastKey.current === key,
+      receivedAt: receivedAtRef.current,
+      lastCompletedAt: lastCompletedAt.current,
+      explicit: handledRefresh.current !== refresh,
+      now: started,
+    });
+    if (mode === "skip") return;
+    lastKey.current = key;
     const controller = new AbortController();
     queueMicrotask(() => {
-      setBusy(true);
+      setBusy(mode === "foreground");
       setFailed(false);
-      setData(null);
+      if (mode === "foreground") clearData();
     });
-    onSnapshot(null);
+    // Bookkeeping is recorded on completion, so an aborted request is retried.
+    const complete = () => {
+      handledRefresh.current = refresh;
+      lastCompletedAt.current = Date.now();
+    };
     void fetch("/api/discovery", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -240,31 +304,38 @@ export function DiscoveryHome({
       })
       .then((x) => {
         if (controller.signal.aborted) return;
+        complete();
+        const at = Date.now();
+        receivedAtRef.current = at;
         setData(x);
-        const h = x.outlook.current;
-        if (h)
-          onSnapshot({
-            areaId: cell,
-            areaName: ar ? "توقعات المنطقة المحددة" : "Selected area forecast",
-            timestamp: Date.parse(x.evaluatedAt),
-            temperatureC: h.conditions.temperatureC ?? null,
-            windKmh: h.conditions.windKmh ?? null,
-            score: h.score,
-          });
+        setReceivedAt(at);
+        setNow(at);
+        setRefreshFailed(false);
       })
       .catch(() => {
-        if (!controller.signal.aborted) setFailed(true);
+        if (controller.signal.aborted) return;
+        complete();
+        // A failed background refresh keeps conditions only while they are fresh.
+        if (
+          mode === "background" &&
+          isWithinMaxAge(receivedAtRef.current, Date.now())
+        )
+          setRefreshFailed(true);
+        else {
+          clearData();
+          setFailed(true);
+        }
       })
       .finally(() => {
         if (!controller.signal.aborted) setBusy(false);
       });
     return () => controller.abort();
-  }, [key, cell, refresh, onSnapshot, ar, active]);
+  }, [key, cell, refresh, active]);
   function choose(p: Coordinates, n: string, kind: "gps" | "manual") {
     if (!locationContext(p)) {
       setGeo("outside");
       setPoint(null);
-      setData(null);
+      clearData();
       onSnapshot(null);
       return;
     }
@@ -322,11 +393,11 @@ export function DiscoveryHome({
       setSearching(false);
     }
   }
-  const nearby = rankNearby(data?.places ?? [], point).filter(
+  const nearby = rankNearby(live?.places ?? [], point).filter(
     (p) => point && distanceKm(point, p.area) <= radius,
   );
-  const current = data?.outlook.current,
-    plan = data?.plan;
+  const current = live?.outlook.current,
+    plan = live?.plan;
   const planState = planningState({
     hasLocation: !!point,
     loading: busy,
@@ -458,6 +529,23 @@ export function DiscoveryHome({
             · {t("Humidity", "الرطوبة")}{" "}
             <bdi>{current.conditions.relativeHumidityPercent ?? "—"}%</bdi>
           </p>
+        )}
+        {live && receivedAt !== null && (
+          <small
+            className="plan-updated"
+            role={refreshFailed ? "status" : undefined}
+            data-stale={refreshFailed || undefined}
+          >
+            {refreshFailed
+              ? t(
+                  `Couldn’t refresh · showing conditions from ${clock(new Date(receivedAt).toISOString())}`,
+                  `تعذّر التحديث · نعرض ظروف الساعة ${clock(new Date(receivedAt).toISOString())}`,
+                )
+              : t(
+                  `Updated ${clock(new Date(receivedAt).toISOString())}`,
+                  `آخر تحديث ${clock(new Date(receivedAt).toISOString())}`,
+                )}
+          </small>
         )}
         {point && (
           <div className="plan-evidence" aria-label={t("Location data status", "حالة بيانات الموقع")}>
@@ -603,7 +691,7 @@ export function DiscoveryHome({
                 onClick={() => {
                   setPoint(null);
                   setName("");
-                  setData(null);
+                  clearData();
                   setGeo("idle");
                   setBusy(false);
                   onSnapshot(null);
@@ -625,7 +713,7 @@ export function DiscoveryHome({
               </select>
               <button
                 onClick={() =>
-                  onMap({ point, name, activity, places: data?.places ?? [], selectedAreaId: selected ?? best?.area.id })
+                  onMap({ point, name, activity, places: live?.places ?? [], selectedAreaId: selected ?? best?.area.id })
                 }
               >
                 {t("View map", "عرض الخريطة")} ↗
@@ -637,7 +725,7 @@ export function DiscoveryHome({
                 "مسافات تقريبية بخط مستقيم، وليست أوقات وصول. الترتيب حسب الفترة المتاحة، والملاءمة المراجعة، والمصادر، ثم المسافة.",
               )}
             </small>
-            {failed && (
+            {(failed || refreshFailed || (data && !live)) && (
               <button onClick={() => setRefresh((n) => n + 1)}>
                 {t("Retry conditions", "إعادة تحميل الظروف")}
               </button>
@@ -675,7 +763,7 @@ export function DiscoveryHome({
                 </button>
               ))}
             </div>
-            {!busy && data && !nearby.length && (
+            {!busy && live && !nearby.length && (
               <p>
                 {t(
                   "No reviewed places match within this radius. Your area’s conditions remain available; try 10 km or change your preferences.",
@@ -738,6 +826,19 @@ export function DiscoveryHome({
           </p>
           {placeLoading ? (
             <p role="status">{t("Checking conditions…", "جارٍ فحص الظروف…")}</p>
+          ) : placeFailed ? (
+            <p role="status">
+              {t(
+                "Couldn’t check conditions for this place.",
+                "تعذّر فحص الظروف لهذا المكان.",
+              )}{" "}
+              <button
+                className="text-link"
+                onClick={() => setPlaceRetry((n) => n + 1)}
+              >
+                {t("Try again", "حاول مجددًا")}
+              </button>
+            </p>
           ) : placeData?.outlook.current ? (
             <p>
               {t("Area conditions now", "ظروف المنطقة الآن")}:{" "}
