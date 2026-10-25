@@ -5,6 +5,7 @@ import { readFileSync } from "node:fs";
 test("V2.3.1 uses one dock-aware scroll frame and explicit degraded actions", () => {
   const dashboard = readFileSync("src/app/dashboard.css", "utf8");
   const home = readFileSync("src/components/discovery-home.tsx", "utf8");
+  const track = readFileSync("src/components/track-app.tsx", "utf8");
   assert.match(dashboard, /--dock-reserve/);
   assert.match(dashboard, /height: calc\(100dvh - var\(--header-reserve\) - var\(--dock-reserve\)\)/);
   assert.match(dashboard, /scroll-padding-block/);
@@ -12,4 +13,6 @@ test("V2.3.1 uses one dock-aware scroll frame and explicit degraded actions", ()
   assert.match(home, /Start tracking — conditions unavailable/);
   assert.match(home, /Track without a location plan/);
   assert.match(home, /data-recommended/);
+  assert.match(track, /GPS acquiring/);
+  assert.match(track, /GPS degraded/);
 });

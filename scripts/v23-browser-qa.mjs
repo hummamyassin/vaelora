@@ -159,6 +159,10 @@ try {
     await locate.click();
     await p.locator('.daily-plan[aria-busy="false"]').waitFor();
     await p.locator(".nearby-card").first().waitFor();
+    await p.locator("#dashboard").evaluate((shell) => {
+      shell.scrollTop = 0;
+    });
+    await p.locator(".v2-title-row h1").waitFor();
     await snap("located-home");
     assert.ok(
       requests
@@ -189,7 +193,7 @@ try {
     await p.locator("dialog[open]").waitFor();
     await p.keyboard.press("Escape");
     await p.locator(".quick-start").click();
-    await p.locator('.track-live[data-state="recording"]').waitFor();
+    await p.locator('.track-live[data-state="acquiring"]').waitFor();
     const emit = async (i) =>
       p.evaluate(
         (i) =>
@@ -205,6 +209,7 @@ try {
         i,
       );
     await emit(0);
+    await p.locator('.track-live[data-state="recording"]').waitFor();
     for (let i = 1; i <= 100; i++) {
       await p.clock.runFor(5000);
       await emit(i);

@@ -22,7 +22,6 @@ export function PersonalProgress({
       !ar ? (count === 1 ? "Activity" : "Activities") : count === 1 ? "نشاط" : count === 2 ? "نشاطان" : count <= 10 ? "أنشطة" : "نشاطًا";
   return (
     <section className="personal-progress">
-      <p className="v2-kicker">{mode === "bests" ? t("PERSONAL BESTS", "أفضل إنجازاتك") : t("KEEP YOUR RHYTHM", "حافظ على إيقاعك")}</p>
       <h2>{mode === "bests" ? t("Your best efforts", "أفضل أنشطتك") : t("This week", "هذا الأسبوع")}</h2>
       {!activities.length ? (
         <p>
@@ -63,6 +62,7 @@ export function PersonalProgress({
                     ? t("Walking", "المشي")
                     : t("Running", "الجري")}
                 </h3>
+                {mode === "full" && <p className="progress-distance"><bdi>{(p[kind].distanceM / 1000).toFixed(2)}</bdi> {t("km this week", "كم هذا الأسبوع")}</p>}
                 {mode === "full" && p[kind].paceSeconds !== null && (
                   <p>
                     {t("Weekly average pace", "متوسط الوتيرة الأسبوعي")}:{" "}

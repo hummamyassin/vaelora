@@ -268,7 +268,14 @@ export function ProfilePanel({
           </>
         )}
       </section>
-      <PersonalProgress activities={activities} locale={profile.locale} onOpen={onActivity} mode="bests" />
+      {!storageError && (
+        <PersonalProgress
+          activities={activities}
+          locale={profile.locale}
+          onOpen={onActivity}
+          mode="bests"
+        />
+      )}
       <button className="profile-recent" onClick={onPlaces}>
         {t("Saved Areas", "المناطق المحفوظة")}
         <ArrowUpRight size={18} />

@@ -28,6 +28,11 @@ export function supportedCity(point: Coordinates) {
       for (let i = 0, j = p.length - 1; i < p.length; j = i++) {
         const [x, y] = p[i],
           [xx, yy] = p[j];
+        // Boundary points belong to the service area, consistently on every edge.
+        const cross = (point.longitude - x) * (yy - y) - (point.latitude - y) * (xx - x);
+        if (Math.abs(cross) < 1e-10 &&
+            point.longitude >= Math.min(x, xx) && point.longitude <= Math.max(x, xx) &&
+            point.latitude >= Math.min(y, yy) && point.latitude <= Math.max(y, yy)) return true;
         if (
           y > point.latitude !== yy > point.latitude &&
           point.longitude < ((xx - x) * (point.latitude - y)) / (yy - y) + x

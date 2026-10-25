@@ -67,13 +67,14 @@ test("Bilingual share model contains normalized drawing only and real metrics", 
       const model = shareModel(activity, locale, template);
       assert.equal(model.distance, "2.80");
       assert.equal(model.duration, "00:30:00");
+      assert.ok(model.date.includes("2026") || model.date.includes("٢٠٢٦"));
       assert.equal(model.routeUseful, false);
       assert.ok(
         model.route.flat().every((p) => p.every((v) => v >= 0.09 && v <= 0.91)),
       );
       assert.doesNotMatch(
         JSON.stringify(model),
-        /latitude|longitude|synthetic-test|2026-09|35\.85/,
+        /latitude|longitude|synthetic-test|2026-09-22T|35\.85/,
       );
     }
   assert.equal(

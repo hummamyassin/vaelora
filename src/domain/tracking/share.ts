@@ -65,6 +65,12 @@ export function shareModel(
 ) {
   const paths = privateRoute(a.points),
     points = paths.flat();
+  const date = new Intl.DateTimeFormat(locale === "ar" ? "ar-JO" : "en-GB", {
+    timeZone: "Asia/Amman",
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  }).format(new Date(a.startedAt));
   let drawing: number[][][] = [];
   if (points.length) {
     const lat = points.reduce((s, p) => s + p.latitude, 0) / points.length,
@@ -108,6 +114,7 @@ export function shareModel(
           : "RUN",
     distance: valid ? (a.distanceM / 1000).toFixed(2) : "—",
     duration: durationLabel(a.activeMs),
+    date,
     pace: valid ? paceLabel(metrics(a).averagePaceSeconds) : "—",
     score: a.conditions?.score ?? null,
     temperature: a.conditions?.temperatureC ?? null,

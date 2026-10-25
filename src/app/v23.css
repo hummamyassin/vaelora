@@ -1,41 +1,4 @@
-/* Modern Jordan Sport: oxblood, Jordan red, ivory and near-black. */
-:root {
-  --background: #f6f1e8;
-  --surface: #fffaf2;
-  --surface-elevated: #e8ded2;
-  --surface-strong: #541c27;
-  --text-primary: #171719;
-  --text-secondary: #625b57;
-  --on-strong: #f6f1e8;
-  --on-strong-muted: #e8ded2;
-  --strong-border: #9b6470;
-  --strong-selected: #731f30;
-  --brand-primary: #541c27;
-  --brand-accent: #a61e2d;
-  --border: #d2c5b8;
-  --focus: #a61e2d;
-  --shadow: 0 12px 30px #541c2714;
-  --route: #a61e2d;
-  --route-outline: #f6f1e8;
-  --gps: #527400;
-}
-:root[data-theme="dark"] {
-  --background: #171719;
-  --surface: #211c1d;
-  --surface-elevated: #33282a;
-  --surface-strong: #541c27;
-  --text-primary: #f6f1e8;
-  --text-secondary: #c9bdb4;
-  --on-strong: #f6f1e8;
-  --on-strong-muted: #e8ded2;
-  --brand-primary: #a61e2d;
-  --brand-accent: #ef6673;
-  --border: #4c3b3e;
-  --focus: #f6f1e8;
-  --gps: #b7f52a;
-  --route: #ef6673;
-  --route-outline: #171719;
-}
+/* Modern Jordan Sport refinements use the semantic palette in tokens.css. */
 .v2-brand {
   color: var(--brand-accent);
 }
@@ -118,6 +81,10 @@
   font-size: clamp(29px, 4vw, 45px);
   line-height: 1.13;
 }
+.plan-day {
+  font-weight: 750;
+  letter-spacing: 0.02em;
+}
 .plan-heading,
 .section-heading {
   display: flex;
@@ -151,6 +118,30 @@
   background: #171719;
   border-color: var(--strong-border);
 }
+.plan-controls {
+  display: flex;
+  align-items: end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.plan-duration {
+  display: grid;
+  gap: 5px;
+  color: var(--on-strong-muted);
+  font-size: 10px;
+  font-weight: 650;
+}
+.plan-duration select {
+  min-height: 44px;
+  padding: 0 34px 0 12px;
+  border: 1px solid var(--strong-border);
+  border-radius: 11px;
+  background: #21181a;
+  color: var(--on-strong);
+}
+[dir="rtl"] .plan-duration select {
+  padding: 0 12px 0 34px;
+}
 .plan-sports button {
   display: flex;
   gap: 7px;
@@ -168,6 +159,24 @@
   gap: 26px;
   align-items: center;
   margin: 20px 0;
+}
+.plan-score {
+  min-width: 132px;
+  padding-inline-end: 24px;
+  border-inline-end: 1px solid var(--strong-border);
+}
+.plan-score strong {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  font-family: "Bahnschrift", "Segoe UI Variable Display", Tahoma, sans-serif;
+  font-size: 46px;
+  font-stretch: condensed;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.plan-score strong small {
+  font-size: 13px;
 }
 .plan-facts > strong {
   font-size: 35px;
@@ -212,6 +221,10 @@
   width: 100%;
   padding: 12px 18px;
   cursor: pointer;
+  transition:
+    transform 140ms cubic-bezier(0.23, 1, 0.32, 1),
+    background-color 180ms cubic-bezier(0.23, 1, 0.32, 1),
+    border-color 180ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 .quick-start[data-recommended="false"] {
   background: transparent;
@@ -225,6 +238,29 @@
 }
 .plan-safety {
   font-size: 12px !important;
+}
+.plan-evidence {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  margin: 16px 0;
+  overflow: hidden;
+  border: 1px solid var(--strong-border);
+  border-radius: 12px;
+  background: var(--strong-border);
+}
+.plan-evidence span {
+  display: grid;
+  gap: 3px;
+  padding: 10px 12px;
+  background: var(--surface-strong);
+  color: var(--on-strong-muted);
+  font-size: 10px;
+  line-height: 1.4;
+}
+.plan-evidence b {
+  color: var(--on-strong);
+  font-size: 11px;
 }
 .plan-details,
 .location-details {
@@ -506,6 +542,11 @@
 .progress-sports h3 {
   font-size: 14px;
 }
+.progress-distance {
+  color: var(--text-primary) !important;
+  font-size: 13px !important;
+  font-weight: 700;
+}
 .progress-sports p,
 .progress-sports small {
   font-size: 11px;
@@ -736,9 +777,10 @@
   .discovery-home > .personal-progress {
     grid-column: 1/-1;
   }
-  .featured-grid .location-art .area-identity {
-    min-height: 200px;
-  }
+  .featured-grid { grid-template-columns: 1.15fr .85fr; }
+  .featured-grid > button:first-child { grid-row: span 2; }
+  .featured-grid > button:first-child .area-identity { min-height: 414px; }
+  .featured-grid .location-art .area-identity { min-height: 176px; }
   .plan-facts {
     gap: 22px;
   }
@@ -773,9 +815,9 @@
     max-width: 48%;
     font-size: 10px;
   }
-  .plan-facts {
-    gap: 17px;
-  }
+  .plan-facts { gap: 16px; align-items: end; }
+  .plan-score { min-width: 122px; padding-inline-end: 16px; }
+  .plan-score strong { font-size: 40px; }
   .plan-facts div {
     font-size: 13px;
   }
@@ -783,8 +825,15 @@
     font-size: 30px;
   }
   .featured-grid {
-    grid-template-columns: 1fr;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(250px, 84%);
+    grid-template-columns: none;
+    overflow-x: auto;
+    scroll-snap-type: inline mandatory;
+    overscroll-behavior-inline: contain;
+    padding-bottom: 10px;
   }
+  .featured-grid > button { scroll-snap-align: start; }
   .featured-grid .location-art .area-identity {
     min-height: 157px;
   }
@@ -803,6 +852,11 @@
   .daily-plan h2 {
     font-size: 31px;
   }
+  .plan-controls { align-items: stretch; }
+  .plan-sports { flex: 1; }
+  .plan-sports button { min-width: 0; }
+  .plan-duration { min-width: 92px; }
+  .plan-evidence { grid-template-columns: 1fr; }
   .discovery-home p {
     font-size: 12px;
   }

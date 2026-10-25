@@ -614,6 +614,7 @@ export function DashboardApp() {
           activity={activity}
           setActivity={setActivity}
           minutes={minutes}
+          setMinutes={setMinutes}
           preferences={preferences}
           activities={localActivities}
           onStart={() => {
@@ -1259,6 +1260,7 @@ export function DashboardApp() {
           onRecording={setTracking}
           onSession={setSessionBusy}
           preferredActivity={activity}
+          plannedMinutes={minutes}
           startRef={quickStart}
           openActivityId={openActivityId}
           onActivityOpened={setOpenActivityId}

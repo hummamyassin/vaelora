@@ -12,6 +12,7 @@ import {
 import {
   parseSearch,
   parseSearchResults,
+  parseSearchOutcome,
   createGeocoder,
   createSearchHandler,
 } from "../../src/server/geocoding.ts";
@@ -93,6 +94,13 @@ test("Nearby ranks a usable window and reviewed fit before straight-line proximi
   );
 });
 test("Every supported sampled boundary point resolves to an accepted weather cell", () => {
+  for (const [longitude, latitude] of [
+    [35.76, 31.86],
+    [35.84, 31.78],
+    [36.04, 31.93],
+    [35.82, 32.1],
+  ])
+    assert.equal(supportedCity({ latitude, longitude })?.id, "amman");
   for (let latitude = 31.781; latitude < 32.101; latitude += 0.0037)
     for (let longitude = 35.761; longitude < 36.041; longitude += 0.0037) {
       const c = locationContext({ latitude, longitude });
@@ -199,6 +207,10 @@ test("Search validates bilingual input and filters unsafe or outside results", (
       ],
     }),
     [{ name: "Test area", longitude: 35.9, latitude: 31.98 }],
+  );
+  assert.deepEqual(
+    parseSearchOutcome({ features: [feature("Outside", [36.1, 32.1])] }),
+    { places: [], status: "outside" },
   );
 });
 test("Search caches, bounds provider calls and does not accept coordinate arguments", async () => {

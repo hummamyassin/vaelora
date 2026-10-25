@@ -111,6 +111,7 @@ export function DiscoveryHome({
   activity,
   setActivity,
   minutes,
+  setMinutes,
   preferences,
   activities,
   onStart,
@@ -125,6 +126,7 @@ export function DiscoveryHome({
   activity: ActivityKind;
   setActivity: (v: ActivityKind) => void;
   minutes: number;
+  setMinutes: (value: number) => void;
   preferences: string[];
   activities: RecordedActivity[];
   onStart: () => void;
@@ -313,7 +315,7 @@ export function DiscoveryHome({
       if (!r.ok) throw new Error();
       const x = await r.json();
       setResults(x.places);
-      if (!x.places.length) setSearchStatus("empty");
+      if (!x.places.length) setSearchStatus(x.status === "outside" ? "outside" : "empty");
     } catch {
       setSearchStatus("error");
     } finally {
@@ -357,7 +359,9 @@ export function DiscoveryHome({
             : t("No suitable window today.", "لا تتوفر فترة ملائمة اليوم.");
   const planAction =
     planState === "recommended"
-      ? t("Start recommended activity", "ابدأ النشاط الموصى به")
+      ? plan?.status === "now"
+        ? t(`Start ${minutes} min ${activity === "walking" ? "Walk" : "Run"}`, `ابدأ ${activity === "walking" ? "المشي" : "الجري"} لمدة ${minutes} دقيقة`)
+        : t("Track now · best window is later", "سجّل الآن · الفترة الأفضل لاحقًا")
       : planState === "weather-unavailable"
         ? t("Start tracking — conditions unavailable", "ابدأ التسجيل — تعذّر تقييم الطقس")
         : planState === "no-window"
@@ -398,11 +402,12 @@ export function DiscoveryHome({
     <div className="discovery-home">
       <section className="daily-plan" aria-busy={busy} data-plan-state={planState}>
         <div className="plan-heading">
-          <p className="v2-kicker">{t("YOUR PLAN FOR TODAY", "خطتك لليوم")}</p>
+          <span className="plan-day">{t("Today’s outdoor plan", "خطة اليوم في الخارج")}</span>
           <span>{name || t("GREATER AMMAN", "عمّان الكبرى")}</span>
         </div>
         <h2>{planCopy}</h2>
-        <div className="v2-segment plan-sports">
+        <div className="plan-controls">
+        <div className="v2-segment plan-sports" aria-label={t("Activity", "النشاط")}>
           {(["walking", "running"] as const).map((k) => (
             <button
               key={k}
@@ -421,22 +426,25 @@ export function DiscoveryHome({
             </button>
           ))}
         </div>
+        <label className="plan-duration">
+          <span>{t("Duration", "المدة")}</span>
+          <select value={minutes} onChange={(e) => { onSnapshot(null); setMinutes(Number(e.target.value)); }}>
+            {[30, 60, 90].map((value) => <option key={value} value={value}>{value} {t("min", "دقيقة")}</option>)}
+          </select>
+        </label>
+        </div>
         <div className="plan-facts">
-          <strong>
-            {minutes} <small>{t("min", "دقيقة")}</small>
-          </strong>
+          <div className="plan-score">
+            <span>{t("VAELORA Score", "مؤشر VAELORA")}</span>
+            <strong><bdi>{plan?.window?.score ?? current?.score ?? "—"}</bdi><small>/100</small></strong>
+            <small>{plan?.window ? t("Full outing window", "فترة النشاط كاملة") : t("Conditions now", "الظروف الآن")}</small>
+          </div>
           {plan?.window && (
             <div>
               <span>{t("Best window", "أفضل فترة")}</span>
               <bdi>
                 {clock(plan.window.start)} – {clock(plan.window.end)}
               </bdi>
-            </div>
-          )}
-          {current?.score != null && (
-            <div>
-              <span>{t("Conditions now", "الظروف الآن")}</span>
-              <bdi>{current.score}/100</bdi>
             </div>
           )}
         </div>
@@ -451,6 +459,12 @@ export function DiscoveryHome({
             <bdi>{current.conditions.relativeHumidityPercent ?? "—"}%</bdi>
           </p>
         )}
+        {point && (
+          <div className="plan-evidence" aria-label={t("Location data status", "حالة بيانات الموقع")}>
+            <span><b>{t("Dynamic conditions", "الظروف المتغيرة")}</b>{t("Weather and time evaluated", "تم تقييم الطقس والوقت")}</span>
+            <span><b>{t("Area characteristics", "خصائص المنطقة")}</b>{t("Not yet verified", "لم تُوثّق بعد")}</span>
+          </div>
+        )}
         {best && (
           <p>
             {t("Nearby option", "خيار قريب")}:{" "}
@@ -464,7 +478,7 @@ export function DiscoveryHome({
             {t("km approx.", "كم تقريبًا")}
           </p>
         )}
-        <button className="quick-start" onClick={onStart} data-recommended={planState === "recommended"}>
+        <button className="quick-start" onClick={onStart} data-recommended={planState === "recommended" && plan?.status === "now"}>
           {planAction} <ArrowUpRight size={20} />
         </button>
         <small className="plan-safety">
@@ -486,9 +500,6 @@ export function DiscoveryHome({
       <section className="discovery-location">
         <div className="section-heading">
           <div>
-            <p className="v2-kicker">
-              {t("FIND YOUR START", "اختر نقطة انطلاقك")}
-            </p>
             <h2>{t("Near you", "بالقرب منك")}</h2>
           </div>
           <button onClick={locate} disabled={geo === "locating"}>
@@ -552,7 +563,9 @@ export function DiscoveryHome({
         </div>
         {searchStatus && (
           <p role="status">
-            {searchStatus === "empty"
+            {searchStatus === "outside"
+              ? t("Results are outside VAELORA’s Greater Amman coverage. Try a supported area.", "النتائج خارج نطاق VAELORA في عمّان الكبرى. جرّب منطقة مدعومة.")
+              : searchStatus === "empty"
               ? t(
                   "No matching place in our service area. Try another name.",
                   "لا توجد نتيجة ضمن نطاق الخدمة. جرّب اسمًا آخر.",
@@ -676,7 +689,6 @@ export function DiscoveryHome({
       <section className="featured-places">
         <div className="section-heading">
           <div>
-            <p className="v2-kicker">{t("A PLACE TO MOVE", "مكان للحركة")}</p>
             <h2>{t("Featured places", "أماكن مختارة")}</h2>
           </div>
         </div>

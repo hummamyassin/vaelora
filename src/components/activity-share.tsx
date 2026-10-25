@@ -79,7 +79,7 @@ export function ActivityShare({
       </div>
       <div className="share-preview" data-template={template} data-route={model.routeUseful ? "route" : "metrics"}>
         <strong>VAELORA</strong>
-        <span className="share-activity">{model.activity}</span>
+        <span className="share-activity">{model.activity} · {model.date}</span>
         {template === "map" && model.routeUseful ? (
           <svg viewBox="0 0 100 100" role="img" aria-label={t("Privacy-protected route sketch", "رسم المسار بعد حماية الخصوصية")}>
             {model.route.map((path, i) => <polyline key={i} points={path.map(([x, y]) => `${x * 100},${y * 100}`).join(" ")} fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />)}

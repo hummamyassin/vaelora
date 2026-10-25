@@ -1,4 +1,5 @@
 import { supportedCity, serviceCities } from "../lib/dynamic-location.ts";
+import { validCoordinates } from "../lib/geography.ts";
 import {
   BodyError,
   checkJsonRequest,
@@ -28,7 +29,7 @@ export function parseSearch(input: unknown) {
     throw new BodyError("Invalid search", 400);
   return { query: x.query.trim(), locale: x.locale as "en" | "ar" };
 }
-export function parseSearchResults(raw: unknown): SearchPlace[] {
+export function parseSearchOutcome(raw: unknown) {
   if (
     !raw ||
     typeof raw !== "object" ||
@@ -36,6 +37,7 @@ export function parseSearchResults(raw: unknown): SearchPlace[] {
   )
     throw new Error("Invalid search response");
   const rows: SearchPlace[] = [];
+  let outside = false;
   for (const f of (raw as { features: unknown[] }).features.slice(0, 10)) {
     const item = f as {
       geometry?: { type?: string; coordinates?: unknown[] };
@@ -53,6 +55,8 @@ export function parseSearchResults(raw: unknown): SearchPlace[] {
       /[\u0000-\u001f<>]/.test(name)
     )
       continue;
+    if (!validCoordinates({ latitude, longitude })) continue;
+    if (!supportedCity({ latitude, longitude })) outside = true;
     if (
       supportedCity({ latitude, longitude }) &&
       !rows.some(
@@ -64,21 +68,25 @@ export function parseSearchResults(raw: unknown): SearchPlace[] {
     )
       rows.push({ name, latitude, longitude });
   }
-  return rows.slice(0, 6);
+  const places = rows.slice(0, 6);
+  return { places, status: places.length ? "found" : outside ? "outside" : "empty" };
+}
+export function parseSearchResults(raw: unknown): SearchPlace[] {
+  return parseSearchOutcome(raw).places;
 }
 /** Submit-only, one outbound request at a time, 24h/200-entry cache. No reverse GPS. */
 export function createGeocoder(
   fetcher: typeof fetch = fetch,
   clock = Date.now,
 ) {
-  const cache = new Map<string, { expires: number; places: SearchPlace[] }>();
+  const cache = new Map<string, { expires: number; outcome: ReturnType<typeof parseSearchOutcome> }>();
   let busy = false,
     last = 0;
   return async (input: unknown) => {
     const { query, locale } = parseSearch(input),
       key = `${locale}:${query.toLocaleLowerCase()}`,
       saved = cache.get(key);
-    if (saved && saved.expires > clock()) return saved.places;
+    if (saved && saved.expires > clock()) return saved.outcome;
     if (busy || clock() - last < 1100)
       throw new BodyError("Please wait before searching again", 429);
     busy = true;
@@ -128,10 +136,10 @@ export function createGeocoder(
       } finally {
         void reader.cancel().catch(() => {});
       }
-      const places = parseSearchResults(JSON.parse(body + decoder.decode()));
+      const outcome = parseSearchOutcome(JSON.parse(body + decoder.decode()));
       if (cache.size >= 200) cache.delete(cache.keys().next().value!);
-      cache.set(key, { expires: clock() + 86400000, places });
-      return places;
+      cache.set(key, { expires: clock() + 86400000, outcome });
+      return outcome;
     } finally {
       busy = false;
     }
@@ -151,7 +159,7 @@ export function createSearchHandler(search = createGeocoder()) {
     try {
       return Response.json(
         {
-          places: await search(await readJson(request)),
+          ...await search(await readJson(request)),
           attribution: "© OpenStreetMap contributors · Photon",
         },
         { headers: privateHeaders },

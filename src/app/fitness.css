@@ -643,6 +643,9 @@
   border-radius: var(--radius);
   background: var(--surface-strong);
   color: var(--on-strong);
+  transition:
+    border-color 180ms cubic-bezier(0.23, 1, 0.32, 1),
+    background-color 180ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 .track-live[data-state="recording"] {
   border-color: var(--strong-border);
@@ -654,6 +657,29 @@
 .track-live[data-state="paused"] .track-state {
   color: var(--score-fair);
 }
+.track-live[data-state="acquiring"] {
+  border-color: var(--score-fair);
+}
+.track-live[data-state="acquiring"] .track-state {
+  color: var(--score-fair);
+}
+.track-live[data-state="degraded"] {
+  border-color: var(--danger);
+}
+.track-live[data-state="degraded"] .track-state {
+  color: #ffadb4;
+}
+.track-live[data-state="acquiring"] .recording-dot,
+.track-live[data-state="degraded"] .recording-dot {
+  box-shadow: none;
+}
+.track-live[data-state="acquiring"] .recording-dot { background: var(--score-fair); }
+.track-live[data-state="degraded"] .recording-dot { background: #ff818c; }
+.track-plan-context {
+  margin: 6px 0 0;
+  color: var(--on-strong-muted);
+  font-size: 11px;
+}
 .track-timer {
   margin: 16px 0 22px;
   text-align: center;
@@ -662,7 +688,8 @@
   display: block;
   font-size: clamp(56px, 7vw, 84px);
   line-height: 1.1;
-  font-weight: 800;
+  font-family: "Bahnschrift", "Segoe UI Variable Display", Tahoma, sans-serif;
+  font-weight: 750;
   letter-spacing: -2px;
   font-variant-numeric: tabular-nums;
 }
@@ -682,6 +709,7 @@
   line-height: 1.15;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
+  font-family: "Bahnschrift", "Segoe UI Variable Display", Tahoma, sans-serif;
 }
 .track-metrics > .track-speed {
   display: flex;

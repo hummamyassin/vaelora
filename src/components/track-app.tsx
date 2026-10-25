@@ -66,6 +66,7 @@ export function TrackApp({
   onRecording,
   onSession,
   preferredActivity = "walking",
+  plannedMinutes,
   openActivityId,
   onActivityOpened,
   startRef,
@@ -75,6 +76,7 @@ export function TrackApp({
   onRecording: (active: boolean) => void;
   onSession: (busy: boolean) => void;
   preferredActivity?: ActivityKind;
+  plannedMinutes?: number;
   openActivityId?: string | null;
   onActivityOpened: (id: null) => void;
   startRef?: Ref<() => void>;
@@ -340,6 +342,16 @@ export function TrackApp({
   });
   const current = summary ?? a,
     stats = current ? metrics(current) : null;
+  const degraded = ["poor", "jump", "stale", "invalid", "interrupted", "limit"].includes(display.quality);
+  const visualState = summary
+    ? "finished"
+    : state === "paused"
+      ? "paused"
+      : display.quality === "waiting"
+        ? "acquiring"
+        : degraded
+          ? "degraded"
+          : "recording";
   const currentSpeed =
     active && display.currentSpeedMps != null
       ? display.currentSpeedMps * 3.6
@@ -570,20 +582,29 @@ export function TrackApp({
           )}
           <section
             className="track-live"
-            data-state={summary ? "finished" : state}
+            data-state={visualState}
           >
             <div className="track-state">
               <span className={active && !summary ? "recording-dot" : ""} />
               {summary
                 ? text("Completed", "مكتمل")
-                : active
-                  ? text("Recording", "جارٍ التسجيل")
-                  : text("Paused", "متوقف مؤقتًا")}{" "}
+                : visualState === "acquiring"
+                  ? text("GPS acquiring", "جارٍ التقاط إشارة GPS")
+                  : visualState === "degraded"
+                    ? text("GPS degraded", "إشارة GPS ضعيفة")
+                    : active
+                      ? text("Recording", "جارٍ التسجيل")
+                      : text("Paused", "متوقف مؤقتًا")}{" "}
               ·{" "}
               {current.activity === "walking"
                 ? text("Walking", "المشي")
                 : text("Running", "الجري")}
             </div>
+            {!summary && plannedMinutes && (
+              <p className="track-plan-context">
+                {text(`${plannedMinutes} min plan`, `خطة لمدة ${plannedMinutes} دقيقة`)}
+              </p>
+            )}
             {summary && (
               <p>
                 {new Date(current.startedAt).toLocaleString(

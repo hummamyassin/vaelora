@@ -30,6 +30,10 @@ export async function createShareImage(
   c.fillText("VAELORA", 540, 128);
   c.font = "28px Arial";
   c.fillText(model.activity, 540, 183);
+  c.font = "22px Arial";
+  c.direction = ar ? "rtl" : "ltr";
+  c.fillText(model.date, 540, 220);
+  c.direction = "ltr";
   const drawRoute = (left: number, top: number, size: number) => {
     c.strokeStyle = "#a61e2d";
     c.lineWidth = 11;
