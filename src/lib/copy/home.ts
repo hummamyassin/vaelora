@@ -32,6 +32,7 @@ export const homeCopy = {
   ],
   window: ["Outing window", "فترة النشاط"],
   score: ["VAELORA Score", "مؤشر VAELORA"],
+  scoreMeter: ["VAELORA Score {n} out of 100", "مؤشر VAELORA {n} من 100"],
   scoreWindow: ["for the full window", "لكامل الفترة"],
   scoreNow: ["this hour", "هذه الساعة"],
   // Meteogram

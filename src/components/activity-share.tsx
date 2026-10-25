@@ -10,6 +10,7 @@ import {
 } from "../lib/share-image";
 import { shareCopy } from "../lib/copy/track";
 import { translator, type Locale } from "../lib/i18n";
+import { BrandMark, StitchBand } from "./brand-mark";
 
 const missing = (v: string) => (v === "—" ? "–" : v);
 
@@ -62,7 +63,10 @@ export function ActivityShare({
         data-route={model.routeUseful ? "route" : "metrics"}
       >
         <span className="share-head">
-          <strong className="share-brand">VAELORA</strong>
+          <span className="share-lockup">
+            <BrandMark size={24} className="share-mark" />
+            <strong className="share-brand">VAELORA</strong>
+          </span>
           <span className="share-activity">
             <b>{model.activity}</b>
             <span>{model.date}</span>
@@ -111,6 +115,7 @@ export function ActivityShare({
             {model.score != null ? `VAELORA ${model.score}/100` : ""}
           </span>
         )}
+        <StitchBand tone={template === "performance" ? "light" : "dark"} className="share-stitch" />
       </div>
       <p className="fine">{c("privacy")}</p>
       <div className="track-actions share-actions">

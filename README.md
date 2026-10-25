@@ -56,7 +56,7 @@ Weather primarily helps determine **when** conditions are suitable and secondari
 - Installable PWA with a public offline shell for local tracking and history workflows
 - App-like navigation: screens, place profiles, recaps and sheets have hash routes, so Back, Forward and refresh behave like an installed app without interrupting a recording
 - Local backup and restore: export all finished activities as a JSON file, import with strict validation and duplicate protection, and request persistent browser storage
-- A forecast-chart design system: an hourly meteogram strip brackets the recommended window in one reserved course colour, with Archivo and Readex Pro self-hosted for Latin and Arabic
+- The VAELORA identity: deep brown, warm cream, gold, terracotta and olive; the real app icon and a tracked serif wordmark; the icon's cross-stitch band on dark feature surfaces; an hourly meteogram whose recommended window is bracketed in gold
 
 ## Product screenshots
 

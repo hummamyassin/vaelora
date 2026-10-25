@@ -160,7 +160,7 @@ export function DashboardApp() {
       document.documentElement.dataset.theme = theme;
       document
         .querySelectorAll('meta[name="theme-color"]')
-        .forEach((m) => m.setAttribute("content", theme === "dark" ? "#0a1018" : "#eceff1"));
+        .forEach((m) => m.setAttribute("content", theme === "dark" ? "#231f1c" : "#f4efe6"));
     };
     apply();
     media.addEventListener("change", apply);
@@ -300,8 +300,8 @@ export function DashboardApp() {
               navigate({ screen: "home", sheet: null });
             }}
           >
-            <BrandMark />
-            VAELORA
+            <BrandMark size={30} />
+            <span className="wordmark-text">VAELORA</span>
           </a>
           <span className="topbar-spacer" />
           <button

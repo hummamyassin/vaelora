@@ -46,3 +46,11 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
 ## Unresolved decisions
 
 - Owner skipped the decision round by instruction; direction proceeds as assigned.
+
+## Identity pin (2026-10-25)
+
+The owner supplied the VAELORA identity sheet (icon, lockup, palette #231F1C, #F4EFE6, #C8913A,
+#B5532A, #5F6B34). It overrides the OWN-WORLD palette above: deep brown feature bands, warm cream
+ground, gold for the best moment, terracotta for motion, stitch colours for conditions, the real
+app icon as the mark, a tracked classical serif wordmark, and the icon's cross-stitch band at the
+foot of dark features. THESIS, STORY and FIRST VIEWPORT stand; the meteogram remains the signature.

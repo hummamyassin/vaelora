@@ -36,6 +36,7 @@ import { LocationArt } from "./location-art";
 import { PersonalProgress } from "./personal-progress";
 import { Sheet } from "./app-dialog";
 import { Meteogram } from "./meteogram";
+import { StitchBand, StitchMeter } from "./brand-mark";
 import { planningState } from "../domain/recommendation/plan-state";
 import {
   isRefreshDue,
@@ -598,6 +599,7 @@ export function DiscoveryHome({
                 <bdi>{score ?? "–"}</bdi>
                 <small>/100</small>
               </strong>
+              <StitchMeter score={score} label={c("scoreMeter", { n: score ?? "–" })} />
               <span className="plan-score-note">
                 {plan?.window ? c("scoreWindow") : c("scoreNow")}
               </span>
@@ -652,6 +654,7 @@ export function DiscoveryHome({
             <ChevronRight aria-hidden className="flip-rtl" />
           </button>
         )}
+        <StitchBand className="plan-stitch" />
       </section>
 
       <section className="section near" aria-labelledby="near-title">

@@ -2,6 +2,7 @@ import type { Dictionary } from "../i18n.ts";
 
 export const progressCopy = {
   thisWeek: ["This week", "هذا الأسبوع"],
+  weekStitch: ["{day}: {n} activities", "{day}: {n} نشاط"],
   weekNote: ["Monday to Sunday, Amman time", "من الاثنين إلى الأحد بتوقيت عمّان"],
   activities: ["Activities", "الأنشطة"],
   distance: ["Distance", "المسافة"],

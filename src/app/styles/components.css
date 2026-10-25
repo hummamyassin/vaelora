@@ -30,23 +30,28 @@
     max-width: var(--content-max);
     margin-inline: auto;
   }
+  /* Wordmark per the identity lockup: the icon, then widely tracked classical caps. */
   .wordmark {
     display: inline-flex;
     align-items: center;
-    gap: var(--s-2);
+    gap: var(--s-3);
     min-height: 44px;
     color: var(--brand);
     text-decoration: none;
-    font-family: var(--font-sans);
-    font-size: 1.0625rem;
-    font-weight: 800;
-    letter-spacing: 0.06em;
-    font-variation-settings: "wdth" var(--wdth-expanded);
   }
   .wordmark-mark {
-    width: 22px;
-    height: 22px;
+    width: 30px;
+    height: 30px;
     flex: none;
+    border-radius: 8px;
+  }
+  .wordmark-text {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: 0.3em;
+    margin-inline-end: -0.3em;
   }
   .topbar-spacer {
     flex: 1;
@@ -104,8 +109,16 @@
     margin-bottom: var(--s-5);
   }
   .screen-title {
+    font-family: var(--font-display);
+    font-size: 2.1rem;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    line-height: 1.05;
+  }
+  :lang(ar) .screen-title {
+    font-family: var(--font-arabic);
     font-size: var(--text-2xl);
-    letter-spacing: -0.02em;
+    font-weight: 700;
   }
   .screen-lede {
     margin-top: var(--s-1);
@@ -173,9 +186,23 @@
   .dock-item:hover {
     color: var(--on-band);
   }
+  /* Selected: cream label with a terracotta stitch beneath, not a glowing pill. */
   .dock-item[aria-current="page"] {
-    background: var(--on-band);
-    color: var(--ink-band);
+    color: var(--on-band);
+  }
+  .dock-item[aria-current="page"]::after {
+    content: "";
+    position: absolute;
+    bottom: 5px;
+    inset-inline: 0;
+    margin-inline: auto;
+    width: 22px;
+    height: 5px;
+    background: linear-gradient(45deg, transparent 40%, var(--stitch-terracotta) 40% 60%, transparent 60%) 0 0 / 5.5px 5px,
+      linear-gradient(-45deg, transparent 40%, var(--stitch-terracotta) 40% 60%, transparent 60%) 0 0 / 5.5px 5px;
+  }
+  .dock-item.track-dock svg {
+    color: var(--stitch-terracotta);
   }
   .dock-item:focus-visible {
     outline-color: var(--on-band);
@@ -190,9 +217,6 @@
     border-radius: 50%;
     background: var(--live-band);
     box-shadow: 0 0 0 2px var(--ink-band);
-  }
-  .dock-item[aria-current="page"] .dock-live {
-    box-shadow: 0 0 0 2px var(--on-band);
   }
 
   /* ---------- Buttons ---------- */
@@ -262,8 +286,8 @@
     border-color: var(--danger);
   }
   .btn-course {
-    background: var(--course-on-band);
-    color: var(--on-course-band);
+    background: var(--action);
+    color: var(--on-action);
   }
   .btn-course:hover {
     filter: brightness(1.06);
@@ -696,7 +720,7 @@
   }
   .stat-value {
     font-size: clamp(1.5rem, 6.4vw, var(--text-metric));
-    font-weight: 750;
+    font-weight: 700;
     line-height: 1;
     letter-spacing: -0.01em;
     font-variation-settings: "wdth" var(--wdth-condensed);
@@ -773,7 +797,7 @@
     outline: none;
   }
   .sheet::backdrop {
-    background: rgb(5 10 16 / 0.55);
+    background: rgb(26 23 20 / 0.55);
   }
   @media (prefers-reduced-motion: no-preference) {
     .sheet[open] {

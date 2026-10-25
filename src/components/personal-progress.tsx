@@ -10,6 +10,23 @@ import { progressCopy } from "../lib/copy/profile";
 const shownPace = (seconds: number | null) => shown(paceLabel(seconds));
 
 const km = (m: number) => (m / 1000).toFixed(2);
+const dayMs = 86400000;
+const ammanDay = (ms: number) => Math.floor((ms + 10800000) / dayMs);
+/** Monday-to-Sunday days of the current Amman week with the activities finished on each. */
+function weekDays(activities: readonly RecordedActivity[], now = Date.now()) {
+  const today = ammanDay(now),
+    start = today - ((new Date(today * dayMs).getUTCDay() + 6) % 7);
+  return Array.from({ length: 7 }, (_, i) => {
+    const day = start + i;
+    return {
+      day,
+      future: day > today,
+      kinds: activities
+        .filter((a) => a.state === "finished" && ammanDay(a.startedAt) === day)
+        .map((a) => a.activity),
+    };
+  });
+}
 const activityCount = (locale: Locale, n: number) =>
   locale === "ar"
     ? `${n} ${arabicCount(n, ["نشاط", "نشاطان", "أنشطة", "نشاطًا"])}`
@@ -83,6 +100,26 @@ export function PersonalProgress({
               <span className="stat-label">{c("activeTime")}</span>
             </div>
           </div>
+          <ol className="week-stitches" aria-label={c("thisWeek")}>
+            {weekDays(activities).map((d) => {
+              const name = new Date(d.day * dayMs + 43200000).toLocaleDateString(ar ? "ar-JO-u-nu-latn" : "en-GB", {
+                weekday: "short",
+                timeZone: "UTC",
+              });
+              return (
+                <li key={d.day} data-future={d.future || undefined} aria-label={c("weekStitch", { day: name, n: d.kinds.length })}>
+                  <span className="week-stitch-marks" aria-hidden="true">
+                    {d.kinds.length ? (
+                      d.kinds.slice(0, 3).map((k, i) => <i key={i} data-kind={k} />)
+                    ) : (
+                      <i data-empty />
+                    )}
+                  </span>
+                  <span className="week-stitch-day">{name}</span>
+                </li>
+              );
+            })}
+          </ol>
           <div className="sport-bars">
             {sports.map((s) => (
               <div className="sport-bar" data-kind={s.kind} key={s.kind}>

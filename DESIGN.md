@@ -1,45 +1,38 @@
 ---
 name: VAELORA
-description: Weather-aware walking and running for Greater Amman, drawn like a forecast chart.
+description: Sport, movement and identity. Weather-aware walking and running for Greater Amman, in the VAELORA ribbon-and-stitch identity.
 colors:
-  chart-paper: "#eceff1"
-  surface: "#f7f9fa"
-  surface-2: "#e2e7ea"
-  surface-raised: "#fdfefe"
-  synoptic-ink: "#0d1724"
-  ink-band-2: "#172334"
-  on-band: "#eef2f5"
-  on-band-2: "#a9b6c3"
-  on-band-3: "#7f8d9c"
-  text: "#0d1724"
-  text-2: "#3f4b58"
-  text-3: "#5b6775"
-  line: "#cbd3d9"
-  course-crimson: "#9b1c3c"
-  course-rose: "#ff4d7a"
-  isobar-blue: "#1e5fa8"
-  running-burgundy: "#8a1538"
-  live: "#d9234f"
-  good: "#0f7546"
-  fair: "#8a5200"
-  poor: "#a8340a"
-  good-band: "#3dd68c"
-  fair-band: "#ffb547"
-  poor-band: "#ff8a3d"
-  danger: "#b4232f"
+  deep-brown: "#231F1C"
+  warm-cream: "#F4EFE6"
+  gold: "#C8913A"
+  terracotta: "#B5532A"
+  olive: "#5F6B34"
+  surface: "#FBF8F3"
+  surface-2: "#EBE4D8"
+  surface-raised: "#FFFDF9"
+  band-2: "#2E2925"
+  on-band-2: "#CFC4B4"
+  on-band-3: "#A39684"
+  text-2: "#4D4339"
+  text-3: "#6E6256"
+  line: "#D9CFBF"
+  terracotta-text: "#A84A23"
+  terracotta-on-dark: "#E07A4A"
+  gold-text: "#8E6420"
+  olive-on-dark: "#93A45A"
+  faded-thread: "#6B5F55"
+  danger: "#9E2B1F"
 typography:
-  brand:
-    fontFamily: "Archivo, Readex Pro, system-ui, sans-serif"
-    fontSize: "1.0625rem"
-    fontWeight: 800
-    letterSpacing: "0.06em"
-    fontVariation: "'wdth' 125"
-  headline:
-    fontFamily: "Archivo, Readex Pro, system-ui, sans-serif"
-    fontSize: "2.25rem"
-    fontWeight: 750
-    lineHeight: 1.05
-    letterSpacing: "-0.025em"
+  wordmark:
+    fontFamily: "Cormorant Garamond, Georgia, serif"
+    fontSize: "1.3rem"
+    fontWeight: 600
+    letterSpacing: "0.3em"
+  display:
+    fontFamily: "Cormorant Garamond, Readex Pro, Georgia, serif"
+    fontSize: "2.6rem"
+    fontWeight: 600
+    lineHeight: 1
   title:
     fontFamily: "Archivo, Readex Pro, system-ui, sans-serif"
     fontSize: "1.375rem"
@@ -57,21 +50,14 @@ typography:
   metric:
     fontFamily: "Archivo, Readex Pro, system-ui, sans-serif"
     fontSize: "clamp(1.5rem, 6.4vw, 2.5rem)"
-    fontWeight: 780
+    fontWeight: 700
     lineHeight: 1
     fontFeature: "'tnum' 1"
-    fontVariation: "'wdth' 72"
-  timer:
-    fontFamily: "Archivo, Readex Pro, system-ui, sans-serif"
-    fontSize: "clamp(4.25rem, 22vw, 7.5rem)"
-    fontWeight: 800
-    lineHeight: 0.92
-    fontFeature: "'tnum' 1"
-    fontVariation: "'wdth' 72"
+    fontVariation: "'wdth' 84"
 rounded:
   control: "10px"
-  panel: "16px"
-  sheet: "22px"
+  panel: "18px"
+  sheet: "24px"
   pill: "999px"
 spacing:
   s1: "4px"
@@ -84,214 +70,145 @@ spacing:
   s10: "40px"
 components:
   button-primary:
-    backgroundColor: "{colors.course-crimson}"
+    backgroundColor: "{colors.terracotta}"
     textColor: "{colors.surface-raised}"
     rounded: "{rounded.control}"
     height: "44px"
-    padding: "0 16px"
-  button-course:
-    backgroundColor: "{colors.course-rose}"
-    textColor: "{colors.synoptic-ink}"
-    rounded: "{rounded.control}"
-    height: "54px"
   button-secondary:
     backgroundColor: "{colors.surface-raised}"
-    textColor: "{colors.text}"
+    textColor: "{colors.deep-brown}"
     rounded: "{rounded.control}"
     height: "44px"
-  segmented-selected:
-    backgroundColor: "{colors.surface-raised}"
-    textColor: "{colors.text}"
-    rounded: "{rounded.control}"
-    height: "40px"
   chip-selected:
-    backgroundColor: "{colors.synoptic-ink}"
-    textColor: "{colors.on-band}"
+    backgroundColor: "{colors.deep-brown}"
+    textColor: "{colors.warm-cream}"
     rounded: "{rounded.pill}"
     height: "40px"
-  dock:
-    backgroundColor: "{colors.synoptic-ink}"
-    textColor: "{colors.on-band-2}"
-    rounded: "{rounded.pill}"
-    height: "64px"
-  plan-band:
-    backgroundColor: "{colors.synoptic-ink}"
-    textColor: "{colors.on-band}"
+  feature-band:
+    backgroundColor: "{colors.deep-brown}"
+    textColor: "{colors.warm-cream}"
     rounded: "{rounded.panel}"
     padding: "24px"
+  dock:
+    backgroundColor: "{colors.deep-brown}"
+    textColor: "{colors.on-band-2}"
+    rounded: "{rounded.pill}"
+    height: "66px"
 ---
 
 # Design System: VAELORA
 
 ## Overview
 
-**Creative North Star: "The Forecast Chart"**
+**Creative North Star: "The Ribbon and the Stitch"**
 
-VAELORA is read the way a good meteogram is read: one glance tells you what the next hours
-hold and when to go. Conditions are drawn, not described. Each remaining hour is a column
-whose height and colour are the scorer's comfort band, with the temperature written above it,
-and the recommended outing is bracketed in a single reserved ink. Everything else in the
-product, from the share card to the live recorder, borrows that chart's discipline: a cool
-paper ground, synoptic navy ink, hairline rules, condensed tabular figures.
+VAELORA's identity sheet defines the product: a cream ribbon "V" on deep brown, its tip catching
+gold, rising out of a band of cross-stitch in cream, olive, terracotta and gold. The interface is
+the digital expression of that icon. Dark, confident feature surfaces carry the decision and the
+recorder; warm cream carries reading; the stitch band appears where the icon's band would, at the
+foot of a dark feature. The cultural reference is the embroidery itself, used structurally and
+sparingly, never as wallpaper.
 
-The system is operational, not decorative. Cards are rare; bands, rows and rules carry
-structure. Colour does jobs: one action colour, one condition ramp, two activity hues. The
-product works in strong daylight and at night, so the decision band and the live recorder sit
-on the ink ground at high contrast in both themes. Arabic is first-class: layouts mirror, the
-meteogram runs right to left, and Readex Pro carries Arabic text and numerals.
+The product stays an athletic instrument. Numbers are large, tabular and calm; the classical serif
+is reserved for the wordmark and a few display lines, so craft reads as refinement, not costume.
 
 **Key Characteristics:**
-- An ink plan band that holds the single decision and its single action.
-- A meteogram strip as the signature data graphic.
-- One variable grotesk whose width axis is the hierarchy.
-- Flat surfaces with hairlines; depth only for overlays and the floating dock.
-- Restrained motion that explains state: press, sheet rise, live pulse.
+- One dark feature band per screen, closed by the icon's stitch band.
+- Gold marks the best moment; terracotta marks motion.
+- The stitch colours (olive, gold) carry conditions; poor conditions read as faded thread.
+- A tracked classical serif wordmark beside the real app icon.
+- Warm cream ground with dark brown ink; no cool or neon accents.
 
 ## Colors
 
-A cool, chart-paper neutral system with one crimson-rose action ink and a meteorological
-condition ramp.
+The five identity colours, extended only with tints needed for contrast.
 
 ### Primary
-- **Course Crimson** (`course-crimson`): primary buttons on paper surfaces, selected place
-  marker, focus of the active outing on light grounds.
-- **Course Rose** (`course-rose`): the same course ink on the ink band: the window time, the
-  meteogram bracket, the Start button, the live route and the recording state.
+- **Deep Brown** (`deep-brown`): feature bands, the dock, the live recorder, text on cream, the dark theme ground.
+- **Warm Cream** (`warm-cream`): page ground in light theme, all text on dark surfaces.
 
 ### Secondary
-- **Isobar Blue** (`isobar-blue`): walking series, the reference-point marker, focus rings.
-- **Running Burgundy** (`running-burgundy`): running series.
+- **Terracotta** (`terracotta`, text `terracotta-text`, on dark `terracotta-on-dark`): primary action, Start, recording state, the live route, the selected map marker, running.
+- **Gold** (`gold`, text `gold-text`): the recommended window and its meteogram bracket, verified-place marker rims, the reference point, acceptable conditions.
 
 ### Tertiary
-- **Condition ramp** (`good`, `fair`, `poor` on paper; `good-band`, `fair-band`, `poor-band`
-  on ink): comfortable, acceptable and less suitable conditions, and GPS quality.
+- **Olive** (`olive`, on dark `olive-on-dark`): comfortable conditions, GPS recording well, walking.
+- **Faded thread** (`faded-thread`): less suitable conditions.
 
 ### Neutral
-- **Chart Paper** (`chart-paper`): page ground.
-- **Surface / Surface 2 / Raised** (`surface`, `surface-2`, `surface-raised`): panels,
-  segmented tracks, inputs and raised controls.
-- **Synoptic Ink** (`synoptic-ink`): text, the plan band, the dock, the live recorder.
-- **Secondary and muted text** (`text-2`, `text-3`): metadata at 7.7:1 and 5:1 on paper.
-- **Line** (`line`): hairline rules and borders.
+- **Surfaces** (`surface`, `surface-2`, `surface-raised`, `band-2`): panels, tracks, raised controls.
+- **Secondary text** (`text-2`, `text-3`, `on-band-2`, `on-band-3`): metadata on cream and on brown.
+- **Line** (`line`): hairlines.
 
 ### Named Rules
-**The One Course Rule.** Course ink marks only the active outing (its window, bracket, start,
-live route and selected place). It never decorates.
+**The Gold Moment Rule.** Gold marks the single best moment (the recommended window, the V's tip). It never decorates.
 
-**The Conditions Mean Conditions Rule.** Green, amber and vermilion appear only for comfort
-bands and GPS quality, never for brand, activity or emphasis.
+**The Motion Rule.** Terracotta means movement or action: Start, Resume, recording, the live route.
+
+**The Thread Rule.** Conditions use the stitch colours: olive comfortable, gold acceptable, faded thread poor.
 
 ## Typography
 
-**Display and body font:** Archivo (variable, wdth 62 to 125), self-hosted.
-**Arabic font:** Readex Pro, self-hosted, used for Arabic script and Arabic-Indic numerals.
+**Wordmark and display:** Cormorant Garamond 600, self-hosted.
+**Interface and metrics:** Archivo (variable width), self-hosted.
+**Arabic:** Readex Pro, self-hosted; Arabic display lines use it at 700.
 
-**Character:** a sturdy, slightly athletic grotesk. Expanded for the wordmark, normal for
-reading, condensed and heavy for numbers.
+**Character:** a classical, widely tracked wordmark and calm serif display lines over a steady grotesk; metrics are tabular and slightly condensed, firm rather than aggressive.
 
 ### Hierarchy
-- **Brand** (800, 1.0625rem, 0.06em tracking, width 125): the wordmark only.
-- **Headline** (750, 2.25rem, 1.05): the plan decision ("Good to go now") and onboarding.
-- **Title** (700, 1.375 to 1.75rem): screen and section titles.
-- **Body** (400, 1rem, 1.5): descriptions, kept under 60ch.
-- **Label** (600 to 650, 0.75 to 0.8125rem): metadata, field labels, metric captions.
-- **Metric** (780, condensed, tabular): distance, pace, score, window time; fluid sizes.
-- **Timer** (800, condensed, tabular, up to 7.5rem): the live recorder's active time.
+- **Wordmark** (Cormorant 600, 1.3rem, 0.3em tracking): beside the app icon in the top bar, onboarding, share card.
+- **Display** (Cormorant 600, 2–2.6rem): the plan decision, screen titles, the profile name, onboarding.
+- **Title** (Archivo 700, 1.375rem): section titles.
+- **Body** (Archivo 400, 1rem, 1.5).
+- **Label** (Archivo 600–650, 0.75–0.8125rem).
+- **Metric** (Archivo 700, width 84, tabular): timer, distance, pace, window, score.
 
 ### Named Rules
-**The Width Is Rank Rule.** Hierarchy for numbers comes from the width axis and weight, not
-from new families: condensed for metrics, normal for text, expanded only for the brand.
-
-**The No Eyebrow Rule.** No tracked uppercase labels above headings; the heading speaks.
+**The Quiet Serif Rule.** The serif appears only in the wordmark and display lines, never in controls, labels or numbers.
 
 ## Layout
 
-Single column on phones with a 16px gutter (28px from 768px), content capped at 1180px.
-Screens reserve space for the floating dock and the safe area at the bottom. From 1080px Home
-becomes two columns: the plan band is sticky on the left, Near you, reviewed places and
-progress on the right. The live recorder splits instrument and map from 768px. Spacing is a
-4px grid (4, 8, 12, 16, 20, 24, 32, 40); sections are separated by 40px, with more space above
-a heading than below it.
+Single column on phones (16px gutter, 28px from 768px), 1180px maximum. From 1080px Home is two columns: the plan band, this week and reviewed places on the left, Near you on the right. Screens clear the floating dock and the safe area. Spacing is a 4px grid.
 
 ## Elevation & Depth
 
-Flat by default. Depth is tonal: chart paper, surface and the ink band. Shadows appear only on
-things that float over content.
-
-### Shadow Vocabulary
-- **Raised control** (`0 1px 2px rgb(13 23 36 / 0.06), 0 2px 8px rgb(13 23 36 / 0.05)`): the
-  selected segment and small floating map controls.
-- **Overlay** (`0 8px 24px rgb(13 23 36 / 0.12), 0 2px 6px rgb(13 23 36 / 0.06)`): sheets
-  and the share preview.
-- **Dock** (`0 10px 30px rgb(13 23 36 / 0.24)`): the floating navigation.
-
-### Named Rules
-**The Float Only Rule.** A shadow means the element floats above content. Panels in the flow
-use a hairline or a tonal step instead.
+Flat and warm. Depth comes from the brown feature bands against cream. Shadows are warm-tinted and only for floating things: the dock, sheets, the share preview.
 
 ## Shapes
 
-Gently rounded and consistent: controls and inputs 10px, panels and maps 16px, sheets 22px at
-the top edge, chips, tags and the dock fully rounded. Score markers on maps are small rounded
-squares (8px); the reference point is a hollow circle; clusters are dashed pills.
+The icon's soft square: controls 10px, panels 18px, sheets 24px, chips and the dock fully rounded. Map score markers are 8px squares with a gold rim.
 
 ## Components
 
+### Stitch band (signature)
+- The icon's three cross-stitch rows (cream or ink zig-zag, alternating olive and terracotta, gold) at the foot of the plan band, the Track ready panel and the share card. A single-row variant divides the recap and closes location art.
+
+### Stitch meter (signature)
+- The VAELORA Score as ten crosses, one per ten points, lit in the condition colour, always beside the number.
+
+### Week stitches
+- This week as seven days on brown; each finished activity is one cross, olive for walking, terracotta for running.
+
+### Meteogram strip
+- Remaining hours as bars whose height and colour are the comfort band; the recommended window bracketed in gold.
+
 ### Buttons
-- **Shape:** 10px radius, 44px minimum height (54px for the plan Start, 60px for recorder
-  controls).
-- **Primary:** course crimson with white text. **Course:** course rose with ink text, used on
-  the ink band. **Secondary:** raised surface with a hairline. **Ghost:** text only.
-  **Band:** ink-2 surface for controls on the ink band.
-- **Hover / Focus / Active:** colour shift on hover, 2px blue focus ring, scale 0.97 on press.
-
-### Segmented controls
-- **Style:** surface-2 track, raised selected segment with a soft shadow; on the ink band the
-  selected segment is paper with ink text. Used for activity, duration, day and share layout.
-
-### Chips and tags
-- **Chips:** pill, hairline, raised surface; selected chips turn ink. Used for areas,
-  preferences and next steps.
-- **Tags:** small tonal pills for status (good now, best at), activity and context.
-
-### Rows
-- Lists are hairline-separated rows (56px minimum) with a title, metadata, optional score and a
-  chevron that mirrors in Arabic.
-
-### Inputs
-- **Style:** raised surface, hairline, 10px radius, 46px tall, labels above.
-- **Focus:** blue border with a soft 3px blue halo.
+- **Primary:** terracotta with cream text. **Secondary:** raised cream with a hairline. **Band:** brown-2 on dark. Press scales to 0.97.
 
 ### Navigation
-- A floating ink dock (64px) with Home, Map, Track and Ask. The current item is a paper pill;
-  Track shows a rose dot while recording. Back moves between routed screens and overlays.
-
-### Meteogram strip (signature)
-- One column per remaining forecast hour: temperature above, a bar whose height and fill are
-  the comfort band (comfortable tallest), the hour below ("Now" first).
-  The recommended window is a course-ink bracket placed at its real start and end. Hours
-  without data are hatched. A screen-reader list repeats every hour in text.
-
-### Live recorder (signature)
-- The page switches to the ink ground. Order: state pill, timer, distance and pace, three
-  secondary metrics, GPS quality, map, sticky Pause or Resume and Finish.
+- A brown dock. The selected item turns cream with a short terracotta stitch beneath; the Track icon is always terracotta and carries a live dot while recording.
 
 ## Do's and Don'ts
 
 ### Do:
-- **Do** keep one primary action per band, in course ink.
-- **Do** set every metric in condensed tabular Archivo and every label in the label style.
-- **Do** isolate numbers and times with `bdi` so they read correctly in Arabic.
-- **Do** use Western digits in both languages so times, distances and metrics read the same.
-- **Do** keep notices neutral (surface tone plus a small status dot); errors use the danger text colour.
-- **Do** keep missing values explicit ("–", "Conditions unavailable") instead of estimating.
-- **Do** keep motion to opacity, colour and short transforms under 250ms, and drop movement
-  under reduced motion.
+- **Do** use the real app icon (cropped from the identity sheet) wherever the brand mark appears.
+- **Do** close dark feature surfaces with the stitch band, once per surface.
+- **Do** keep numbers in Archivo tabular figures and Western digits in both languages.
+- **Do** keep notices neutral with a status dot.
 
 ### Don't:
-- **Don't** use course ink or the condition ramp for decoration, brand accents or charts that
-  are not conditions.
-- **Don't** add eyebrow labels, section numbers or em dashes in interface copy.
-- **Don't** stack cards inside cards; use rows, rules and tonal steps.
-- **Don't** add shadows to elements that sit in the flow.
-- **Don't** invent score differences, place facts or achievements to fill space.
+- **Don't** use embroidery as a background texture or on every card.
+- **Don't** introduce cool blues, lime, purple or neon accents.
+- **Don't** set controls, labels or metrics in the serif.
+- **Don't** redraw the V; use the identity artwork.
+- **Don't** add eyebrow labels or em dashes in interface copy.

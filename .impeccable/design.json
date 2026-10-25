@@ -1,40 +1,105 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-25T20:30:00Z",
+  "generatedAt": "2026-10-25T20:35:04.493Z",
   "title": "Design System: VAELORA",
   "extensions": {
     "colorMeta": {
-      "chart-paper": { "role": "neutral", "displayName": "Chart Paper", "canonical": "#eceff1", "tonalRamp": ["#1d2226", "#343b41", "#4d565e", "#69737c", "#88929b", "#a9b2ba", "#ccd3d9", "#eceff1"] },
-      "synoptic-ink": { "role": "neutral", "displayName": "Synoptic Ink", "canonical": "#0d1724", "tonalRamp": ["#0d1724", "#172334", "#24334a", "#384a63", "#53667f", "#76879d", "#a3b0c0", "#d4dbe4"] },
-      "course-crimson": { "role": "primary", "displayName": "Course Crimson", "canonical": "#9b1c3c", "tonalRamp": ["#3d0a17", "#5e1024", "#801731", "#9b1c3c", "#c2365a", "#e2607f", "#f3a2b5", "#fbdbe3"] },
-      "course-rose": { "role": "primary", "displayName": "Course Rose (on ink)", "canonical": "#ff4d7a" },
-      "isobar-blue": { "role": "secondary", "displayName": "Isobar Blue (walking)", "canonical": "#1e5fa8", "tonalRamp": ["#0b2440", "#123862", "#184c86", "#1e5fa8", "#3f7fc6", "#6ea2db", "#a8c8ec", "#dbe7f5"] },
-      "running-burgundy": { "role": "secondary", "displayName": "Running Burgundy", "canonical": "#8a1538" },
-      "good": { "role": "tertiary", "displayName": "Comfortable", "canonical": "#0f7546" },
-      "fair": { "role": "tertiary", "displayName": "Acceptable", "canonical": "#8a5200" },
-      "poor": { "role": "tertiary", "displayName": "Less suitable", "canonical": "#a8340a" }
+      "deep-brown": {
+        "role": "primary",
+        "displayName": "Deep Brown",
+        "canonical": "#231F1C"
+      },
+      "warm-cream": {
+        "role": "primary",
+        "displayName": "Warm Cream",
+        "canonical": "#F4EFE6"
+      },
+      "terracotta": {
+        "role": "secondary",
+        "displayName": "Terracotta",
+        "canonical": "#B5532A"
+      },
+      "gold": {
+        "role": "secondary",
+        "displayName": "Gold",
+        "canonical": "#C8913A"
+      },
+      "olive": {
+        "role": "tertiary",
+        "displayName": "Olive",
+        "canonical": "#5F6B34"
+      }
     },
     "typographyMeta": {
-      "brand": { "displayName": "Brand", "purpose": "Wordmark only; Archivo expanded (wdth 125)." },
-      "headline": { "displayName": "Headline", "purpose": "The plan decision and onboarding title." },
-      "metric": { "displayName": "Metric", "purpose": "Distance, pace, score and window time; condensed tabular." },
-      "timer": { "displayName": "Timer", "purpose": "Live recorder active time; the largest element on Track." }
+      "brand": {
+        "displayName": "Brand",
+        "purpose": "Wordmark only; Archivo expanded (wdth 125)."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "The plan decision and onboarding title."
+      },
+      "metric": {
+        "displayName": "Metric",
+        "purpose": "Distance, pace, score and window time; condensed tabular."
+      },
+      "timer": {
+        "displayName": "Timer",
+        "purpose": "Live recorder active time; the largest element on Track."
+      }
     },
     "shadows": [
-      { "name": "raised", "value": "0 1px 2px rgb(13 23 36 / 0.06), 0 2px 8px rgb(13 23 36 / 0.05)", "purpose": "Selected segment and floating map controls." },
-      { "name": "overlay", "value": "0 8px 24px rgb(13 23 36 / 0.12), 0 2px 6px rgb(13 23 36 / 0.06)", "purpose": "Sheets and the share preview." },
-      { "name": "dock", "value": "0 10px 30px rgb(13 23 36 / 0.24)", "purpose": "Floating navigation dock." }
+      {
+        "name": "raised",
+        "value": "0 1px 2px rgb(35 31 28 / 0.06), 0 2px 8px rgb(35 31 28 / 0.05)",
+        "purpose": "Selected segment, map controls."
+      },
+      {
+        "name": "overlay",
+        "value": "0 10px 28px rgb(35 31 28 / 0.14), 0 2px 6px rgb(35 31 28 / 0.06)",
+        "purpose": "Sheets and share preview."
+      },
+      {
+        "name": "dock",
+        "value": "0 12px 30px rgb(35 31 28 / 0.28)",
+        "purpose": "Floating dock."
+      }
     ],
     "motion": [
-      { "name": "ease-out", "value": "cubic-bezier(0.23, 1, 0.32, 1)", "purpose": "Press feedback, state changes, entrances." },
-      { "name": "ease-drawer", "value": "cubic-bezier(0.32, 0.72, 0, 1)", "purpose": "Sheet rise." },
-      { "name": "press", "value": "140ms", "purpose": "Scale 0.97 on press." },
-      { "name": "base", "value": "240ms", "purpose": "Sheets and settling content." }
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.23, 1, 0.32, 1)",
+        "purpose": "Press feedback, state changes, entrances."
+      },
+      {
+        "name": "ease-drawer",
+        "value": "cubic-bezier(0.32, 0.72, 0, 1)",
+        "purpose": "Sheet rise."
+      },
+      {
+        "name": "press",
+        "value": "140ms",
+        "purpose": "Scale 0.97 on press."
+      },
+      {
+        "name": "base",
+        "value": "240ms",
+        "purpose": "Sheets and settling content."
+      }
     ],
     "breakpoints": [
-      { "name": "narrow", "value": "359px" },
-      { "name": "tablet", "value": "768px" },
-      { "name": "desktop", "value": "1080px" }
+      {
+        "name": "narrow",
+        "value": "359px"
+      },
+      {
+        "name": "tablet",
+        "value": "768px"
+      },
+      {
+        "name": "desktop",
+        "value": "1080px"
+      }
     ]
   },
   "components": [
@@ -42,89 +107,71 @@
       "name": "Primary Button",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "The one action on paper surfaces.",
-      "html": "<button class=\"ds-btn-primary\">Save settings</button>",
-      "css": ".ds-btn-primary { min-height: 44px; padding: 0 16px; border: 0; border-radius: 10px; background: #9b1c3c; color: #fff; font: 650 15px/1.2 Archivo, system-ui, sans-serif; transition: background-color 180ms ease, transform 140ms cubic-bezier(0.23,1,0.32,1); } .ds-btn-primary:hover { background: #84162f; } .ds-btn-primary:focus-visible { outline: 2px solid #1e5fa8; outline-offset: 2px; } .ds-btn-primary:active { transform: scale(0.97); }"
+      "description": "Start, Resume and the one action per surface.",
+      "html": "<button class=\"ds-btn\">Start 60 min walk</button>",
+      "css": ".ds-btn{min-height:44px;padding:0 16px;border:0;border-radius:10px;background:#B5532A;color:#FBF6EE;font:700 15px Archivo,system-ui,sans-serif;transition:background-color 180ms ease,transform 140ms cubic-bezier(.23,1,.32,1)}.ds-btn:hover{background:#9C4522}.ds-btn:focus-visible{outline:2px solid #8E6420;outline-offset:2px}.ds-btn:active{transform:scale(.97)}"
     },
     {
-      "name": "Course Button",
-      "kind": "button",
-      "refersTo": "button-course",
-      "description": "Start the outing; course ink on the ink band.",
-      "html": "<div class=\"ds-band\"><button class=\"ds-btn-course\">Start 60 min walk</button></div>",
-      "css": ".ds-band { padding: 16px; background: #0d1724; border-radius: 16px; } .ds-btn-course { width: 100%; min-height: 54px; border: 0; border-radius: 10px; background: #ff4d7a; color: #0d1724; font: 750 16px/1.2 Archivo, system-ui, sans-serif; transition: filter 180ms ease, transform 140ms cubic-bezier(0.23,1,0.32,1); } .ds-btn-course:hover { filter: brightness(1.06); } .ds-btn-course:focus-visible { outline: 2px solid #eef2f5; outline-offset: 2px; } .ds-btn-course:active { transform: scale(0.97); }"
-    },
-    {
-      "name": "Segmented Control",
-      "kind": "chip",
-      "refersTo": "segmented-selected",
-      "description": "Activity, duration, day and share layout choices.",
-      "html": "<div class=\"ds-seg\"><button aria-pressed=\"true\">Walk</button><button aria-pressed=\"false\">Run</button></div>",
-      "css": ".ds-seg { display: inline-grid; grid-auto-flow: column; gap: 2px; padding: 3px; border-radius: 10px; background: #e2e7ea; } .ds-seg button { min-height: 40px; padding: 0 14px; border: 0; border-radius: 7px; background: none; color: #3f4b58; font: 600 15px Archivo, system-ui, sans-serif; } .ds-seg button[aria-pressed=\"true\"] { background: #fdfefe; color: #0d1724; box-shadow: 0 1px 2px rgb(13 23 36 / .06), 0 2px 8px rgb(13 23 36 / .05); } .ds-seg button:focus-visible { outline: 2px solid #1e5fa8; }"
-    },
-    {
-      "name": "Area Chip",
-      "kind": "chip",
-      "refersTo": "chip-selected",
-      "description": "Area and preference toggles.",
-      "html": "<button class=\"ds-chip\" aria-pressed=\"true\">Central Amman</button> <button class=\"ds-chip\" aria-pressed=\"false\">Abdoun</button>",
-      "css": ".ds-chip { min-height: 40px; padding: 0 16px; border: 1px solid #cbd3d9; border-radius: 999px; background: #fdfefe; color: #0d1724; font: 550 15px Archivo, system-ui, sans-serif; } .ds-chip:hover { border-color: #8d99a5; } .ds-chip[aria-pressed=\"true\"] { background: #0d1724; border-color: #0d1724; color: #eef2f5; } .ds-chip:focus-visible { outline: 2px solid #1e5fa8; outline-offset: 2px; }"
-    },
-    {
-      "name": "Text Field",
-      "kind": "input",
-      "description": "Labelled input with a blue focus halo.",
-      "html": "<label class=\"ds-field\">Display name<input value=\"Lina\"></label>",
-      "css": ".ds-field { display: grid; gap: 6px; font: 600 13px Archivo, system-ui, sans-serif; color: #3f4b58; } .ds-field input { min-height: 46px; padding: 0 12px; border: 1px solid #cbd3d9; border-radius: 10px; background: #fdfefe; color: #0d1724; font: 400 16px Archivo, system-ui, sans-serif; } .ds-field input:focus-visible { outline: none; border-color: #1e5fa8; box-shadow: 0 0 0 3px rgb(30 95 168 / .25); }"
+      "name": "Feature Band with Stitch",
+      "kind": "custom",
+      "refersTo": "feature-band",
+      "description": "Dark decision surface closed by the icon stitch band.",
+      "html": "<div class=\"ds-band\"><p class=\"ds-h\">Good to go now</p><p class=\"ds-w\">08:00 - 09:00</p><div class=\"ds-st\"></div></div>",
+      "css": ".ds-band{position:relative;padding:20px 20px 52px;border-radius:18px;background:#231F1C;color:#F4EFE6;overflow:hidden}.ds-h{margin:0;font:600 34px Cormorant Garamond,Georgia,serif}.ds-w{margin:6px 0 0;color:#C8913A;font:700 38px Archivo,sans-serif}.ds-st{position:absolute;left:0;right:0;bottom:10px;height:28px;background:radial-gradient(circle,#F4EFE6 2px,transparent 2.5px) 0 0/26px 10px repeat-x,radial-gradient(circle,#93A45A 2px,transparent 2.5px) 0 10px/26px 10px repeat-x,radial-gradient(circle,#C8913A 2px,transparent 2.5px) 0 20px/26px 10px repeat-x}"
     },
     {
       "name": "Dock",
       "kind": "nav",
       "refersTo": "dock",
-      "description": "Floating primary navigation.",
-      "html": "<nav class=\"ds-dock\"><a aria-current=\"page\">Home</a><a>Map</a><a>Track</a><a>Ask</a></nav>",
-      "css": ".ds-dock { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; width: 360px; height: 64px; padding: 6px; border-radius: 999px; background: #0d1724; box-shadow: 0 10px 30px rgb(13 23 36 / .24); } .ds-dock a { display: grid; place-items: center; border-radius: 999px; color: #a9b6c3; font: 600 12px Archivo, system-ui, sans-serif; } .ds-dock a:hover { color: #eef2f5; } .ds-dock a[aria-current=\"page\"] { background: #eef2f5; color: #0d1724; }"
-    },
-    {
-      "name": "Meteogram Strip",
-      "kind": "custom",
-      "description": "Remaining hours as comfort-coloured bars with the bracketed window.",
-      "html": "<div class=\"ds-meteo\"><span style=\"--h:40%\" data-t=\"g\"></span><span style=\"--h:55%\" data-t=\"g\"></span><span style=\"--h:70%\" data-t=\"g\"></span><span style=\"--h:85%\" data-t=\"f\"></span><span style=\"--h:80%\" data-t=\"p\"></span><i></i></div>",
-      "css": ".ds-meteo { position: relative; display: grid; grid-template-columns: repeat(5, 40px); align-items: end; height: 72px; padding: 8px; background: #0d1724; border-radius: 12px; } .ds-meteo span { height: var(--h); margin: 0 5px; border-radius: 3px 3px 1px 1px; background: #3dd68c; } .ds-meteo span[data-t=\"f\"] { background: #ffb547; } .ds-meteo span[data-t=\"p\"] { background: #ff8a3d; } .ds-meteo i { position: absolute; top: 4px; bottom: 6px; left: 28px; width: 80px; border: 2px solid #ff4d7a; border-bottom: 0; border-radius: 8px 8px 0 0; }"
+      "description": "Brown dock; selected item cream with a terracotta stitch.",
+      "html": "<nav class=\"ds-dock\"><a aria-current=\"page\">Home</a><a>Map</a><a class=\"t\">Track</a><a>Ask</a></nav>",
+      "css": ".ds-dock{display:grid;grid-template-columns:repeat(4,1fr);width:360px;height:66px;padding:6px;border-radius:999px;background:#231F1C}.ds-dock a{display:grid;place-items:center;color:#CFC4B4;font:600 12px Archivo,sans-serif}.ds-dock a[aria-current]{color:#F4EFE6;text-decoration:underline wavy #E07A4A}.ds-dock a.t{color:#E07A4A}"
     }
   ],
   "narrative": {
-    "northStar": "The Forecast Chart",
-    "overview": "VAELORA is read the way a good meteogram is read: one glance tells you what the next hours hold and when to go. Conditions are drawn, not described. Each remaining hour is a column whose height and colour are the scorer's comfort band, with the temperature written above it, and the recommended outing is bracketed in a single reserved ink. Everything else in the product, from the share card to the live recorder, borrows that chart's discipline: a cool paper ground, synoptic navy ink, hairline rules, condensed tabular figures.",
+    "northStar": "The Ribbon and the Stitch",
+    "overview": "The interface is the digital expression of the VAELORA icon: a cream ribbon V on deep brown, its tip catching gold, rising out of a cross-stitch band in cream, olive, terracotta and gold. Dark feature surfaces carry the decision and the recorder; warm cream carries reading; the stitch band appears where the icon band would.",
     "keyCharacteristics": [
-      "An ink plan band that holds the single decision and its single action.",
-      "A meteogram strip as the signature data graphic.",
-      "One variable grotesk whose width axis is the hierarchy.",
-      "Flat surfaces with hairlines; depth only for overlays and the floating dock.",
-      "Restrained motion that explains state: press, sheet rise, live pulse."
+      "One dark feature band per screen, closed by the icon stitch band.",
+      "Gold marks the best moment; terracotta marks motion.",
+      "The stitch colours carry conditions; poor conditions read as faded thread.",
+      "A tracked classical serif wordmark beside the real app icon.",
+      "Warm cream ground with dark brown ink; no cool or neon accents."
     ],
     "rules": [
-      { "name": "The One Course Rule", "body": "Course ink marks only the active outing (its window, bracket, start, live route and selected place). It never decorates.", "section": "colors" },
-      { "name": "The Conditions Mean Conditions Rule", "body": "Green, amber and vermilion appear only for comfort bands and GPS quality, never for brand, activity or emphasis.", "section": "colors" },
-      { "name": "The Width Is Rank Rule", "body": "Hierarchy for numbers comes from the width axis and weight, not from new families: condensed for metrics, normal for text, expanded only for the brand.", "section": "typography" },
-      { "name": "The No Eyebrow Rule", "body": "No tracked uppercase labels above headings; the heading speaks.", "section": "typography" },
-      { "name": "The Float Only Rule", "body": "A shadow means the element floats above content. Panels in the flow use a hairline or a tonal step instead.", "section": "elevation" }
+      {
+        "name": "The Gold Moment Rule",
+        "body": "Gold marks the single best moment (the recommended window, the V tip). It never decorates.",
+        "section": "colors"
+      },
+      {
+        "name": "The Motion Rule",
+        "body": "Terracotta means movement or action: Start, Resume, recording, the live route.",
+        "section": "colors"
+      },
+      {
+        "name": "The Thread Rule",
+        "body": "Conditions use the stitch colours: olive comfortable, gold acceptable, faded thread poor.",
+        "section": "colors"
+      },
+      {
+        "name": "The Quiet Serif Rule",
+        "body": "The serif appears only in the wordmark and display lines, never in controls, labels or numbers.",
+        "section": "typography"
+      }
     ],
     "dos": [
-      "Do keep one primary action per band, in course ink.",
-      "Do set every metric in condensed tabular Archivo and every label in the label style.",
-      "Do isolate numbers and times with bdi so they read correctly in Arabic.",
-      "Do use Western digits in both languages so times, distances and metrics read the same.",
-      "Do keep notices neutral (surface tone plus a small status dot); errors use the danger text colour.",
-      "Do keep missing values explicit (\"–\", \"Conditions unavailable\") instead of estimating.",
-      "Do keep motion to opacity, colour and short transforms under 250ms, and drop movement under reduced motion."
+      "Do use the real app icon (cropped from the identity sheet) wherever the brand mark appears.",
+      "Do close dark feature surfaces with the stitch band, once per surface.",
+      "Do keep numbers in Archivo tabular figures and Western digits in both languages.",
+      "Do keep notices neutral with a status dot."
     ],
     "donts": [
-      "Don't use course ink or the condition ramp for decoration, brand accents or charts that are not conditions.",
-      "Don't add eyebrow labels, section numbers or em dashes in interface copy.",
-      "Don't stack cards inside cards; use rows, rules and tonal steps.",
-      "Don't add shadows to elements that sit in the flow.",
-      "Don't invent score differences, place facts or achievements to fill space."
+      "Don't use embroidery as a background texture or on every card.",
+      "Don't introduce cool blues, lime, purple or neon accents.",
+      "Don't set controls, labels or metrics in the serif.",
+      "Don't redraw the V; use the identity artwork.",
+      "Don't add eyebrow labels or em dashes in interface copy."
     ]
   }
 }

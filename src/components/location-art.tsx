@@ -1,4 +1,5 @@
 import { t, type Locale } from "../lib/i18n";
+import { StitchBand } from "./brand-mark";
 export function LocationArt({
   areaId,
   locale,
@@ -60,6 +61,7 @@ export function LocationArt({
         </svg>
         <strong>{name ?? "VAELORA"}</strong>
         <small>{t(locale, "photoNeutral")}</small>
+        <StitchBand variant="line" className="art-stitch" />
       </span>
     </span>
   );

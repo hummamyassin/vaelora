@@ -42,9 +42,7 @@ export function Onboarding({
   return (
     <Sheet title="VAELORA" close={() => finish(true)} closeLabel={c("guest")} className="onboarding">
       <div className="onboarding-meta">
-        <div className="onboarding-mark" aria-hidden="true">
-          <BrandMark />
-        </div>
+        <BrandMark size={72} className="onboarding-mark" />
         <button
           className="btn btn-secondary btn-sm onboarding-language"
           lang={ar ? "en" : "ar"}

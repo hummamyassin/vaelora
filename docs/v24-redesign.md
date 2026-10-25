@@ -130,3 +130,22 @@ qa:browser`) stays local because it depends on Edge and a running server.
 - Moved interface copy into typed English and Arabic dictionaries under `src/lib/copy/`, with
   a test that every entry has Arabic, matching placeholders and no em dashes.
 - The service worker registers once instead of once per screen.
+
+## V2.4.1 identity alignment
+
+The owner's identity sheet (VAELORA app icon, lockup and palette) is now the visual source of
+truth; see [DESIGN.md](../DESIGN.md).
+
+- **Palette:** #231F1C deep brown, #F4EFE6 warm cream, #C8913A gold, #B5532A terracotta,
+  #5F6B34 olive, with contrast tints (#A84A23, #E07A4A, #8E6420, #93A45A). Gold marks the best
+  moment (window time, meteogram bracket); terracotta marks motion (Start, recording, the live
+  route, the selected marker); olive and gold carry conditions, and poor conditions read as faded
+  thread. Light theme is cream with brown ink; dark theme is #231F1C with cream text.
+- **Icon and PWA:** the app icon, maskable icon, Apple touch icon, favicon and in-app mark are
+  cropped from the identity sheet's own artwork (masked to the icon's rounded square), not redrawn.
+- **Type:** Cormorant Garamond for the tracked wordmark and display lines; Archivo for interface
+  and metrics (less condensed than V2.4); Readex Pro for Arabic.
+- **Stitch motif:** the icon's three-row cross-stitch band closes the Home plan band, the Track
+  ready panel and the share card; a single row divides the recap and closes location art; the
+  VAELORA Score gains a ten-stitch meter; this week becomes seven stitched days; Ask's thinking
+  state sews five stitches; the dock marks the current screen with a terracotta stitch.

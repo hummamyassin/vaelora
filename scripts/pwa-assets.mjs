@@ -4,6 +4,7 @@ const files = readdirSync(".next/static", { recursive: true })
   .filter((f) => /\.(m?js|css|woff2?)$/.test(f))
   .map((f) => "/_next/static/" + f.replaceAll("\\", "/"))
   .sort();
+files.push("/brand/mark.png");
 files.push(...readdirSync("public/maplibre", { recursive: true })
   .filter((f) => /\.mjs$/.test(f))
   .map((f) => "/maplibre/" + f.replaceAll("\\", "/")));

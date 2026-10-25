@@ -1,92 +1,110 @@
 /*
- * VAELORA design tokens. Forecast-chart world: cool chart-paper ground, synoptic
- * ink, one reserved "course" ink for the active outing, and a met ramp that is
- * used only for conditions. Layers keep specificity flat (no !important).
+ * VAELORA design tokens, derived from the brand identity sheet:
+ * #231F1C deep brown, #F4EFE6 warm cream, #C8913A gold, #B5532A terracotta,
+ * #5F6B34 olive. Dark feature surfaces carry the brand; cream carries reading.
+ * Gold marks the best moment (the recommended window, the V's tip); terracotta
+ * marks motion (start, recording, the live route). The stitch colours (olive,
+ * gold) also carry conditions. Layers keep specificity flat.
  */
 @layer reset, base, components, screens, utilities;
 
 :root {
   color-scheme: light;
 
+  /* Brand constants (identity sheet) */
+  --brand-ink: #231f1c;
+  --brand-cream: #f4efe6;
+  --brand-gold: #c8913a;
+  --brand-terracotta: #b5532a;
+  --brand-olive: #5f6b34;
+  --stitch-cream: #f4efe6;
+  --stitch-olive: #93a45a;
+  --stitch-terracotta: #e07a4a;
+  --stitch-gold: #c8913a;
+
   /* Grounds */
-  --bg: #eceff1;
-  --surface: #f7f9fa;
-  --surface-2: #e2e7ea;
-  --surface-raised: #fdfefe;
-  --ink-band: #0d1724;
-  --ink-band-2: #172334;
-  --on-band: #eef2f5;
-  --on-band-2: #a9b6c3;
-  --on-band-3: #7f8d9c;
-  --band-line: #2a3849;
+  --bg: #f4efe6;
+  --surface: #fbf8f3;
+  --surface-2: #ebe4d8;
+  --surface-raised: #fffdf9;
+  --ink-band: #231f1c;
+  --ink-band-2: #2e2925;
+  --on-band: #f4efe6;
+  --on-band-2: #cfc4b4;
+  --on-band-3: #a39684;
+  --band-line: #3d3631;
 
   /* Text */
-  --text: #0d1724;
-  --text-2: #3f4b58;
-  --text-3: #5b6775;
-  --text-inverse: #f7f9fa;
+  --text: #231f1c;
+  --text-2: #4d4339;
+  --text-3: #6e6256;
+  --text-inverse: #f4efe6;
 
   /* Lines */
-  --line: #cbd3d9;
-  --line-soft: #dce2e6;
-  --line-strong: #8d99a5;
+  --line: #d9cfbf;
+  --line-soft: #e6ded1;
+  --line-strong: #a89a88;
 
-  /* Brand and action. "Course" ink is reserved for the active outing. */
-  --brand: #0d1724;
-  --action: #9b1c3c;
-  --action-hover: #84162f;
-  --on-action: #ffffff;
-  --course: #9b1c3c;
-  --course-on-band: #ff4d7a;
-  --on-course-band: #0d1724;
-  --selected: #f4dfe5;
-  --on-selected: #6e1129;
+  /* Brand and action */
+  --brand: #231f1c;
+  --action: #b5532a;
+  --action-hover: #9c4522;
+  --on-action: #fbf6ee;
+  --course: #a84a23;
+  --course-on-band: #e07a4a;
+  --on-course-band: #231f1c;
+  --highlight: #8e6420;
+  --highlight-on-band: #c8913a;
+  --selected: #efe2d2;
+  --on-selected: #6b3416;
 
-  /* Activities */
-  --walking: #1e5fa8;
-  --walking-soft: #dbe7f5;
-  --running: #8a1538;
-  --running-soft: #f3dde4;
+  /* Activities (stitch colours) */
+  --walking: #5f6b34;
+  --walking-soft: #e4e6d3;
+  --running: #a84a23;
+  --running-soft: #f3dfd3;
 
   /* Recording */
-  --live: #d9234f;
-  --live-band: #ff4d7a;
+  --live: #a84a23;
+  --live-band: #e07a4a;
 
-  /* Conditions (met ramp) */
-  --good: #0f7546;
-  --good-soft: #d8efe3;
-  --fair: #8a5200;
-  --fair-soft: #f6e8cf;
-  --poor: #a8340a;
-  --poor-soft: #f7ded3;
-  --unknown: #8d99a5;
-  --good-band: #3dd68c;
-  --fair-band: #ffb547;
-  --poor-band: #ff8a3d;
-  --unknown-band: #3a4757;
+  /* Conditions: olive good, gold acceptable, faded thread poor */
+  --good: #5f6b34;
+  --good-soft: #e4e6d3;
+  --fair: #8e6420;
+  --fair-soft: #f8f0e1;
+  --poor: #6e6256;
+  --poor-soft: #eee9df;
+  --unknown: #a89a88;
+  --good-band: #93a45a;
+  --fair-band: #c8913a;
+  --poor-band: #6b5f55;
+  --unknown-band: #3d3631;
 
-  --danger: #b4232f;
-  --danger-soft: #f8dfe1;
-  --disabled: #a3adb7;
-  --on-disabled: #eef1f3;
-  --focus: #1e5fa8;
+  --danger: #9e2b1f;
+  --danger-soft: #f3dcd6;
+  --disabled: #b9ad9d;
+  --on-disabled: #f4efe6;
+  --focus: #8e6420;
 
   /* Map */
-  --map-marker: #0d1724;
-  --map-marker-text: #f7f9fa;
-  --map-selected: #9b1c3c;
-  --map-dynamic: #1e5fa8;
-  --route: #d9234f;
-  --route-outline: #fdfefe;
-  --route-start: #0f7546;
-  --route-finish: #0d1724;
-  --on-strong: #fdfefe;
+  --map-marker: #231f1c;
+  --map-marker-text: #f4efe6;
+  --map-selected: #b5532a;
+  --map-dynamic: #c8913a;
+  --map-verified: #c8913a;
+  --route: #b5532a;
+  --route-outline: #fffdf9;
+  --route-start: #5f6b34;
+  --route-finish: #231f1c;
+  --on-strong: #fffdf9;
 
   /* Type */
   --font-sans: var(--font-archivo), var(--font-readex), ui-sans-serif, system-ui,
     -apple-system, "Segoe UI", sans-serif;
   --font-arabic: var(--font-readex), var(--font-archivo), "Segoe UI", Tahoma,
     sans-serif;
+  --font-display: var(--font-cormorant), Georgia, "Times New Roman", serif;
   --text-xs: 0.75rem;
   --text-sm: 0.8125rem;
   --text-md: 0.9375rem;
@@ -96,11 +114,11 @@
   --text-2xl: 1.75rem;
   --text-3xl: 2.25rem;
   --text-metric: 2.5rem;
-  --text-monument: 3.5rem;
-  --text-timer: clamp(4.25rem, 22vw, 7.5rem);
-  --wdth-condensed: 72;
+  --text-monument: 3.25rem;
+  --text-timer: clamp(4rem, 20vw, 7rem);
+  --wdth-condensed: 84;
   --wdth-normal: 100;
-  --wdth-expanded: 125;
+  --wdth-expanded: 112;
 
   /* Space (4px grid) */
   --s-1: 4px;
@@ -116,16 +134,16 @@
   --gutter: 16px;
   --content-max: 1180px;
 
-  /* Shape: controls 10, panels 16, sheets 22, chips and nav pill */
+  /* Shape: the icon's soft square (controls 10, panels 18, sheets 24) */
   --r-control: 10px;
-  --r-panel: 16px;
-  --r-sheet: 22px;
+  --r-panel: 18px;
+  --r-sheet: 24px;
   --r-pill: 999px;
 
-  /* Depth: offset, soft, tinted from ink */
-  --shadow-1: 0 1px 2px rgb(13 23 36 / 0.06), 0 2px 8px rgb(13 23 36 / 0.05);
-  --shadow-2: 0 8px 24px rgb(13 23 36 / 0.12), 0 2px 6px rgb(13 23 36 / 0.06);
-  --shadow-dock: 0 10px 30px rgb(13 23 36 / 0.24);
+  /* Depth: warm, offset, soft */
+  --shadow-1: 0 1px 2px rgb(35 31 28 / 0.06), 0 2px 8px rgb(35 31 28 / 0.05);
+  --shadow-2: 0 10px 28px rgb(35 31 28 / 0.14), 0 2px 6px rgb(35 31 28 / 0.06);
+  --shadow-dock: 0 12px 30px rgb(35 31 28 / 0.28);
 
   /* Motion */
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
@@ -137,117 +155,119 @@
 
   /* Shell */
   --topbar-h: 60px;
-  --dock-h: 64px;
+  --dock-h: 66px;
   --dock-gap: 12px;
   --dock-reserve: calc(var(--dock-h) + var(--dock-gap) * 2 + env(safe-area-inset-bottom));
   --header-reserve: calc(var(--topbar-h) + env(safe-area-inset-top));
 }
 
+/* Dark theme: the large dark icon. #231F1C ground, cream text, controlled gold
+   and terracotta; feature bands sit one step deeper. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --bg: #0a1018;
-    --surface: #111a25;
-    --surface-2: #19242f;
-    --surface-raised: #1d2a37;
-    --ink-band: #121d2a;
-    --ink-band-2: #1a2735;
-    --band-line: #2b3a4c;
-    --text: #ecf0f3;
-    --text-2: #b4bfca;
-    --text-3: #8f9ba7;
-    --text-inverse: #0a1018;
-    --line: #2a3644;
-    --line-soft: #1f2a36;
-    --line-strong: #4d5b6a;
-    --brand: #ecf0f3;
-    --action: #ff5c7f;
-    --action-hover: #ff7a96;
-    --on-action: #1a0710;
-    --course: #ff5c7f;
-    --selected: #3a1622;
-    --on-selected: #ffc2d0;
-    --walking: #6cb0f0;
-    --walking-soft: #16304a;
-    --running: #ff7a96;
-    --running-soft: #3a1622;
-    --live: #ff4d7a;
-    --good: #4cc38a;
-    --good-soft: #12301f;
-    --fair: #f2b544;
-    --fair-soft: #33260c;
-    --poor: #ff8a5c;
-    --poor-soft: #3a1c10;
-    --unknown: #5d6b7a;
-    --danger: #ff7c86;
-    --danger-soft: #3a1418;
-    --disabled: #3d4a58;
-    --on-disabled: #8f9ba7;
-    --focus: #6cb0f0;
-    --map-marker: #ecf0f3;
-    --map-marker-text: #0a1018;
-    --map-selected: #ff5c7f;
-    --map-dynamic: #6cb0f0;
-    --route: #ff4d7a;
-    --route-outline: #0a1018;
-    --route-start: #4cc38a;
-    --route-finish: #ecf0f3;
-    --on-strong: #0a1018;
+    --bg: #231f1c;
+    --surface: #2b2622;
+    --surface-2: #352f2a;
+    --surface-raised: #3a332d;
+    --ink-band: #1a1714;
+    --ink-band-2: #2b2622;
+    --band-line: #3d3631;
+    --text: #f4efe6;
+    --text-2: #d2c7b7;
+    --text-3: #a89b8a;
+    --text-inverse: #231f1c;
+    --line: #443c35;
+    --line-soft: #362f2a;
+    --line-strong: #6b5f55;
+    --brand: #f4efe6;
+    --action: #b5532a;
+    --action-hover: #a84a23;
+    --on-action: #fbf6ee;
+    --course: #e07a4a;
+    --highlight: #c8913a;
+    --selected: #3d2b20;
+    --on-selected: #f0c9a8;
+    --walking: #9aaa5c;
+    --walking-soft: #333620;
+    --running: #e07a4a;
+    --running-soft: #3d2a20;
+    --live: #e07a4a;
+    --good: #9aaa5c;
+    --good-soft: #31341f;
+    --fair: #d8a452;
+    --fair-soft: #3a2f1c;
+    --poor: #a89b8a;
+    --poor-soft: #352f2a;
+    --unknown: #6b5f55;
+    --danger: #f08a78;
+    --danger-soft: #3d221d;
+    --disabled: #4d433b;
+    --on-disabled: #a89b8a;
+    --focus: #c8913a;
+    --map-marker: #231f1c;
+    --map-marker-text: #f4efe6;
+    --map-selected: #b5532a;
+    --route: #e07a4a;
+    --route-outline: #231f1c;
+    --route-start: #9aaa5c;
+    --route-finish: #f4efe6;
+    --on-strong: #231f1c;
     --shadow-1: 0 1px 2px rgb(0 0 0 / 0.3);
-    --shadow-2: 0 10px 28px rgb(0 0 0 / 0.4);
+    --shadow-2: 0 12px 30px rgb(0 0 0 / 0.42);
     --shadow-dock: 0 12px 32px rgb(0 0 0 / 0.5);
   }
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #0a1018;
-  --surface: #111a25;
-  --surface-2: #19242f;
-  --surface-raised: #1d2a37;
-  --ink-band: #121d2a;
-  --ink-band-2: #1a2735;
-  --band-line: #2b3a4c;
-  --text: #ecf0f3;
-  --text-2: #b4bfca;
-  --text-3: #8f9ba7;
-  --text-inverse: #0a1018;
-  --line: #2a3644;
-  --line-soft: #1f2a36;
-  --line-strong: #4d5b6a;
-  --brand: #ecf0f3;
-  --action: #ff5c7f;
-  --action-hover: #ff7a96;
-  --on-action: #1a0710;
-  --course: #ff5c7f;
-  --selected: #3a1622;
-  --on-selected: #ffc2d0;
-  --walking: #6cb0f0;
-  --walking-soft: #16304a;
-  --running: #ff7a96;
-  --running-soft: #3a1622;
-  --live: #ff4d7a;
-  --good: #4cc38a;
-  --good-soft: #12301f;
-  --fair: #f2b544;
-  --fair-soft: #33260c;
-  --poor: #ff8a5c;
-  --poor-soft: #3a1c10;
-  --unknown: #5d6b7a;
-  --danger: #ff7c86;
-  --danger-soft: #3a1418;
-  --disabled: #3d4a58;
-  --on-disabled: #8f9ba7;
-  --focus: #6cb0f0;
-  --map-marker: #ecf0f3;
-  --map-marker-text: #0a1018;
-  --map-selected: #ff5c7f;
-  --map-dynamic: #6cb0f0;
-  --route: #ff4d7a;
-  --route-outline: #0a1018;
-  --route-start: #4cc38a;
-  --route-finish: #ecf0f3;
-  --on-strong: #0a1018;
+  --bg: #231f1c;
+  --surface: #2b2622;
+  --surface-2: #352f2a;
+  --surface-raised: #3a332d;
+  --ink-band: #1a1714;
+  --ink-band-2: #2b2622;
+  --band-line: #3d3631;
+  --text: #f4efe6;
+  --text-2: #d2c7b7;
+  --text-3: #a89b8a;
+  --text-inverse: #231f1c;
+  --line: #443c35;
+  --line-soft: #362f2a;
+  --line-strong: #6b5f55;
+  --brand: #f4efe6;
+  --action: #b5532a;
+  --action-hover: #a84a23;
+  --on-action: #fbf6ee;
+  --course: #e07a4a;
+  --highlight: #c8913a;
+  --selected: #3d2b20;
+  --on-selected: #f0c9a8;
+  --walking: #9aaa5c;
+  --walking-soft: #333620;
+  --running: #e07a4a;
+  --running-soft: #3d2a20;
+  --live: #e07a4a;
+  --good: #9aaa5c;
+  --good-soft: #31341f;
+  --fair: #d8a452;
+  --fair-soft: #3a2f1c;
+  --poor: #a89b8a;
+  --poor-soft: #352f2a;
+  --unknown: #6b5f55;
+  --danger: #f08a78;
+  --danger-soft: #3d221d;
+  --disabled: #4d433b;
+  --on-disabled: #a89b8a;
+  --focus: #c8913a;
+  --map-marker: #231f1c;
+  --map-marker-text: #f4efe6;
+  --map-selected: #b5532a;
+  --route: #e07a4a;
+  --route-outline: #231f1c;
+  --route-start: #9aaa5c;
+  --route-finish: #f4efe6;
+  --on-strong: #231f1c;
   --shadow-1: 0 1px 2px rgb(0 0 0 / 0.3);
-  --shadow-2: 0 10px 28px rgb(0 0 0 / 0.4);
+  --shadow-2: 0 12px 30px rgb(0 0 0 / 0.42);
   --shadow-dock: 0 12px 32px rgb(0 0 0 / 0.5);
 }

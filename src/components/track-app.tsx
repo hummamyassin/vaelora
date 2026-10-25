@@ -8,6 +8,7 @@ import {
 } from "react";
 import { Activity, ChevronRight, Footprints, Pause, Play, Square } from "lucide-react";
 import { ActivityShare } from "./activity-share";
+import { StitchBand, StitchMeter } from "./brand-mark";
 import dynamic from "next/dynamic";
 import {
   ActivityRecorder,
@@ -522,6 +523,7 @@ export function TrackApp({
             <Play aria-hidden />
             {c("start")}
           </button>
+          <StitchBand className="track-ready-stitch" />
         </section>
       )}
       {!summary && drafts.length > 0 && (!a || state === "finished") && (
@@ -717,6 +719,7 @@ export function TrackApp({
               </div>
             </div>
           </section>
+          <StitchBand variant="line" tone="light" className="recap-stitch" />
           <section className="recap-conditions" aria-labelledby="conditions-title">
             <h2 id="conditions-title" className="mini-title">
               {c("conditions")}
@@ -724,11 +727,9 @@ export function TrackApp({
             {summary.conditions ? (
               <div className="recap-conditions-body">
                 {summary.conditions.score != null && (
-                  <span
-                    className="score-chip num"
-                    data-tone={summary.conditions.score >= 80 ? "good" : summary.conditions.score >= 60 ? "fair" : "poor"}
-                  >
-                    {summary.conditions.score}
+                  <span className="recap-score">
+                    <b className="num">{summary.conditions.score}</b>
+                    <StitchMeter score={summary.conditions.score} label={`VAELORA ${summary.conditions.score}/100`} />
                   </span>
                 )}
                 <div>

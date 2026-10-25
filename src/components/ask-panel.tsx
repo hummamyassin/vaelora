@@ -11,6 +11,7 @@ import { askCopy, shellCopy } from "../lib/copy/shell";
 import type { AgentView } from "./types";
 import type { PlanSummary } from "./discovery-home";
 import { Meteogram } from "./meteogram";
+import { BrandMark } from "./brand-mark";
 
 /**
  * Ask VAELORA: the single grounded agent. The model only extracts intent; the
@@ -231,7 +232,13 @@ export function AskPanel({
       )}
       {asking && (
         <div className="ask-progress ai-progress" role="status">
-          <span className="ask-pulse" aria-hidden="true" />
+          <span className="ask-stitches" aria-hidden="true">
+            <i />
+            <i />
+            <i />
+            <i />
+            <i />
+          </span>
           {c("progress")}
         </div>
       )}
@@ -243,6 +250,7 @@ export function AskPanel({
         >
           {asked && <p className="ask-question">{asked}</p>}
           <h3 className="ask-answer-title">
+            <BrandMark size={22} className="ask-answer-mark" />
             {failed ? c("failed") : answer.status === "clarification" ? c("clarify") : c("answer")}
           </h3>
           <p className="ask-answer-text">{answer.text || c("serviceError")}</p>
