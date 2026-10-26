@@ -85,6 +85,17 @@ export const askCopy = {
   suggestLocal: ["How did I move today?", "كيف كان نشاطي اليوم؟"],
   localPrompt: ["My activity today", "نشاطي اليوم"],
   localNote: ["Answered on this device", "تُجاب على هذا الجهاز"],
+  aiOffline: [
+    "Free-text planning is off in this version. Your plan above comes from the same forecast engine, and questions about your own activity are answered on this device.",
+    "التخطيط بالنص الحر متوقف في هذه النسخة. خطتك أعلاه من محرك التوقعات نفسه، وتُجاب الأسئلة عن نشاطك على هذا الجهاز.",
+  ],
+  offlinePlaceholder: ["Ask about your activity today", "اسأل عن نشاطك اليوم"],
+  offlineAnswer: [
+    "That needs free-text planning, which is off in this version. Home shows today’s plan; here you can ask about your own activity today.",
+    "يحتاج هذا إلى التخطيط بالنص الحر، وهو متوقف في هذه النسخة. تعرض الرئيسية خطة اليوم، ويمكنك هنا السؤال عن نشاطك اليوم.",
+  ],
+  offlineDistance: ["How far did I walk today?", "كم مشيت اليوم؟"],
+  offlinePace: ["My average pace today", "متوسط وتيرتي اليوم"],
   yourQuestion: ["Your question", "سؤالك"],
   placeholder: ["A flat 45-minute walk tomorrow evening", "مشي 45 دقيقة على أرض مسطحة مساء الغد"],
   send: ["Ask", "اسأل"],

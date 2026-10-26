@@ -1,3 +1,4 @@
+import { edgeLimit } from "../edge-limit.ts";
 import { weatherAreas } from "../../data/weather-areas.ts";
 import { activityOutlook } from "../../domain/recommendation/score.ts";
 import {
@@ -127,6 +128,8 @@ export function createPlanningHandler(
   return async (request: Request) => {
     const rejected = checkJsonRequest(request);
     if (rejected) return rejected;
+    const limited = await edgeLimit(request, { required: false });
+    if (limited) return limited;
     const release = budget(request);
     if (release instanceof Response) return release;
     try {

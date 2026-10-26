@@ -1,3 +1,4 @@
+import { edgeLimit } from "../edge-limit.ts";
 import {
   BodyError,
   checkJsonRequest,
@@ -18,6 +19,8 @@ export function createDashboardHandler(
   return async (request: Request) => {
     const rejected = checkJsonRequest(request);
     if (rejected) return rejected;
+    const limited = await edgeLimit(request, { required: false });
+    if (limited) return limited;
     const release = budget(request);
     if (release instanceof Response) return release;
     try {

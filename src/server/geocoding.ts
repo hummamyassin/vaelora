@@ -1,3 +1,4 @@
+import { edgeLimit } from "./edge-limit.ts";
 import { supportedCity, serviceCities } from "../lib/dynamic-location.ts";
 import { validCoordinates } from "../lib/geography.ts";
 import {
@@ -154,6 +155,8 @@ export function createSearchHandler(search = createGeocoder()) {
   return async (request: Request) => {
     const rejected = checkJsonRequest(request);
     if (rejected) return rejected;
+    const limited = await edgeLimit(request, { required: false });
+    if (limited) return limited;
     const release = budget(request);
     if (release instanceof Response) return release;
     try {

@@ -2,6 +2,7 @@ import type { createOutdoorAgent } from "./agent.ts";
 import { isObject } from "./intent.ts";
 import { parseDashboardRequest } from "../recommendations/dashboard.ts";
 import { InvalidRecommendationRequest } from "../recommendations/request.ts";
+import { edgeLimit } from "../edge-limit.ts";
 import { BodyError, checkJsonRequest, createRequestBudget, privateHeaders, publicError, readJson } from "../http-security.ts";
 
 export function createAgentHandler(getAgent: () => ReturnType<typeof createOutdoorAgent> | null) {
@@ -13,6 +14,9 @@ export function createAgentHandler(getAgent: () => ReturnType<typeof createOutdo
     if (rejected) return rejected;
     // Explicit deployment activation after edge protections are configured; local AI is unchanged.
     if (process.env.VERCEL === "1" && process.env.VAELORA_AI_PUBLIC_ENABLED !== "true") return publicError("AI service unavailable", 503);
+    // Public AI also needs the Vercel Firewall rate limit rule; without it the route stays closed.
+    const limited = await edgeLimit(request, { required: true });
+    if (limited) return limited;
     const release = budget(request);
     if (release instanceof Response) return release;
     try {

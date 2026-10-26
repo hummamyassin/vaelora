@@ -32,6 +32,7 @@ export function AskPanel({
   onClearOrigin,
   onAdjust,
   plan = null,
+  online = true,
 }: {
   locale: Locale;
   areaId: string;
@@ -46,6 +47,8 @@ export function AskPanel({
   onClearOrigin: () => void;
   onAdjust: () => void;
   plan?: PlanSummary | null;
+  /** False when the deployment has no live AI; Ask then answers only on-device questions. */
+  online?: boolean;
 }) {
   const c = translator(askCopy, locale),
     s = translator(shellCopy, locale);
@@ -76,6 +79,10 @@ export function AskPanel({
           text: localActivityAnswer(question, await loadActivities(), locale)!,
           trace: [],
         });
+        return;
+      }
+      if (!online) {
+        setAnswer({ status: "conditions", text: c("offlineAnswer"), trace: [] });
         return;
       }
       const nearRequested = /near me|قريب(?:ًا|ا|ة)? مني|بالقرب مني/i.test(question);
@@ -121,6 +128,11 @@ export function AskPanel({
   return (
     <div className="ask v2-ai">
       <p className="ask-intro">{c("intro")}</p>
+      {!online && (
+        <p className="notice ask-offline" data-tone="caution" role="note">
+          {c("aiOffline")}
+        </p>
+      )}
       <section className="ask-plan" aria-labelledby="ask-plan-title">
         <h3 className="mini-title" id="ask-plan-title">{c("currentPlan")}</h3>
         {plan ? (
@@ -181,10 +193,12 @@ export function AskPanel({
             ))}
           </span>
         </div>
-        <p className="ask-privacy">
-          <IconLock aria-hidden />
-          {c("privacy")}
-        </p>
+        {online && (
+          <p className="ask-privacy">
+            <IconLock aria-hidden />
+            {c("privacy")}
+          </p>
+        )}
       </section>
       <form className="ask-form" onSubmit={ask} aria-busy={asking}>
         <label className="sr-only" htmlFor="v2-prompt">
@@ -203,7 +217,7 @@ export function AskPanel({
           }}
           maxLength={2000}
           rows={2}
-          placeholder={c("placeholder")}
+          placeholder={online ? c("placeholder") : c("offlinePlaceholder")}
         />
         <button className="btn btn-primary ask-send ai-send" disabled={asking || !prompt.trim()} aria-label={c("send")}>
           <IconSend aria-hidden weight="bold" />
@@ -214,7 +228,7 @@ export function AskPanel({
         <section className="ask-suggestions" aria-labelledby="ask-suggest-title">
           <h3 className="mini-title" id="ask-suggest-title">{c("suggestions")}</h3>
           <div className="ask-chips v2-suggestions">
-            {suggestions.map((p) => (
+            {(online ? suggestions : [c("offlineDistance"), c("offlinePace")]).map((p) => (
               <button key={p} className="prompt-chip" onClick={() => use(p)}>
                 <IconAsk aria-hidden weight="fill" />
                 {p}

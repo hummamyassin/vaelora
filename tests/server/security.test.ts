@@ -67,3 +67,26 @@ test("Vercel AI stays disabled until explicitly activated after edge protection"
     if (enabled === undefined) delete process.env.VAELORA_AI_PUBLIC_ENABLED; else process.env.VAELORA_AI_PUBLIC_ENABLED = enabled;
   }
 });
+
+test("Edge rate limit: no-op off Vercel, closes AI without the rule, opens weather", async () => {
+  const { edgeLimit, edgeRuleId } = await import("../../src/server/edge-limit.ts");
+  const request = new Request("https://vaelora.test/api/agent", { method: "POST" });
+  const seen: string[] = [];
+  const answer = (result: { rateLimited: boolean; error?: "not-found" | "blocked" }) =>
+    (async (id: string) => {
+      seen.push(id);
+      return result;
+    }) as never;
+  assert.equal(await edgeLimit(request, { required: true, onVercel: false, check: answer({ rateLimited: true }) }), null);
+  assert.equal(seen.length, 0);
+  assert.equal((await edgeLimit(request, { required: false, onVercel: true, check: answer({ rateLimited: true }) }))?.status, 429);
+  assert.equal(seen[0], edgeRuleId);
+  assert.equal((await edgeLimit(request, { required: true, onVercel: true, check: answer({ rateLimited: false, error: "not-found" }) }))?.status, 503);
+  assert.equal(await edgeLimit(request, { required: false, onVercel: true, check: answer({ rateLimited: false, error: "not-found" }) }), null);
+  assert.equal(await edgeLimit(request, { required: true, onVercel: true, check: answer({ rateLimited: false }) }), null);
+  const broken = (async () => {
+    throw new Error("TimeoutError");
+  }) as never;
+  assert.equal((await edgeLimit(request, { required: true, onVercel: true, check: broken }))?.status, 503);
+  assert.equal(await edgeLimit(request, { required: false, onVercel: true, check: broken }), null);
+});

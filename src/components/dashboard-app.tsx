@@ -54,7 +54,8 @@ function save(key: string, value: unknown) {
   }
 }
 
-export function DashboardApp() {
+/** `aiLive` comes from the server: AI is configured and, on Vercel, publicly enabled. */
+export function DashboardApp({ aiLive = true }: { aiLive?: boolean }) {
   const { route, navigate, close } = useAppRoute();
   const routeRef = useRef<AppRoute>(route);
   useEffect(() => {
@@ -564,6 +565,7 @@ export function DashboardApp() {
               onClearOrigin={() => setOrigin(null)}
               onAdjust={() => navigate({ sheet: "filters" }, { replace: true })}
               plan={planSummary}
+              online={aiLive}
             />
           )}
         </Sheet>

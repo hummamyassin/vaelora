@@ -1,3 +1,4 @@
+import { edgeLimit } from "../edge-limit.ts";
 import { InvalidRecommendationRequest } from "./request.ts";
 import type { createRecommendationPipeline } from "./pipeline.ts";
 import { BodyError, checkJsonRequest, createRequestBudget, privateHeaders, publicError, readJson } from "../http-security.ts";
@@ -9,6 +10,8 @@ export function createRecommendationHandler(run: ReturnType<typeof createRecomme
     const headers = privateHeaders;
     const rejected = checkJsonRequest(request);
     if (rejected) return rejected;
+    const limited = await edgeLimit(request, { required: false });
+    if (limited) return limited;
     const release = budget(request);
     if (release instanceof Response) return release;
     try {
