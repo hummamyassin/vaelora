@@ -391,7 +391,7 @@
     color: var(--stitch-olive);
   }
   .week-stitch-marks i[data-kind="running"] {
-    color: var(--stitch-terracotta);
+    color: var(--stitch-copper);
   }
   .week-stitch-marks i[data-empty] {
     color: rgb(244 239 230 / 0.18);
@@ -1911,7 +1911,7 @@
     --card-bg: var(--ink-band);
     --card-fg: var(--on-band);
     --card-muted: var(--on-band-2);
-    --card-accent: var(--stitch-terracotta);
+    --card-accent: var(--stitch-copper);
     --card-gold: var(--brand-gold);
     position: relative;
     display: flex;
@@ -2462,7 +2462,7 @@
     }
     .plan {
       margin-inline: 0;
-      padding: var(--s-6);
+      padding: var(--s-6) var(--s-6) calc(var(--s-6) + 44px);
       border-radius: var(--r-panel);
     }
     .meteo-scroll {

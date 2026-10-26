@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-25T20:35:04.493Z",
+  "generatedAt": "2026-10-26T08:59:28.363Z",
   "title": "Design System: VAELORA",
   "extensions": {
     "colorMeta": {
@@ -28,6 +28,61 @@
         "role": "tertiary",
         "displayName": "Olive",
         "canonical": "#5F6B34"
+      },
+      "black-chrome": {
+        "role": "material",
+        "displayName": "Black Chrome",
+        "canonical": "#1C1D20",
+        "stops": [
+          "#050506",
+          "#1C1D20",
+          "#5E6268",
+          "#C9CDD2"
+        ]
+      },
+      "platinum": {
+        "role": "material",
+        "displayName": "Platinum",
+        "canonical": "#C7CBCF",
+        "stops": [
+          "#8E949A",
+          "#C7CBCF",
+          "#F4F6F8",
+          "#FFFFFF"
+        ]
+      },
+      "polished-gold": {
+        "role": "material",
+        "displayName": "Polished Gold",
+        "canonical": "#B47E22",
+        "stops": [
+          "#6E4508",
+          "#B47E22",
+          "#E9C065",
+          "#FFF1C2"
+        ]
+      },
+      "copper": {
+        "role": "material",
+        "displayName": "Copper",
+        "canonical": "#A44A22",
+        "stops": [
+          "#5A200C",
+          "#A44A22",
+          "#DC7B48",
+          "#FFC7A2"
+        ]
+      },
+      "green-metal": {
+        "role": "material",
+        "displayName": "Green Metal",
+        "canonical": "#56651F",
+        "stops": [
+          "#26300F",
+          "#56651F",
+          "#93A645",
+          "#E3EEA6"
+        ]
       }
     },
     "typographyMeta": {
@@ -130,13 +185,13 @@
   ],
   "narrative": {
     "northStar": "The Ribbon and the Stitch",
-    "overview": "The interface is the digital expression of the VAELORA icon: a cream ribbon V on deep brown, its tip catching gold, rising out of a cross-stitch band in cream, olive, terracotta and gold. Dark feature surfaces carry the decision and the recorder; warm cream carries reading; the stitch band appears where the icon band would.",
+    "overview": "The interface is the digital expression of the VAELORA icon, rendered in five metals: deep brown premium surfaces as black chrome, important cream as platinum, gold as polished gold, terracotta as copper and olive as green metal. Black chrome feature surfaces carry the decision and the recorder; warm cream carries reading; the stitch band, in platinum thread, appears where the icon band would.",
     "keyCharacteristics": [
-      "One dark feature band per screen, closed by the icon stitch band.",
-      "Gold marks the best moment; terracotta marks motion.",
-      "The stitch colours carry conditions; poor conditions read as faded thread.",
+      "One black chrome feature band per screen, closed by the icon stitch band in platinum thread.",
+      "Polished gold marks the best moment; copper marks motion.",
+      "Green metal and gold carry conditions; poor conditions read as steel.",
       "A tracked classical serif wordmark beside the real app icon.",
-      "Warm cream ground with dark brown ink; no cool or neon accents."
+      "Warm cream ground with dark brown ink; the only cool tones are chrome and platinum. No blue, lime, purple or neon."
     ],
     "rules": [
       {
@@ -146,18 +201,23 @@
       },
       {
         "name": "The Motion Rule",
-        "body": "Terracotta means movement or action: Start, Resume, recording, the live route.",
+        "body": "Copper means movement or action: Start, Resume, recording, the live route.",
         "section": "colors"
       },
       {
         "name": "The Thread Rule",
-        "body": "Conditions use the stitch colours: olive comfortable, gold acceptable, faded thread poor.",
+        "body": "Conditions use the metals: green metal comfortable, gold acceptable, steel poor. Decorative stitches are platinum.",
         "section": "colors"
       },
       {
         "name": "The Quiet Serif Rule",
         "body": "The serif appears only in the wordmark and display lines, never in controls, labels or numbers.",
         "section": "typography"
+      },
+      {
+        "name": "The Metal Rule",
+        "body": "Brand colour that acts, marks, measures or selects is metal (one light from the top left, brushed grain, specular edge, mid-tone under text, edge shade, tinted shadow). Grounds and reading surfaces stay calm. Gold is never a large area. No idle shine.",
+        "section": "elevation"
       }
     ],
     "dos": [

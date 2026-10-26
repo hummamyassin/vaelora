@@ -110,9 +110,15 @@ export function ActivityShare({
         </div>
         {(model.temperature != null || model.score != null) && template !== "minimal" && (
           <span className="share-conditions" dir="ltr">
-            {model.temperature != null ? `${model.temperature}°C` : ""}
-            {model.temperature != null && model.score != null ? "   " : ""}
-            {model.score != null ? `VAELORA ${model.score}/100` : ""}
+            {model.temperature != null && <span>{model.temperature}°C</span>}
+            {model.score != null && (
+              <span
+                className="share-score"
+                data-tone={model.score >= 80 ? "good" : model.score >= 60 ? "fair" : "poor"}
+              >
+                VAELORA {model.score}/100
+              </span>
+            )}
           </span>
         )}
         <StitchBand tone={template === "performance" ? "light" : "dark"} className="share-stitch" />

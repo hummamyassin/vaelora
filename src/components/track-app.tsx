@@ -502,7 +502,7 @@ export function TrackApp({
           <p className="track-ready-body">{c("readyBody")}</p>
           <div className="seg seg-band track-kind-seg" role="group" aria-label={c("label")}>
             {(["walking", "running"] as const).map((k) => (
-              <button key={k} aria-pressed={kind === k} onClick={() => setKind(k)}>
+              <button key={k} aria-pressed={kind === k} data-activity={k} onClick={() => setKind(k)}>
                 {k === "walking" ? <Footprints aria-hidden /> : <Activity aria-hidden />}
                 {kindLabel(k)}
               </button>

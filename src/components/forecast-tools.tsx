@@ -155,7 +155,7 @@ export function ForecastTools({
           </div>
           <div className="seg" role="group" aria-label="activity">
             {(["walking", "running"] as const).map((a) => (
-              <button key={a} aria-pressed={activity === a} onClick={() => setActivity(a)}>
+              <button key={a} aria-pressed={activity === a} data-activity={a} onClick={() => setActivity(a)}>
                 {label(locale, a)}
                 <span className="num seg-score">
                   {loading ? "–" : ((day === "today" ? result?.[a].current?.score : result?.[a].bestWindow?.score) ?? "–")}

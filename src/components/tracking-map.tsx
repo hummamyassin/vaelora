@@ -62,22 +62,24 @@ export function TrackingMap({
         type: "geojson",
         data: { type: "FeatureCollection", features: [] },
       });
-      map.addLayer({
-        id: "route-outline",
-        type: "line",
-        source: "route",
-        filter: ["==", ["geometry-type"], "LineString"],
-        paint: { "line-color": color("--route-outline"), "line-width": 9 },
-        layout: { "line-cap": "round", "line-join": "round" },
-      });
-      map.addLayer({
-        id: "route-line",
-        type: "line",
-        source: "route",
-        filter: ["==", ["geometry-type"], "LineString"],
-        paint: { "line-color": color("--route"), "line-width": 5 },
-        layout: { "line-cap": "round", "line-join": "round" },
-      });
+      // The route is a copper metal thread: outline, edge shade, body, bright core, glint.
+      const strands = [
+        ["route-outline", "--route-outline", 11, 1],
+        ["route-edge", "--route-edge", 7.5, 1],
+        ["route-line", "--route", 5.5, 1],
+        ["route-core", "--route-core", 2.6, 1],
+        ["route-glint", "--route-glint", 1, 0.8],
+      ] as const;
+      for (const [id, token, width, opacity] of strands) {
+        map.addLayer({
+          id,
+          type: "line",
+          source: "route",
+          filter: ["==", ["geometry-type"], "LineString"],
+          paint: { "line-color": color(token), "line-width": width, "line-opacity": opacity },
+          layout: { "line-cap": "round", "line-join": "round" },
+        });
+      }
       map.addLayer({
         id: "route-points",
         type: "circle",

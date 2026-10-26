@@ -186,7 +186,7 @@
   .dock-item:hover {
     color: var(--on-band);
   }
-  /* Selected: cream label with a terracotta stitch beneath, not a glowing pill. */
+  /* Selected: a bright label with a platinum stitch beneath (material layer), not a glowing pill. */
   .dock-item[aria-current="page"] {
     color: var(--on-band);
   }
@@ -198,11 +198,11 @@
     margin-inline: auto;
     width: 22px;
     height: 5px;
-    background: linear-gradient(45deg, transparent 40%, var(--stitch-terracotta) 40% 60%, transparent 60%) 0 0 / 5.5px 5px,
-      linear-gradient(-45deg, transparent 40%, var(--stitch-terracotta) 40% 60%, transparent 60%) 0 0 / 5.5px 5px;
+    background: linear-gradient(45deg, transparent 40%, var(--stitch-copper) 40% 60%, transparent 60%) 0 0 / 5.5px 5px,
+      linear-gradient(-45deg, transparent 40%, var(--stitch-copper) 40% 60%, transparent 60%) 0 0 / 5.5px 5px;
   }
   .dock-item.track-dock svg {
-    color: var(--stitch-terracotta);
+    color: var(--stitch-copper);
   }
   .dock-item:focus-visible {
     outline-color: var(--on-band);

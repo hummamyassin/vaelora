@@ -10,17 +10,38 @@ colors:
   surface: "#FBF8F3"
   surface-2: "#EBE4D8"
   surface-raised: "#FFFDF9"
-  band-2: "#2E2925"
-  on-band-2: "#CFC4B4"
-  on-band-3: "#A39684"
+  chrome-band: "#17181B"
+  band-2: "#24262A"
+  on-band: "#F4F1EC"
+  on-band-2: "#C9C6C0"
+  on-band-3: "#A19E99"
   text-2: "#4D4339"
   text-3: "#6E6256"
   line: "#D9CFBF"
-  terracotta-text: "#A84A23"
-  terracotta-on-dark: "#E07A4A"
-  gold-text: "#8E6420"
-  olive-on-dark: "#93A45A"
-  faded-thread: "#6B5F55"
+  chrome-0: "#050506"
+  chrome-1: "#1C1D20"
+  chrome-2: "#5E6268"
+  chrome-3: "#C9CDD2"
+  platinum-0: "#8E949A"
+  platinum-1: "#C7CBCF"
+  platinum-2: "#F4F6F8"
+  platinum-3: "#FFFFFF"
+  gold-0: "#6E4508"
+  gold-1: "#B47E22"
+  gold-2: "#E9C065"
+  gold-3: "#FFF1C2"
+  copper-0: "#5A200C"
+  copper-1: "#A44A22"
+  copper-2: "#DC7B48"
+  copper-3: "#FFC7A2"
+  olive-0: "#26300F"
+  olive-1: "#56651F"
+  olive-2: "#93A645"
+  olive-3: "#E3EEA6"
+  copper-text: "#A44A22"
+  gold-text: "#7A500C"
+  olive-text: "#56651F"
+  steel-poor: "#5E6268"
   danger: "#9E2B1F"
 typography:
   wordmark:
@@ -70,28 +91,28 @@ spacing:
   s10: "40px"
 components:
   button-primary:
-    backgroundColor: "{colors.terracotta}"
+    backgroundColor: "{colors.copper-1}"
     textColor: "{colors.surface-raised}"
     rounded: "{rounded.control}"
     height: "44px"
   button-secondary:
-    backgroundColor: "{colors.surface-raised}"
+    backgroundColor: "{colors.platinum-2}"
     textColor: "{colors.deep-brown}"
     rounded: "{rounded.control}"
     height: "44px"
   chip-selected:
-    backgroundColor: "{colors.deep-brown}"
-    textColor: "{colors.warm-cream}"
+    backgroundColor: "{colors.chrome-1}"
+    textColor: "{colors.platinum-2}"
     rounded: "{rounded.pill}"
     height: "40px"
   feature-band:
-    backgroundColor: "{colors.deep-brown}"
-    textColor: "{colors.warm-cream}"
+    backgroundColor: "{colors.chrome-band}"
+    textColor: "{colors.on-band}"
     rounded: "{rounded.panel}"
     padding: "24px"
   dock:
-    backgroundColor: "{colors.deep-brown}"
-    textColor: "{colors.on-band-2}"
+    backgroundColor: "{colors.chrome-1}"
+    textColor: "{colors.platinum-1}"
     rounded: "{rounded.pill}"
     height: "66px"
 ---
@@ -113,39 +134,41 @@ The product stays an athletic instrument. Numbers are large, tabular and calm; t
 is reserved for the wordmark and a few display lines, so craft reads as refinement, not costume.
 
 **Key Characteristics:**
-- One dark feature band per screen, closed by the icon's stitch band.
-- Gold marks the best moment; terracotta marks motion.
-- The stitch colours (olive, gold) carry conditions; poor conditions read as faded thread.
+- One black chrome feature band per screen, closed by the icon's stitch band in platinum thread.
+- Polished gold marks the best moment; copper marks motion.
+- Green metal and gold carry conditions; poor conditions read as steel.
 - A tracked classical serif wordmark beside the real app icon.
-- Warm cream ground with dark brown ink; no cool or neon accents.
+- Warm cream ground with dark brown ink; the only cool tones are the chrome and platinum metals. No blue, lime, purple or neon.
 
 ## Colors
 
-The five identity colours, extended only with tints needed for contrast.
+The five identity colours, rendered as metals (see Elevation & Depth). Solid tints exist only for small text and fallbacks.
 
 ### Primary
-- **Deep Brown** (`deep-brown`): feature bands, the dock, the live recorder, text on cream, the dark theme ground.
-- **Warm Cream** (`warm-cream`): page ground in light theme, all text on dark surfaces.
+- **Deep Brown** (`deep-brown`): text on cream and the dark theme ground. Premium dark surfaces render as **black chrome** (`chrome-*`).
+- **Warm Cream** (`warm-cream`): page ground in light theme and text on dark. Important light states render as **platinum** (`platinum-*`).
 
 ### Secondary
-- **Terracotta** (`terracotta`, text `terracotta-text`, on dark `terracotta-on-dark`): primary action, Start, recording state, the live route, the selected map marker, running.
-- **Gold** (`gold`, text `gold-text`): the recommended window and its meteogram bracket, verified-place marker rims, the reference point, acceptable conditions.
+- **Terracotta as copper** (`copper-*`, text `copper-text`): primary action, Start, recording, the live route, the selected map marker, running.
+- **Gold as polished gold** (`gold-*`, text `gold-text`): the recommended window and its bracket, verified rims, the reference point, acceptable conditions.
 
 ### Tertiary
-- **Olive** (`olive`, on dark `olive-on-dark`): comfortable conditions, GPS recording well, walking.
-- **Faded thread** (`faded-thread`): less suitable conditions.
+- **Olive as green metal** (`olive-*`, text `olive-text`): comfortable conditions, GPS recording well, walking.
+- **Steel** (`steel-poor`): less suitable conditions.
 
 ### Neutral
 - **Surfaces** (`surface`, `surface-2`, `surface-raised`, `band-2`): panels, tracks, raised controls.
-- **Secondary text** (`text-2`, `text-3`, `on-band-2`, `on-band-3`): metadata on cream and on brown.
+- **Secondary text** (`text-2`, `text-3`, `on-band-2`, `on-band-3`): metadata on cream and on chrome.
 - **Line** (`line`): hairlines.
 
 ### Named Rules
 **The Gold Moment Rule.** Gold marks the single best moment (the recommended window, the V's tip). It never decorates.
 
-**The Motion Rule.** Terracotta means movement or action: Start, Resume, recording, the live route.
+**The Motion Rule.** Copper means movement or action: Start, Resume, recording, the live route.
 
-**The Thread Rule.** Conditions use the stitch colours: olive comfortable, gold acceptable, faded thread poor.
+**The Thread Rule.** Conditions use the metals: green metal comfortable, gold acceptable, steel poor. Decorative stitches are platinum.
+
+**The Metal Rule.** Brand colour that acts, marks, measures or selects is metal; grounds and reading surfaces stay calm. Gold is never a large area.
 
 ## Typography
 
@@ -179,17 +202,30 @@ Single column on phones (16px gutter, 28px from 768px), 1180px maximum. From 108
 
 ## Elevation & Depth
 
-### Material: polished metal (V2.4.2)
-Brand and action moments take the material of the V ribbon: a vertical gradient with light at the top edge and depth below, a thin sheen (top highlight, bottom shade) and a soft tinted shadow. Text always sits on the mid-tone so contrast holds.
-- **Terracotta metal**: primary actions, Start, the selected map marker, running progress.
-- **Gold metal**: the recommended window, the Ask plan window, the recap score, verified-marker rims, acceptable bars.
-- **Olive metal**: comfortable bars and the score in good conditions, walking progress.
-- **Cream metal**: the live timer and metrics on dark, selected segments on dark, the recommended-off Start.
-- **Ink metal**: the dock, selected chips, avatars, the recap score plate; metal ink text for key figures on cream.
-Base surfaces (grounds, panels, rows, inputs) stay flat. Hover shifts the gradient (light response); reduced motion keeps colour changes only.
+### Material system: five metals (V2.4.3)
+The brand palette is rendered in five metals from the material reference. Each has four stops (base, mid, bright, specular):
 
+| Metal | Stops | Brand role |
+| --- | --- | --- |
+| Black chrome | `#050506` `#1C1D20` `#5E6268` `#C9CDD2` | deep brown premium surfaces and controls |
+| Platinum | `#8E949A` `#C7CBCF` `#F4F6F8` `#FFFFFF` | important cream and white, the stitch |
+| Polished gold | `#6E4508` `#B47E22` `#E9C065` `#FFF1C2` | gold |
+| Copper | `#5A200C` `#A44A22` `#DC7B48` `#FFC7A2` | terracotta |
+| Green metal | `#26300F` `#56651F` `#93A645` `#E3EEA6` | olive |
 
-Flat and warm. Depth comes from the brown feature bands against cream. Shadows are warm-tinted and only for floating things: the dock, sheets, the share preview.
+**Construction.** One light, from the top left. A metal surface stacks fine horizontal brushed grain, a soft secondary highlight, and a body gradient (specular edge, bright, the mid-tone under the text, edge shade). Edges add a top reflection, a lower shade and an inner line; shadows are tinted by the metal. Tokens in `tokens.css`: `--metal-{copper,gold,platinum,olive,chrome}` surfaces with `-body`, `-subtle`/`-raised`/`-band`/`-well` variants, `-text` (and `-text-light` for cream grounds), `-border`, `-edge` and `-shadow`; theme-aware `--metal-key-text`, `--metal-best-text`, `--metal-good-text`; and `--thread-*` stitch stops.
+
+- **Black chrome**: the plan band, Track ready, the whole live recorder, Ask plan, this week, the dock, raised keys on dark, recessed segment wells, the recap score plate, selected chips (light theme), avatars, map marker bodies, the share card.
+- **Platinum**: selected segments, the recommended-off Start, secondary buttons, live figures and the decision on chrome, rank beads, card rims and section rules, map light detail, the stitch.
+- **Polished gold**: the best window, the meteogram bracket, verified rims, the avatar rim, acceptable scores and bars, the best hour.
+- **Copper**: primary actions (Start, Resume, Save), the recording pill and bead, the live route, the selected marker, running progress and the Run selection.
+- **Green metal**: comfortable bars and scores, positive beads, GPS recording well, walking progress and the Walk selection.
+
+**Metal text** is reserved for the wordmark, the decision, key figures, scores and the best window. Body text stays solid. Every gradient's darkest stop is checked against its ground (AA; 3:1 for large figures), and text on metal surfaces sits on the 30 to 70% band (copper 4.86:1 worst case).
+
+**Motion.** No idle shine. Hover slides the reflection; press compresses it toward the top and sinks the edge; reduced motion keeps only the edge change.
+
+Calm grounds, rows, inputs and reading panels stay flat.
 
 ## Shapes
 
@@ -198,22 +234,22 @@ The icon's soft square: controls 10px, panels 18px, sheets 24px, chips and the d
 ## Components
 
 ### Stitch band (signature)
-- The icon's three cross-stitch rows (cream or ink zig-zag, alternating olive and terracotta, gold) at the foot of the plan band, the Track ready panel and the share card. A single-row variant divides the recap and closes location art.
+- The icon's three cross-stitch rows embroidered in platinum metal thread (darker silver base, steel mid, platinum highlight, a pale reflective edge and a restrained drop shade; lower rows sit slightly further from the light) at the foot of the plan band, the Track ready panel and the share card. A single-row variant divides the recap and closes location art. On cream the thread runs one step darker.
 
 ### Stitch meter (signature)
-- The VAELORA Score as ten crosses, one per ten points, lit in the condition colour, always beside the number.
+- The VAELORA Score as ten crosses, one per ten points, lit in green metal, gold or steel by condition, always beside the number.
 
 ### Week stitches
-- This week as seven days on brown; each finished activity is one cross, olive for walking, terracotta for running.
+- This week as seven days on black chrome; each finished activity is one cross, green metal for walking, copper for running.
 
 ### Meteogram strip
-- Remaining hours as bars whose height and colour are the comfort band; the recommended window bracketed in gold.
+- Remaining hours as lit metal rods whose height and metal are the comfort band; the recommended window bracketed in polished gold.
 
 ### Buttons
-- **Primary:** terracotta with cream text. **Secondary:** raised cream with a hairline. **Band:** brown-2 on dark. Press scales to 0.97.
+- **Primary:** copper metal with pale text. **Secondary:** brushed platinum (chrome in the dark theme). **Band:** raised chrome on dark. Press scales to 0.97 and compresses the reflection.
 
 ### Navigation
-- A brown dock. The selected item turns cream with a short terracotta stitch beneath; the Track icon is always terracotta and carries a live dot while recording.
+- A black chrome dock with platinum icons. The selected item brightens with a fine platinum stitch beneath; the Track icon is always copper and carries a copper bead while recording.
 
 ## Do's and Don'ts
 

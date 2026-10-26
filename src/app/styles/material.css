@@ -1,8 +1,9 @@
 /*
- * Premium refinement: brand typography for key moments and a metallic
- * material on brand and action moments only. Base surfaces stay calm.
- * Metal = a vertical gradient (light at the top edge, depth below), a thin
- * sheen and a soft tinted shadow, like the polished V ribbon.
+ * VAELORA material system. Brand typography for key moments, and five metals
+ * from the material reference (black chrome, platinum, polished gold, copper,
+ * green metal) applied by role. Tokens live in tokens.css; this layer only
+ * assigns them. One light, from the top left. Calm grounds and reading
+ * surfaces stay flat; brand colour that acts, marks, measures or selects is metal.
  */
 @layer material {
   /* ================= Typography ================= */
@@ -150,58 +151,83 @@
     font-family: var(--font-sans);
   }
 
-  /* ================= Material ================= */
-
-  /* Metal text: polished figures. Contrast is checked against the darkest stop. */
+  /* ================= Metal text =================
+     Only the wordmark, key figures, scores, the best window and the decision.
+     Body text stays solid. Each gradient's darkest stop is AA on its ground
+     (large-text 3:1 for figures); units inside keep a solid fill. */
+  .wordmark-text,
+  .plan-headline,
   .plan-window-time,
-  .ask-plan-window,
-  .recap-score b {
-    background: var(--metal-gold);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
+  .plan-score strong,
   .track-timer strong,
-  .track-metric strong {
-    background: var(--metal-cream);
+  .track-metric strong,
+  .recap-hero strong,
+  .recap-score b,
+  .stat-value,
+  .nearby-score b,
+  .compare-score,
+  .overview-score strong,
+  .overview-window strong,
+  .ask-plan-window,
+  .share-brand,
+  .share-primary b,
+  .share-secondary b {
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
-  .track-live[data-state="paused"] .track-timer strong {
-    background: linear-gradient(180deg, #d8ccb8, #a39684);
-    -webkit-background-clip: text;
-    background-clip: text;
-  }
+  .wordmark-text,
   .recap-hero strong,
   .stat-value,
   .nearby-score b,
+  .compare-score,
+  .overview-score strong {
+    background-image: var(--metal-key-text);
+  }
+  /* On black chrome: platinum for the decision and live figures. */
+  .plan-headline,
+  .track-timer strong,
+  .track-metric strong {
+    background-image: var(--metal-platinum-text);
+  }
+  .track-live[data-state="paused"] .track-timer strong {
+    background-image: var(--metal-steel-text);
+  }
+  /* The best window is polished gold, on the band and in Ask. */
+  .plan-window-time,
+  .ask-plan-window {
+    background-image: var(--metal-gold-text);
+  }
   .overview-window strong {
-    background: var(--metal-text);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    background-image: var(--metal-best-text);
   }
-  .plan-score strong {
-    background: var(--metal-olive);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+  /* Scores: green metal when comfortable, gold acceptable, steel otherwise. */
+  .plan-score strong,
+  .recap-score b {
+    background-image: var(--metal-steel-text);
   }
-  .plan-score[data-tone="fair"] strong {
-    background: var(--metal-gold);
-    -webkit-background-clip: text;
-    background-clip: text;
+  .plan-score[data-tone="good"] strong,
+  .recap-score:has(.stitch-meter[data-tone="good"]) b {
+    background-image: var(--metal-olive-text);
   }
-  .plan-score[data-tone="poor"] strong,
-  .plan-score[data-tone="unknown"] strong {
-    background: linear-gradient(180deg, #cfc4b4, #a39684);
-    -webkit-background-clip: text;
-    background-clip: text;
+  .plan-score[data-tone="fair"] strong,
+  .recap-score:has(.stitch-meter[data-tone="fair"]) b {
+    background-image: var(--metal-gold-text);
+  }
+  .overview-score[data-tone="good"] strong,
+  .nearby-card:has(.tag[data-tone="good"]) .nearby-score b {
+    background-image: var(--metal-good-text);
+  }
+  .overview-score[data-tone="fair"] strong,
+  .nearby-card:has(.tag[data-tone="fair"]) .nearby-score b {
+    background-image: var(--metal-best-text);
   }
   /* The unit after a clipped number keeps its own solid colour. */
   .plan-score strong small,
-  .stat-value .stat-unit {
+  .stat-value .stat-unit,
+  .compare-score small,
+  .overview-score strong small,
+  .plan-window-time .plan-dash {
     -webkit-text-fill-color: currentColor;
   }
   .plan-score strong small {
@@ -210,23 +236,203 @@
   .stat-value .stat-unit {
     color: var(--text-2);
   }
+  .compare-score small,
+  .overview-score strong small {
+    color: var(--text-3);
+  }
+  .plan-window-time .plan-dash {
+    color: var(--gold-1);
+  }
 
-  /* Primary actions: polished terracotta with a light-responsive sheen. */
+  /* ================= Black chrome ================= */
+
+  /* Feature surfaces: the plan band, Track ready, Ask plan, this week. */
+  .plan,
+  .track-ready,
+  .ask-plan,
+  .week-stitches,
+  .location-art,
+  .location-art[data-theme-art="urban"] {
+    background: var(--metal-chrome-band);
+    box-shadow: var(--metal-chrome-edge);
+  }
+  .track-ready,
+  .ask-plan {
+    box-shadow: var(--metal-chrome-edge), var(--metal-chrome-shadow);
+  }
+  /* Branded art keeps its scene, rendered as deep green metal or deep copper. */
+  .location-art[data-theme-art="park"],
+  .location-art[data-theme-art="nature"] {
+    background: var(--metal-olive-scene);
+  }
+  .location-art[data-theme-art="running"] {
+    background: var(--metal-copper-scene);
+  }
+  .location-artwork {
+    color: rgb(201 205 210 / 0.24);
+  }
+
+  /* Fine reflective rules inside chrome features. */
+  .plan-figures,
+  .track-primary {
+    border-image: var(--rule-chrome) 1;
+  }
+
+  /* Navigation: a black chrome dock, platinum icons, the selected item stitched. */
+  .dock {
+    background: var(--metal-chrome);
+    box-shadow: var(--metal-chrome-edge), var(--metal-chrome-shadow);
+  }
+  .dock-item {
+    color: var(--platinum-1);
+  }
+  .dock-item:hover,
+  .dock-item[aria-current="page"] {
+    color: var(--platinum-3);
+  }
+  .dock-item[aria-current="page"] {
+    font-weight: 700;
+  }
+  .dock-item[aria-current="page"] svg {
+    filter: drop-shadow(0 1px 0 rgb(0 0 0 / 0.6));
+  }
+  .dock-item.track-dock svg {
+    color: var(--copper-2);
+  }
+
+  /* Avatar: a chrome bead with a polished gold rim. */
+  .avatar {
+    border: 1.5px solid transparent;
+    background: var(--metal-chrome-body) padding-box, var(--metal-gold-border) border-box;
+    color: var(--platinum-2);
+    box-shadow: var(--metal-chrome-edge), 0 4px 10px -6px rgb(5 5 6 / 0.7);
+  }
+
+  /* Raised chrome keys on dark: band buttons, the nearest-place row, map controls, questions. */
+  .btn-band,
+  .plan-nearby,
+  .track-follow,
+  .ask-question {
+    border-color: transparent;
+    background: var(--metal-chrome-raised);
+    color: var(--on-band);
+    box-shadow: var(--metal-chrome-edge), 0 6px 14px -10px rgb(5 5 6 / 0.8);
+  }
+  .plan-nearby:hover,
+  .btn-band:hover:not(:disabled) {
+    background: var(--metal-chrome-raised-hover);
+  }
+  .plan-nearby svg {
+    color: var(--platinum-1);
+  }
+
+  /* Recessed chrome wells: segmented tracks on dark. */
+  .seg-band {
+    background: var(--metal-chrome-well);
+    box-shadow: var(--metal-chrome-well-edge);
+  }
+  .seg-band button {
+    color: var(--on-band-2);
+  }
+
+  /* Plates: the recap score. */
+  .recap-score {
+    background: var(--metal-chrome);
+    box-shadow: var(--metal-chrome-edge), var(--metal-chrome-shadow);
+  }
+
+  /* Selected chips: chrome on cream, platinum in the dark theme. */
+  .chip[aria-pressed="true"] {
+    border-color: transparent;
+    background: var(--metal-selected);
+    color: var(--on-metal-selected);
+    box-shadow: var(--metal-selected-edge);
+  }
+
+  /* ================= Platinum ================= */
+
+  /* Selected segments: a polished platinum key with ink text. */
+  .seg button[aria-pressed="true"],
+  .seg-band button[aria-pressed="true"] {
+    background: var(--metal-platinum);
+    color: var(--chrome-1);
+    box-shadow: var(--metal-platinum-edge), 0 4px 10px -6px rgb(5 5 6 / 0.55);
+  }
+  /* Activity selection carries its own metal: green for walking, copper for running. */
+  .seg button[data-activity="walking"][aria-pressed="true"] {
+    background: var(--metal-olive-deep);
+    color: var(--on-olive);
+    box-shadow: var(--metal-olive-edge), var(--metal-olive-shadow);
+  }
+  .seg button[data-activity="running"][aria-pressed="true"] {
+    background: var(--metal-copper);
+    color: var(--on-action);
+    box-shadow: var(--metal-copper-edge), var(--metal-copper-shadow);
+  }
+  .seg button[data-activity][aria-pressed="true"] {
+    text-shadow: 0 1px 0 rgb(0 0 0 / 0.28);
+  }
+  .seg button[data-activity][aria-pressed="true"] .seg-score {
+    color: inherit;
+  }
+
+  /* Pale keys: secondary buttons are brushed platinum on cream. */
+  .btn-secondary {
+    border-color: transparent;
+    background: var(--metal-key);
+    color: var(--on-metal-key);
+    box-shadow: var(--metal-key-edge);
+  }
+  .btn-secondary:hover:not(:disabled) {
+    background: var(--metal-key-hover);
+  }
+  .plan-start[data-recommended="false"] {
+    background: var(--metal-platinum);
+    color: var(--chrome-1);
+    box-shadow: var(--metal-platinum-edge), 0 10px 20px -12px rgb(5 5 6 / 0.8);
+  }
+
+  /* Icon surfaces: ranks are platinum beads. */
+  .nearby-rank {
+    background: var(--metal-bead);
+    color: var(--on-metal-bead);
+    box-shadow: var(--metal-bead-edge);
+  }
+
+  /* Premium rims on reading cards: a fine platinum edge, no heavier than a hairline. */
+  .featured-card,
+  .map-card,
+  .recap-conditions,
+  .ask-answer:not([data-status$="error"]) {
+    border-color: transparent;
+    background: linear-gradient(var(--surface), var(--surface)) padding-box, var(--rim-premium) border-box;
+  }
+  .activity-share,
+  .profile-section,
+  .place-facts {
+    border-image: var(--rule-premium) 1;
+  }
+
+  /* ================= Copper ================= */
+
+  /* Primary actions: copper that looks metallic before any hover. */
+  .btn-primary,
+  .btn-course,
+  .plan-start[data-recommended="true"],
+  .count-badge {
+    border-color: transparent;
+    background: var(--metal-copper);
+    background-size: 100% 130%;
+    background-position: 50% 0%;
+    color: var(--on-action);
+    text-shadow: 0 1px 0 rgb(58 18 6 / 0.45);
+    box-shadow: var(--metal-copper-edge), var(--metal-copper-shadow);
+  }
   .btn-primary,
   .btn-course,
   .plan-start[data-recommended="true"] {
-    background: var(--metal-terracotta);
-    background-size: 100% 140%;
-    background-position: 50% 0%;
-    box-shadow: var(--sheen), var(--glow-terracotta);
-    border-color: transparent;
-    transition: background-position 360ms var(--ease-out), box-shadow var(--dur-fast) ease,
-      transform var(--dur-press) var(--ease-out);
-  }
-  .plan-start[data-recommended="false"] {
-    background: var(--metal-cream);
-    color: var(--brand-ink);
-    box-shadow: var(--sheen-soft), 0 8px 18px -10px rgb(0 0 0 / 0.5);
+    transition: background-position 320ms var(--ease-out), background-size 140ms var(--ease-out),
+      box-shadow 140ms ease, transform var(--dur-press) var(--ease-out);
   }
   @media (hover: hover) and (pointer: fine) {
     .btn-primary:hover:not(:disabled),
@@ -236,112 +442,441 @@
       filter: none;
     }
   }
-  .btn-primary:disabled,
-  .btn-course:disabled {
+  /* Pressed: the reflection compresses toward the top and the edge sinks. */
+  .btn-primary:active:not(:disabled),
+  .btn-course:active:not(:disabled),
+  .plan-start[data-recommended="true"]:active {
+    background-size: 100% 104%;
+    background-position: 50% 100%;
+    box-shadow: var(--metal-copper-pressed);
+  }
+  .btn-band:active:not(:disabled),
+  .plan-nearby:active {
+    box-shadow: var(--metal-chrome-pressed);
+  }
+  .seg button[aria-pressed="true"]:active,
+  .btn-secondary:active:not(:disabled) {
+    box-shadow: var(--metal-platinum-pressed);
+  }
+  /* Disabled keys lose their metal entirely, so they never read as available. */
+  .btn:disabled,
+  .btn[aria-disabled="true"] {
     background: var(--disabled);
+    color: var(--on-disabled);
+    text-shadow: none;
     box-shadow: none;
   }
-  .btn-band {
-    background: linear-gradient(180deg, #3a332d 0%, #2b2622 100%);
-    box-shadow: var(--sheen-dark);
+  .btn-ghost:disabled {
+    background: none;
+  }
+  .count-badge {
+    background-size: auto;
+    text-shadow: none;
+    box-shadow: var(--metal-copper-edge), 0 0 0 1px rgb(90 32 12 / 0.5);
   }
 
-  /* Selected states: polished cream on dark, polished ink on light. */
-  .seg-band button[aria-pressed="true"] {
-    background: var(--metal-cream);
-    box-shadow: var(--sheen-soft), 0 4px 10px -6px rgb(0 0 0 / 0.6);
+  /* Recording: a copper state pill with a copper bead; other states stay quieter. */
+  .track-state {
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.1), inset 0 0 0 1px rgb(201 205 210 / 0.1);
   }
-  .seg button[aria-pressed="true"]:not(.seg-band *) {
-    background: linear-gradient(180deg, #fffdf9 0%, var(--surface-raised) 55%, #efe7da 100%);
-    box-shadow: var(--sheen-soft), var(--shadow-1);
-  }
-  :root[data-theme="dark"] .seg button[aria-pressed="true"]:not(.seg-band *) {
-    background: linear-gradient(180deg, #4a4139 0%, #3a332d 100%);
-    box-shadow: var(--sheen-dark);
-  }
-  .chip[aria-pressed="true"] {
-    background: var(--metal-ink);
-    border-color: #1a1714;
-    box-shadow: var(--sheen-dark), 0 4px 10px -6px rgb(35 31 28 / 0.6);
-  }
-  .avatar {
-    background: var(--metal-ink);
-    box-shadow: var(--sheen-dark), 0 0 0 1.5px rgb(200 145 58 / 0.55);
-  }
-
-  /* Navigation: a polished dark dock; the selected stitch is gold-to-terracotta metal. */
-  .dock {
-    background: var(--metal-ink);
-    box-shadow: var(--sheen-dark), var(--shadow-dock);
-  }
-  .dock-item[aria-current="page"] {
-    font-weight: 700;
-  }
-  .dock-item[aria-current="page"]::after {
-    background: linear-gradient(45deg, transparent 40%, #e9a35f 40% 60%, transparent 60%) 0 0 / 5.5px 5px,
-      linear-gradient(-45deg, transparent 40%, #c8653a 40% 60%, transparent 60%) 0 0 / 5.5px 5px;
-  }
-
-  /* Live state: a polished terracotta pill. */
   .track-live[data-state="recording"] .track-state {
-    background: linear-gradient(180deg, rgb(224 122 74 / 0.28), rgb(181 83 42 / 0.16));
-    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.12);
+    background: var(--metal-copper-subtle);
+    color: var(--on-copper-veil);
+    box-shadow: var(--metal-copper-subtle-edge);
+  }
+  .track-live[data-state="recording"] .state-dot,
+  .dock-live,
+  .track-follow[aria-pressed="true"] .track-follow-dot {
+    background: var(--metal-copper-bead);
+    border-color: var(--copper-1);
+  }
+  .track-live[data-state="degraded"] .track-state {
+    background: var(--metal-gold-subtle);
+    color: var(--on-gold-veil);
+  }
+  .track-live[data-state="paused"] .track-state {
+    background: var(--metal-platinum-veil);
+    color: var(--platinum-2);
   }
 
-  /* Charts: meteogram bars and progress threads in polished metal. */
-  .meteo-col[data-tone="good"] .meteo-bar {
-    background: var(--metal-olive);
+  /* ================= Gold ================= */
+
+  /* The meteogram bracket around the best window: a fine polished-gold frame. */
+  .meteo-window {
+    border-color: var(--gold-2);
+    border-image: var(--metal-gold-rule) 1;
+    border-radius: 0;
+    box-shadow: 0 -6px 16px -12px rgb(233 192 101 / 0.6);
   }
-  .meteo-col[data-tone="fair"] .meteo-bar {
-    background: var(--metal-gold);
+  .meteo-window::after {
+    background: var(--metal-gold-rule-h);
+  }
+  .hour-chip[data-best] {
+    border-color: transparent;
+    background: linear-gradient(var(--surface-raised), var(--surface-raised)) padding-box,
+      var(--metal-gold-border) border-box;
+  }
+  .plan-updated[data-stale] {
+    color: var(--gold-2);
+  }
+
+  /* ================= Green metal and charts ================= */
+
+  /* Meteogram bars are lit rods: bright on the left edge, shade on the right. */
+  .meteo-col[data-tone="good"] .meteo-bar,
+  .hour-chip[data-tone="good"] .hour-chip-bar {
+    background: var(--metal-olive-rod);
+  }
+  .meteo-col[data-tone="fair"] .meteo-bar,
+  .hour-chip[data-tone="fair"] .hour-chip-bar {
+    background: var(--metal-gold-rod);
   }
   .meteo-col[data-tone="poor"] .meteo-bar {
-    background: var(--metal-thread);
+    background: var(--metal-steel-rod);
+  }
+  .hour-chip[data-tone="poor"] .hour-chip-bar {
+    background: var(--metal-steel-rod-light);
   }
   .meteo-col:not([data-tone="unknown"]) .meteo-bar {
-    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.4), inset 0 -1px 0 rgb(0 0 0 / 0.2);
+    box-shadow: var(--metal-rod-edge), 0 2px 4px -2px rgb(0 0 0 / 0.6);
   }
-  .meteo-window {
-    box-shadow: 0 0 0 1px rgb(200 145 58 / 0.18), 0 -6px 16px -10px rgb(200 145 58 / 0.6);
+  .hour-chip-bar {
+    box-shadow: var(--metal-rod-edge);
   }
   .meteo-legend [data-tone="good"]::before {
-    background: var(--metal-olive);
+    background: var(--metal-olive-body);
   }
   .meteo-legend [data-tone="fair"]::before {
-    background: var(--metal-gold);
+    background: var(--metal-gold-body);
   }
   .meteo-legend [data-tone="poor"]::before {
-    background: var(--metal-thread);
+    background: var(--metal-steel-body);
   }
-  .sport-bar-track span {
-    background: var(--metal-olive-deep);
-    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.35);
-  }
-  .sport-bar[data-kind="running"] .sport-bar-track span {
-    background: var(--metal-terracotta);
-  }
-  .recap-score {
-    background: var(--metal-ink);
-    box-shadow: var(--sheen-dark);
+  .meteo-legend span::before {
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.45);
   }
 
-  /* Map accents: polished markers; tiles are never tinted. */
+  /* Progress: walking green metal, running copper, structure in chrome. */
+  .sport-bar-track {
+    height: 8px;
+    background: var(--metal-track);
+    box-shadow: var(--metal-track-edge);
+  }
+  .sport-bar-track span {
+    background: var(--metal-olive-body);
+    box-shadow: var(--metal-olive-edge);
+  }
+  .sport-bar[data-kind="running"] .sport-bar-track span {
+    background: var(--metal-copper-body);
+    box-shadow: var(--metal-copper-edge);
+  }
+  .sport-cell .sport-name::before,
+  .sport-bar .sport-name::before {
+    background: var(--metal-olive-bead);
+  }
+  .sport-cell[data-kind="running"] .sport-name::before,
+  .sport-bar[data-kind="running"] .sport-name::before {
+    background: var(--metal-copper-bead);
+  }
+
+  /* Status beads: positive is green metal, pending is gold. */
+  .notice[data-tone="good"]::before,
+  .save-status[data-saved="true"]::before,
+  .track-map-key i {
+    background: var(--metal-olive-bead);
+  }
+  .save-status::before {
+    background: var(--metal-gold-bead);
+  }
+  .track-map-key i[data-kind="end"] {
+    background: var(--metal-copper-bead);
+  }
+  .track-gps {
+    color: var(--good-band);
+  }
+  .track-gps[data-quality="waiting"],
+  .track-gps[data-quality="paused"],
+  .track-gps[data-quality="stationary"] {
+    color: var(--on-band-2);
+  }
+  .track-gps[data-quality="poor"],
+  .track-gps[data-quality="jump"],
+  .track-gps[data-quality="stale"],
+  .track-gps[data-quality="invalid"],
+  .track-gps[data-quality="interrupted"],
+  .track-gps[data-quality="limit"] {
+    color: var(--gold-2);
+  }
+
+  /* Tags and score chips: pale metal tints with an inner edge, text solid. */
+  .tag,
+  .score-chip {
+    --ring: var(--ring-platinum);
+    background: var(--tint-platinum);
+    color: var(--on-tint-platinum);
+    box-shadow: var(--tint-edge), inset 0 0 0 1px var(--ring);
+  }
+  .tag[data-tone="good"],
+  .tag[data-tone="walking"],
+  .score-chip[data-tone="good"] {
+    --ring: var(--ring-olive);
+    background: var(--tint-olive);
+    color: var(--on-tint-olive);
+  }
+  .tag[data-tone="fair"],
+  .score-chip[data-tone="fair"] {
+    --ring: var(--ring-gold);
+    background: var(--tint-gold);
+    color: var(--on-tint-gold);
+  }
+  .tag[data-tone="poor"],
+  .score-chip[data-tone="poor"] {
+    color: var(--on-tint-steel);
+  }
+  .tag[data-tone="running"] {
+    --ring: var(--ring-copper);
+    background: var(--tint-copper);
+    color: var(--on-tint-copper);
+  }
+  /* On chrome surfaces tags always take the deep veils. */
+  .plan .tag,
+  .ask-plan .tag,
+  .track-ready .tag {
+    --ring: var(--ring-platinum-deep);
+    background: var(--tint-platinum-deep);
+    color: var(--platinum-1);
+  }
+  .ask-plan .tag[data-tone="walking"] {
+    --ring: var(--ring-olive-deep);
+    background: var(--tint-olive-deep);
+    color: var(--on-tint-olive-deep);
+  }
+  .ask-plan .tag[data-tone="running"] {
+    --ring: var(--ring-copper-deep);
+    background: var(--tint-copper-deep);
+    color: var(--on-tint-copper-deep);
+  }
+
+  /* ================= Stitch =================
+     The embroidery is platinum thread by default: each cross is two bars lit
+     along their length (bright at the top ends, steel at the bottom) with a
+     restrained drop shade. Semantic stitches take green metal, gold or copper. */
+  .stitch-meter i,
+  .week-stitch-marks i,
+  .ask-stitches i {
+    --stops: var(--thread-faint);
+    filter: drop-shadow(0 0.6px 0 rgb(0 0 0 / 0.45));
+  }
+  .stitch-meter i::before,
+  .week-stitch-marks i::before,
+  .ask-stitches i::before {
+    background: linear-gradient(90deg, var(--stops));
+  }
+  .stitch-meter i::after,
+  .week-stitch-marks i::after,
+  .ask-stitches i::after {
+    background: linear-gradient(270deg, var(--stops));
+  }
+  .stitch-meter i[data-on] {
+    --stops: var(--thread-steel);
+  }
+  .stitch-meter[data-tone="good"] i[data-on] {
+    --stops: var(--thread-olive);
+  }
+  .stitch-meter[data-tone="fair"] i[data-on] {
+    --stops: var(--thread-gold);
+  }
+  .week-stitch-marks i {
+    --stops: var(--thread-olive);
+  }
+  .week-stitch-marks i[data-kind="running"] {
+    --stops: var(--thread-copper);
+  }
+  .week-stitch-marks i[data-empty] {
+    --stops: var(--thread-faint);
+  }
+  .week-stitches li[data-future] .week-stitch-marks i[data-empty] {
+    opacity: 0.45;
+  }
+  .ask-stitches i {
+    --stops: var(--thread-ground);
+    filter: none;
+  }
+  .recap-stitch {
+    opacity: 0.9;
+  }
+  .art-stitch {
+    opacity: 0.85;
+  }
+  /* The selected dock item: a fine platinum stitch, masked from the thread metal. */
+  .dock-item[aria-current="page"]::after {
+    background: var(--metal-stitch);
+    -webkit-mask: linear-gradient(45deg, transparent 38%, #000 38% 62%, transparent 62%) 0 0 / 5.5px 5px,
+      linear-gradient(-45deg, transparent 38%, #000 38% 62%, transparent 62%) 0 0 / 5.5px 5px;
+    mask: linear-gradient(45deg, transparent 38%, #000 38% 62%, transparent 62%) 0 0 / 5.5px 5px,
+      linear-gradient(-45deg, transparent 38%, #000 38% 62%, transparent 62%) 0 0 / 5.5px 5px;
+  }
+
+  /* ================= Map ================= */
+  /* Chrome bodies, gold verified rims, copper selection, platinum light detail.
+     Tiles are never filtered. */
   .area-score-marker {
     border: 2px solid transparent;
-    background: var(--metal-ink) padding-box, var(--metal-gold) border-box;
-    box-shadow: 0 3px 8px rgb(35 31 28 / 0.35);
+    background: var(--metal-chrome-body) padding-box, var(--metal-gold-border) border-box;
+    color: var(--platinum-2);
+    box-shadow: inset 0 1px 0 rgb(201 205 210 / 0.35), 0 3px 8px rgb(5 5 6 / 0.4);
+  }
+  .area-score-marker[data-score="good"] {
+    color: var(--on-tint-olive-deep);
+  }
+  .area-score-marker[data-score="fair"] {
+    color: var(--on-gold-veil);
   }
   .area-score-marker[data-score="poor"],
   .area-score-marker[data-score="unknown"] {
-    background: linear-gradient(180deg, #fffdf9, #efe7da) padding-box, var(--metal-gold) border-box;
+    background: var(--metal-platinum-body) padding-box, var(--metal-steel-body) border-box;
+    color: var(--chrome-1);
+    box-shadow: inset 0 1px 0 var(--platinum-3), 0 3px 8px rgb(5 5 6 / 0.3);
   }
-  .selected-area-marker {
+  .area-cluster-marker {
+    background: var(--metal-platinum-subtle);
+    color: var(--chrome-1);
+    border-color: var(--chrome-2);
+    box-shadow: inset 0 1px 0 var(--platinum-3), 0 3px 8px rgb(5 5 6 / 0.3);
+  }
+  .selected-area-marker,
+  .selected-area-marker[data-score] {
     border: 2px solid transparent;
-    background: var(--metal-terracotta) padding-box, var(--metal-cream) border-box;
-    box-shadow: var(--glow-terracotta), 0 4px 10px rgb(35 31 28 / 0.35);
+    background: var(--metal-copper-body) padding-box, var(--metal-platinum-body) border-box;
+    color: var(--on-action);
+    text-shadow: 0 1px 0 rgb(58 18 6 / 0.5);
+    box-shadow: inset 0 1px 0 rgb(255 214 186 / 0.6), 0 0 0 3px rgb(220 123 72 / 0.28),
+      0 6px 14px -4px rgb(90 32 12 / 0.55);
   }
   .dynamic-origin {
-    background: radial-gradient(circle at 35% 30%, #4a4139, var(--brand-ink));
+    border-color: transparent;
+    background: var(--metal-chrome-bead) padding-box, var(--metal-gold-border) border-box;
+    box-shadow: 0 0 0 6px rgb(233 192 101 / 0.22), 0 3px 8px rgb(5 5 6 / 0.4);
+  }
+  .map-marker {
+    border-color: transparent;
+    background: var(--metal-chrome-body) padding-box, var(--metal-platinum-body) border-box;
+    box-shadow: 0 3px 8px rgb(5 5 6 / 0.4);
+  }
+  .map-marker.is-selected {
+    background: var(--metal-copper-body) padding-box, var(--metal-platinum-body) border-box;
+  }
+  .map-legend [data-kind="selected"] {
+    background: var(--metal-copper-body);
+    box-shadow: 0 0 0 2px var(--platinum-2), 0 0 0 3px var(--copper-1);
+  }
+  .map-legend [data-kind="origin"] {
+    border-color: var(--gold-1);
+    background: var(--metal-chrome-bead);
+  }
+  .map-legend [data-kind="score"] {
+    border-color: transparent;
+    background: var(--metal-chrome-body) padding-box, var(--metal-gold-border) border-box;
+  }
+  .map-legend [data-kind="cluster"] {
+    background: var(--metal-platinum-subtle);
+    border-color: var(--chrome-2);
+  }
+
+  /* ================= Track recording ================= */
+  /* The whole recorder is one black chrome slab; the sticky controls share its
+     fixed light so no seam shows. */
+  .app[data-screen="track"]:has(.track-session[data-recap="false"]),
+  .track-controls {
+    background: var(--metal-chrome-band);
+    background-attachment: fixed;
+  }
+  .app[data-screen="track"]:has(.track-session[data-recap="false"]) .notice {
+    background: var(--metal-chrome-raised);
+    box-shadow: var(--metal-chrome-edge);
+  }
+  .track-secondary dd {
+    color: var(--platinum-2);
+  }
+  .track-map-loading {
+    background: var(--metal-chrome-well);
+  }
+
+  /* ================= Share card ================= */
+  /* The strongest expression: black chrome card, platinum figures, copper route,
+     gold context, a green accent and the platinum stitch. Route masking unchanged. */
+  .share-preview {
+    --card-accent: var(--copper-2);
+    --card-gold: var(--gold-2);
+    background: var(--metal-chrome-band);
+    box-shadow: var(--metal-chrome-edge), var(--metal-chrome-shadow);
+  }
+  .share-brand,
+  .share-primary b,
+  .share-secondary b {
+    background-image: var(--metal-platinum-text);
+  }
+  .share-activity b {
+    background: var(--metal-gold-text);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .share-route {
+    filter: drop-shadow(0 1px 0 rgb(90 32 12 / 0.9)) drop-shadow(0 -0.5px 0 rgb(255 199 162 / 0.55));
+  }
+  /* Context in gold; the score in green metal when comfortable. */
+  .share-conditions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 1.4em;
+  }
+  .share-conditions > span {
+    background: var(--metal-gold-text);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .share-conditions .share-score[data-tone="good"] {
+    background-image: var(--metal-olive-text);
+  }
+  .share-conditions .share-score[data-tone="poor"] {
+    background-image: var(--metal-steel-text);
+  }
+  .share-preview[data-template="performance"] {
+    background: var(--metal-platinum-subtle);
+    box-shadow: var(--metal-platinum-edge), var(--shadow-2);
+  }
+  .share-preview[data-template="performance"] .share-brand,
+  .share-preview[data-template="performance"] .share-primary b,
+  .share-preview[data-template="performance"] .share-secondary b {
+    background-image: var(--metal-chrome-text);
+  }
+  .share-preview[data-template="performance"] .share-activity b,
+  .share-preview[data-template="performance"] .share-conditions > span {
+    background: none;
+    color: var(--gold-0);
+  }
+  .share-preview[data-template="performance"] .share-score[data-tone="good"] {
+    color: var(--olive-1);
+  }
+  .share-preview[data-template="performance"] .share-score[data-tone="poor"] {
+    color: var(--chrome-2);
+  }
+  .share-preview[data-template="performance"] .share-route {
+    filter: drop-shadow(0 1px 0 rgb(90 32 12 / 0.6));
+  }
+  .share-preview[data-template="minimal"] .share-primary {
+    background: var(--metal-copper);
+    box-shadow: var(--metal-copper-edge);
+  }
+  .share-preview[data-template="minimal"] .share-primary b {
+    background: none;
+    color: var(--on-action);
+    text-shadow: 0 2px 0 rgb(58 18 6 / 0.45);
+  }
+  .share-preview[data-template="minimal"] .share-primary span {
+    color: var(--copper-3);
   }
 
   /* Narrow phones: window and score stack so neither figure clips. */
@@ -356,11 +891,44 @@
     }
   }
 
+  /* Metal is never animated on its own: light moves only on hover and press. */
   @media (prefers-reduced-motion: reduce) {
     .btn-primary,
     .btn-course,
     .plan-start {
-      transition: background-color var(--dur-fast) ease;
+      transition: box-shadow var(--dur-fast) ease;
+    }
+    .btn-primary:active:not(:disabled),
+    .btn-course:active:not(:disabled),
+    .plan-start[data-recommended="true"]:active {
+      background-size: 100% 130%;
+      background-position: 50% 0%;
+    }
+  }
+
+  /* Forced colours: drop gradient text and metal fills for system colours. */
+  @media (forced-colors: active) {
+    .wordmark-text,
+    .plan-headline,
+    .plan-window-time,
+    .plan-score strong,
+    .track-timer strong,
+    .track-metric strong,
+    .recap-hero strong,
+    .recap-score b,
+    .stat-value,
+    .nearby-score b,
+    .compare-score,
+    .overview-score strong,
+    .overview-window strong,
+    .ask-plan-window,
+    .share-brand,
+    .share-primary b,
+    .share-secondary b,
+    .share-activity b,
+    .share-conditions > span {
+      background: none;
+      color: CanvasText;
     }
   }
 }

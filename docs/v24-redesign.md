@@ -155,3 +155,35 @@ truth; see [DESIGN.md](../DESIGN.md).
 - **Typography:** the wordmark serif (Cormorant Garamond, now with 700) carries key labels (tracked caps), section titles, key metrics (lining tabular figures) and primary actions. Arabic keeps Readex Pro for labels, headings and buttons; figures share the serif. Body, controls and AI answers stay in Archivo / Readex Pro.
 - **Material:** a separate `material` CSS layer adds polished metal (gradient, sheen, tinted shadow) to primary actions, selected states, the dock, key figures, meteogram bars, progress threads and map markers. Base surfaces stay flat. Contrast is checked on the mid-tone of every gradient.
 - **Share card:** metal gradient fills for the wordmark, activity, figures and route; figures stay in the lining sans because canvas cannot request lining figures.
+
+## V2.4.3 metallic material system
+
+The whole brand palette is now a material system in five metals from the material reference:
+black chrome (`#050506` `#1C1D20` `#5E6268` `#C9CDD2`), platinum (`#8E949A` `#C7CBCF` `#F4F6F8`
+`#FFFFFF`), polished gold (`#6E4508` `#B47E22` `#E9C065` `#FFF1C2`), copper (`#5A200C` `#A44A22`
+`#DC7B48` `#FFC7A2`) and green metal (`#26300F` `#56651F` `#93A645` `#E3EEA6`). Deep brown
+surfaces become black chrome, important cream becomes platinum, terracotta becomes copper and
+olive becomes green metal. See [DESIGN.md](../DESIGN.md) for the role of each metal.
+
+- **Tokens:** `tokens.css` holds the raw stops and composed tokens per metal (surface, body,
+  subtle/raised/band/well, text, text on cream, border, edge, shadow), shared brushed grain and
+  glint layers, theme-aware metal text, stitch thread stops, and premium rims and rules.
+  `material.css` only assigns them. Solid semantic tokens (`--action`, `--good`, `--fair`, map
+  and route colours) were re-based onto the metal mid-tones.
+- **Construction:** one light from the top left; grain, soft highlight, body gradient
+  (specular, bright, mid, edge shade), top reflection, lower shade, inner line, tinted shadow.
+  Pure CSS gradients and pseudo-elements; no images.
+- **Stitch:** platinum thread by default (SVG gradient strokes with a drop shade and reflective
+  edge; CSS crosses lit along each bar; the dock stitch masked from the thread metal). The score
+  meter and this week keep semantic green metal, gold and copper.
+- **Map:** copper route thread (outline, edge, body, core, glint layers), chrome marker bodies,
+  gold verified rims, a copper selected marker with a platinum rim, platinum clusters. Tiles are
+  never filtered.
+- **Share card:** black chrome base with brushed grain, platinum wordmark and figures, copper
+  route thread, gold context, the score in green metal when comfortable, platinum stitch; the
+  minimal template sets the distance on a copper plate in both the preview and the export.
+  Privacy masking is unchanged.
+- **Accessibility:** text on metal surfaces sits on the 30 to 70% band and was checked against
+  every point of that band (copper 4.86:1, green metal 4.90:1, platinum 5.50:1 with ink). Metal
+  text uses a darkest stop that passes on its ground; forced-colours mode drops all gradient
+  text. No idle shine; press compresses the reflection and reduced motion keeps only the edge.

@@ -41,7 +41,7 @@ export function FiltersPanel({
         <legend className="mini-title">{c("activity")}</legend>
         <div className="seg" role="group">
           {(["walking", "running"] as const).map((a) => (
-            <button key={a} aria-pressed={activity === a} onClick={() => setActivity(a)}>
+            <button key={a} aria-pressed={activity === a} data-activity={a} onClick={() => setActivity(a)}>
               {c(a)}
             </button>
           ))}

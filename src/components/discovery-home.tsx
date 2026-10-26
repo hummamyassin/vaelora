@@ -549,6 +549,7 @@ export function DiscoveryHome({
                   setActivity(k);
                 }}
                 aria-pressed={activity === k}
+                data-activity={k}
               >
                 {k === "walking" ? <Footprints aria-hidden /> : <Activity aria-hidden />}
                 {k === "walking" ? c("walk") : c("run")}
