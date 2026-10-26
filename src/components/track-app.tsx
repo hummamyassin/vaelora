@@ -73,7 +73,7 @@ export function TrackApp({
     watch = useRef<number | null>(null),
     writes = useRef(Promise.resolve()),
     wake = useRef<WakeLockSentinel | null>(null),
-    keepAwakeRef = useRef(false);
+    keepAwakeRef = useRef(true);
   const [revision, setRevision] = useState(0),
     [kind, setKind] = useState<ActivityKind>("walking"),
     [history, setHistory] = useState<RecordedActivity[]>([]),
@@ -83,7 +83,9 @@ export function TrackApp({
     [notice, setNotice] = useState<string | null>(null),
     [storageError, setStorageError] = useState(false),
     [saving, setSaving] = useState(false),
-    [keepAwake, setKeepAwake] = useState(false),
+    [keepAwake, setKeepAwake] = useState(true),
+    // Active time when the page was hidden mid-recording; shown as a resume prompt on return.
+    [backgrounded, setBackgrounded] = useState<number | null>(null),
     [online, setOnline] = useState(true),
     [exportConfirm, setExportConfirm] = useState(false),
     [deleteConfirm, setDeleteConfirm] = useState(false),
@@ -128,6 +130,25 @@ export function TrackApp({
         setStorageError(true);
       });
   };
+  // A screen lock or app switch pauses recording (web GPS stops in the background),
+  // so keep the screen on by default and take the lock again whenever it is lost.
+  const keepScreenOn = () => {
+    if (!keepAwakeRef.current || wake.current) return;
+    if (!("wakeLock" in navigator)) {
+      setNotice("wake-unavailable");
+      return;
+    }
+    void navigator.wakeLock
+      .request("screen")
+      .then((lock) => {
+        if (engine.current?.data.state !== "recording") return void lock.release();
+        wake.current = lock;
+        lock.addEventListener("release", () => {
+          if (wake.current === lock) wake.current = null;
+        });
+      })
+      .catch(() => setNotice("wake-unavailable"));
+  };
   const watchGPS = () => {
     if (watch.current !== null) return;
     if (!navigator.geolocation) {
@@ -166,17 +187,18 @@ export function TrackApp({
       setNotice("gps-denied");
       refresh();
     }
-    if (keepAwakeRef.current && "wakeLock" in navigator)
-      void navigator.wakeLock
-        .request("screen")
-        .then((lock) => {
-          if (engine.current?.data.state === "recording") wake.current = lock;
-          else void lock.release();
-        })
-        .catch(() => setNotice("wake-unavailable"));
+    keepScreenOn();
   };
   useEffect(() => {
     let mounted = true;
+    try {
+      if (localStorage.getItem("vaelora:keep-awake") === "off") {
+        keepAwakeRef.current = false;
+        queueMicrotask(() => setKeepAwake(false));
+      }
+    } catch {
+      /* Keep the default. */
+    }
     void Promise.all([loadActivities(), loadDrafts()])
       .then(([h, d]) => {
         if (mounted) {
@@ -204,9 +226,12 @@ export function TrackApp({
       ) {
         engine.current.pause(Date.now());
         engine.current.quality = "interrupted";
+        setBackgrounded(engine.current.data.activeMs);
         stopWatch();
         checkpoint();
         refresh();
+      } else if (document.visibilityState === "visible" && engine.current?.data.state === "recording") {
+        keepScreenOn();
       }
     };
     const connectivity = () => setOnline(navigator.onLine);
@@ -320,6 +345,7 @@ export function TrackApp({
     refresh();
   }
   function pause() {
+    setBackgrounded(null);
     engine.current?.pause(Date.now());
     stopWatch();
     checkpoint();
@@ -327,6 +353,7 @@ export function TrackApp({
   }
   function resume() {
     if (engine.current?.resume(Date.now())) {
+      setBackgrounded(null);
       setNotice(null);
       watchGPS();
       checkpoint();
@@ -528,10 +555,16 @@ export function TrackApp({
               onChange={(e) => {
                 setKeepAwake(e.target.checked);
                 keepAwakeRef.current = e.target.checked;
+                try {
+                  localStorage.setItem("vaelora:keep-awake", e.target.checked ? "on" : "off");
+                } catch {
+                  /* Optional preference. */
+                }
               }}
             />
             {c("keepAwake")}
           </label>
+          <p className="track-screen-note">{c("screenNote")}</p>
         </section>
       )}
       {!summary && drafts.length > 0 && (!a || state === "finished") && (
@@ -582,6 +615,21 @@ export function TrackApp({
       )}
       {current && live && (
         <div className="track-session instrument" data-recap="false">
+          {backgrounded !== null && state === "paused" && (
+            <div className="track-interrupt" role="alert">
+              <strong>{c("backgroundTitle")}</strong>
+              <p>{c("backgroundBody", { time: durationLabel(backgrounded) })}</p>
+              <div className="track-interrupt-actions">
+                <button className="btn btn-course btn-lg" onClick={resume}>
+                  <IconPlay aria-hidden weight="fill" />
+                  {c("backgroundResume")}
+                </button>
+                <button className="btn btn-band btn-lg" onClick={() => setBackgrounded(null)}>
+                  {c("backgroundLater")}
+                </button>
+              </div>
+            </div>
+          )}
           <section className="track-live" data-state={visualState}>
             <div className="track-status">
               <span className="track-state">

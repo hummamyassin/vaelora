@@ -16,6 +16,17 @@ export const trackCopy = {
   walk: ["Walk", "مشي"],
   run: ["Run", "جري"],
   keepAwake: ["Keep screen on while recording, when supported", "إبقاء الشاشة مضاءة أثناء التسجيل، عند توفر الدعم"],
+  screenNote: [
+    "Recording pauses if you lock the phone or switch apps. Keep VAELORA on screen.",
+    "يتوقف التسجيل مؤقتًا إذا قفلت الهاتف أو انتقلت إلى تطبيق آخر. أبقِ VAELORA ظاهرًا على الشاشة.",
+  ],
+  backgroundTitle: ["Paused while VAELORA was in the background", "توقف التسجيل مؤقتًا أثناء وجود VAELORA في الخلفية"],
+  backgroundBody: [
+    "Time and distance stopped at {time}. Nothing was recorded while the screen was off or another app was open.",
+    "توقف الوقت والمسافة عند {time}. لم يُسجَّل شيء أثناء إطفاء الشاشة أو فتح تطبيق آخر.",
+  ],
+  backgroundResume: ["Resume now", "استأنف الآن"],
+  backgroundLater: ["Stay paused", "ابقَ متوقفًا"],
   start: ["Start activity", "ابدأ النشاط"],
   history: ["History", "السجل"],
   historyCount: ["{n} saved", "{n} محفوظ"],

@@ -242,6 +242,22 @@ try {
     await emit(101);
     await p.clock.fastForward(5000);
     await emit(102);
+    // Going to the background pauses honestly and asks to resume on return.
+    await p.evaluate(() => {
+      const set = (v) => Object.defineProperty(document, "visibilityState", { configurable: true, get: () => v });
+      set("hidden");
+      document.dispatchEvent(new Event("visibilitychange"));
+      set("visible");
+      document.dispatchEvent(new Event("visibilitychange"));
+    });
+    await p.locator('.track-interrupt[role="alert"]').waitFor();
+    await p.locator('.track-live[data-state="paused"]').waitFor();
+    await snapViewport("backgrounded");
+    await p.locator(".track-interrupt .btn-course").click();
+    await p.locator(".track-interrupt").waitFor({ state: "detached" });
+    await emit(103);
+    await p.clock.fastForward(5000);
+    await emit(104);
     await p.locator(".track-controls button").last().click();
     await p
       .getByText(locale === "ar" ? "محفوظ على هذا الجهاز" : "Saved on this device", { exact: true })
