@@ -7,7 +7,11 @@ const allowed = (url) =>
     self.VAELORA_ASSETS.files.includes(url.pathname) ||
     url.pathname.startsWith("/icons/") ||
     url.pathname === "/manifest.webmanifest");
+// A new worker takes over as soon as its shell is cached, instead of waiting
+// for every open tab to close; otherwise an older worker keeps serving its
+// cached manifest and icons. Pages stay network-first, so nothing reloads.
 self.addEventListener("install", (event) => {
+  self.skipWaiting();
   event.waitUntil(
     caches.open(SHELL).then(async (cache) => {
       const response = await fetch("/", { cache: "reload" });
@@ -16,9 +20,11 @@ self.addEventListener("install", (event) => {
       await cache.addAll([
         ...self.VAELORA_ASSETS.files,
         "/manifest.webmanifest",
-        "/icons/icon-192.png",
-        "/icons/icon-512.png",
-        "/icons/icon-maskable.png",
+        "/icons/v25/icon-192.png",
+        "/icons/v25/icon-512.png",
+        "/icons/v25/maskable-192.png",
+        "/icons/v25/maskable-512.png",
+        "/icons/v25/apple-touch-icon-180.png",
       ]);
     }),
   );
@@ -41,10 +47,12 @@ self.addEventListener("fetch", (event) => {
   const request = event.request,
     url = new URL(request.url);
   if (request.method !== "GET" || url.origin !== self.location.origin) return;
-  if (request.mode === "navigate" && url.pathname === "/") {
+  // The page and the manifest are network-first, so a cached copy never hides
+  // the current app name or icons; the cached copies serve offline only.
+  if ((request.mode === "navigate" && url.pathname === "/") || url.pathname === "/manifest.webmanifest") {
     event.respondWith(
       fetch(request).catch(
-        async () => (await caches.match("/")) || Response.error(),
+        async () => (await caches.match(url.pathname)) || Response.error(),
       ),
     );
     return;

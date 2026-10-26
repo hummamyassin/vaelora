@@ -41,6 +41,14 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   appleWebApp: { capable: true, statusBarStyle: "default", title: "VAELORA" },
+  icons: {
+    icon: [
+      { url: "/icons/v25/icon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/icons/v25/icon-96.png", sizes: "96x96", type: "image/png" },
+      { url: "/icons/v25/icon-192.png", sizes: "192x192", type: "image/png" },
+    ],
+    apple: [{ url: "/icons/v25/apple-touch-icon-180.png", sizes: "180x180", type: "image/png" }],
+  },
   title: "VAELORA: find your best time outside",
   description:
     "Weather-aware walking and running for Greater Amman. Find when and where to go, record your outing, and keep your history on your device.",
