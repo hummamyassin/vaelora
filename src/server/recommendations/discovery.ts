@@ -56,21 +56,23 @@ export function createDiscovery(
   return async (input: unknown) => {
     const request = parseDiscovery(input),
       now = (options.clock ?? (() => new Date()))(),
-      date = forecastDates(now).today;
+      dates = forecastDates(now),
+      date = dates.today;
     const { activity, minutes, preferences, context, radius } = request;
+    const outlookFor = (hourly: Parameters<typeof activityOutlook>[1], day: string) =>
+      activityOutlook(activity, hourly, day, minutes, now, v1WeatherPolicy, preferenceLimits(activity, preferences));
     const evaluate = async (point: { latitude: number; longitude: number }) => {
       const result = await provider.getForecast(point, now);
-      return activityOutlook(
-        activity,
-        result.ok ? result.hourly : [],
-        date,
-        minutes,
-        now,
-        v1WeatherPolicy,
-        preferenceLimits(activity, preferences),
-      );
+      return outlookFor(result.ok ? result.hourly : [], date);
     };
-    const outlook = await evaluate(context);
+    const forecast = await provider.getForecast(context, now),
+      outlook = outlookFor(forecast.ok ? forecast.hourly : [], date),
+      plan = dailyPlan(outlook, now);
+    // When no full window is left today (or the day has run out), offer tomorrow's
+    // best window from the same two-day forecast instead of a dead end.
+    const todayDone = plan.status === "poor" || (forecast.ok && outlook.hours.length === 0);
+    const next = todayDone && forecast.ok ? outlookFor(forecast.hourly, dates.tomorrow).bestWindow : null;
+    const tomorrow = next ? { date: dates.tomorrow, window: next } : null;
     const eligible = filterEligibleAreas(activityAreas, {
       activity,
       date,
@@ -108,9 +110,10 @@ export function createDiscovery(
       request,
       evaluatedAt: now.toISOString(),
       outlook,
-      plan: dailyPlan(outlook, now),
+      plan,
+      tomorrow,
       places: rankNearby(rows, context),
-      status: outlook.hours.some((h) => h.score !== null)
+      status: outlook.hours.some((h) => h.score !== null) || tomorrow
         ? "complete"
         : "weather-unavailable",
     };

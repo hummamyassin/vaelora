@@ -21,6 +21,15 @@ export const homeCopy = {
   goodNow: ["Good to go now", "مناسب للانطلاق الآن"],
   betterLater: ["Better at {time}", "أفضل عند {time}"],
   noWindow: ["No full window left today", "لا توجد فترة كاملة متبقية اليوم"],
+  tomorrowBest: ["Next good window: tomorrow {time}", "الفترة المناسبة التالية: غدًا {time}"],
+  tomorrowSub: [
+    "No full {n}-minute window is left today. Plan for tomorrow, or track now without a recommendation.",
+    "لا توجد فترة كاملة مدتها {n} دقيقة متبقية اليوم. خطّط للغد، أو سجّل الآن دون توصية.",
+  ],
+  tomorrowWindow: ["Tomorrow’s window", "فترة الغد"],
+  scoreTomorrow: ["for tomorrow’s window", "لفترة الغد"],
+  lastArea: ["Your last area", "منطقتك الأخيرة"],
+  fromLast: ["From your last area", "من منطقتك الأخيرة"],
   noWindowSub: [
     "No remaining {n}-minute stretch meets the comfort limits. Try a shorter outing or tomorrow.",
     "لا توجد فترة متبقية مدتها {n} دقيقة ضمن حدود الراحة. جرّب مدة أقصر أو الغد.",

@@ -309,6 +309,8 @@ try {
     await p.locator(".v2-dock button").first().evaluate((button) => button.click());
     await p.locator("#dashboard").waitFor({ state: "visible" });
     await p.locator(".personal-progress .progress-metrics").waitFor();
+    // After a reload Home reopens on the remembered place with a plan, not an empty prompt.
+    await p.locator(".plan-hero[data-ready]").waitFor();
     await snap("returning-home");
     await p.locator(".profile-entry").click();
     await p.locator(".profile-panel").waitFor();

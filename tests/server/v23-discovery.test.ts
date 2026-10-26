@@ -244,3 +244,22 @@ test("Search caches, bounds provider calls and does not accept coordinate argume
     400,
   );
 });
+
+test("Late in the day Home offers tomorrow's best window from the same forecast", async () => {
+  const twoDays = ["2026-09-22", "2026-09-23"].flatMap((day) =>
+    hours.map((h) => ({ ...h, time: `${day}${h.time.slice(10)}` })),
+  );
+  const late = new Date("2026-09-22T23:40:00+03:00");
+  const twoDayProvider: WeatherProvider = {
+    getForecast: async (point, at) => ({ ...(await provider.getForecast(point, at)), hourly: twoDays }) as never,
+  };
+  const evening = await createDiscovery({ provider: twoDayProvider, clock: () => late })({ ...input, minutes: 60 });
+  assert.equal(evening.plan.window, null);
+  assert.equal(evening.status, "complete");
+  assert.equal(evening.tomorrow?.date, "2026-09-23");
+  assert.ok(Date.parse(evening.tomorrow!.window.start) >= Date.parse("2026-09-23T00:00:00+03:00"));
+  // A day with a usable window never adds a tomorrow fallback.
+  const morning = await createDiscovery({ provider: twoDayProvider, clock: () => now })(input);
+  assert.ok(morning.plan.window);
+  assert.equal(morning.tomorrow, null);
+});

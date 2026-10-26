@@ -78,6 +78,8 @@ export const preferenceKeys = [
   "vaelora:locale",
   "vaelora:activity",
   "vaelora:area",
+  "vaelora:plan-place",
+  "vaelora:keep-awake",
 ];
 export function clearPreferences(storage: Pick<Storage, "removeItem">) {
   for (const key of preferenceKeys) storage.removeItem(key);

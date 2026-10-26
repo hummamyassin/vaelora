@@ -18,6 +18,7 @@ import {
 import { activityAreas } from "../data/activity-areas";
 import { weatherAreas } from "../data/weather-areas";
 import { locationContext } from "../lib/dynamic-location";
+import { parsePlanPlace, planPlaceFor, planPlaceKey } from "../lib/plan-place";
 import { rankNearby } from "../domain/recommendation/nearby";
 import { distanceKm, type Coordinates } from "../lib/geography";
 import {
@@ -291,6 +292,25 @@ export function DiscoveryHome({
         : null,
     );
   }, [point, name, activity, live, selected, onMapData]);
+  // A returning visit opens on the last place Home planned from.
+  useEffect(() => {
+    let saved = null;
+    try {
+      saved = parsePlanPlace(JSON.parse(localStorage.getItem(planPlaceKey) ?? "null"));
+    } catch {
+      /* Ignore unreadable storage. */
+    }
+    if (!saved) return;
+    const place = saved;
+    queueMicrotask(() => {
+      setPoint({ latitude: place.latitude, longitude: place.longitude });
+      setName(place.kind === "gps" ? c("lastArea") : place.name);
+      setSource("manual");
+      setGeo("ready");
+    });
+    // Restore once on mount; later choices overwrite the stored place.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const cell = point ? locationContext(point)?.cellId : null,
     key = JSON.stringify({
       cellId: cell,
@@ -403,6 +423,12 @@ export function DiscoveryHome({
     setPoint(p);
     setName(n);
     setSource(kind);
+    try {
+      const place = planPlaceFor(p, n, kind === "gps" ? "gps" : "area");
+      if (place) localStorage.setItem(planPlaceKey, JSON.stringify(place));
+    } catch {
+      /* Remembering the place is optional. */
+    }
     setGeo("ready");
     setResults([]);
     setSearchStatus("");
@@ -458,12 +484,14 @@ export function DiscoveryHome({
     (p) => point && distanceKm(point, p.area) <= radius,
   );
   const current = live?.outlook.current,
-    plan = live?.plan;
+    plan = live?.plan,
+    tomorrow = live?.tomorrow ?? null;
   const planState = planningState({
     hasLocation: !!point,
     loading: busy,
     failed,
-    status: plan?.status,
+    // Today has run out of hours but tomorrow is known: that is "no window", not missing weather.
+    status: tomorrow && plan?.status === "insufficient" ? "poor" : plan?.status,
   });
   const best = nearby.find(
     (p) => p.plan.status === "now" || p.plan.status === "later",
@@ -479,7 +507,9 @@ export function DiscoveryHome({
           ? c("goodNow")
           : plan?.status === "later" && plan.window
             ? c("betterLater", { time: clock(plan.window.start) })
-            : c("noWindow");
+            : tomorrow
+              ? c("tomorrowBest", { time: clock(tomorrow.window.start) })
+              : c("noWindow");
   const subline = !point
     ? c("chooseAreaSub")
     : busy
@@ -487,7 +517,9 @@ export function DiscoveryHome({
       : planState === "weather-unavailable"
         ? c("unavailableSub")
         : planState === "no-window"
-          ? c("noWindowSub", { n: minutes })
+          ? tomorrow
+            ? c("tomorrowSub", { n: minutes })
+            : c("noWindowSub", { n: minutes })
           : null;
   const planAction =
     planState === "recommended"
@@ -511,10 +543,11 @@ export function DiscoveryHome({
     poor: c("geoPoor"),
     outside: c("geoOutside"),
   };
-  const score = plan?.window?.score ?? current?.score ?? null;
+  const shownWindow = plan?.window ?? tomorrow?.window ?? null;
+  const score = plan?.window?.score ?? tomorrow?.window.score ?? current?.score ?? null;
   const scoreTone = toneOf(score);
   const activityLabel = activity === "walking" ? c("walk") : c("run");
-  const planWindow = plan?.window ?? null;
+  const planWindow = shownWindow;
   useEffect(() => {
     onPlan?.(
       point && live && !busy
@@ -587,7 +620,7 @@ export function DiscoveryHome({
               <span className="plan-score-note">
                 {c("score")}
                 <br />
-                {plan?.window ? c("scoreWindow") : c("scoreNow")}
+                {plan?.window ? c("scoreWindow") : tomorrow ? c("scoreTomorrow") : c("scoreNow")}
               </span>
             </div>
           )}
@@ -597,14 +630,14 @@ export function DiscoveryHome({
             </h2>
             {subline && <p className="plan-sub">{subline}</p>}
             {point && !busy && (
-              <p className="plan-window">
-                <span className="plan-label">{c("window")}</span>
-                {plan?.window ? (
+              <p className="plan-window" data-day={!plan?.window && tomorrow ? "tomorrow" : undefined}>
+                <span className="plan-label">{!plan?.window && tomorrow ? c("tomorrowWindow") : c("window")}</span>
+                {shownWindow ? (
                   <strong className="plan-window-time num">
                     <bdi>
-                      {clock(plan.window.start)}
+                      {clock(shownWindow.start)}
                       <span className="plan-dash">–</span>
-                      {clock(plan.window.end)}
+                      {clock(shownWindow.end)}
                     </bdi>
                   </strong>
                 ) : (
@@ -757,7 +790,7 @@ export function DiscoveryHome({
           <div className="near-results">
             <div className="near-toolbar">
               <span className="near-origin">
-                {source === "gps" ? c("fromGps") : c("fromArea", { name })}
+                {source === "gps" ? c("fromGps") : name === c("lastArea") ? c("fromLast") : c("fromArea", { name })}
               </span>
               <div className="near-actions">
                 <label className="near-radius">
@@ -782,6 +815,11 @@ export function DiscoveryHome({
                 <button
                   className="btn btn-ghost btn-sm"
                   onClick={() => {
+                    try {
+                      localStorage.removeItem(planPlaceKey);
+                    } catch {
+                      /* Optional storage. */
+                    }
                     setPoint(null);
                     setName("");
                     clearData();
