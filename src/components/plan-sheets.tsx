@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { MapPin } from "lucide-react";
+import { IconPin } from "./icons";
 import { searchWeatherAreas } from "../data/weather-areas";
 import { translator, type Locale } from "../lib/i18n";
 import { shellCopy } from "../lib/copy/shell";
@@ -126,7 +126,7 @@ export function AreaPanel({
       <div className="rows">
         {results.map((a) => (
           <button key={a.id} className="row-btn" aria-pressed={a.id === areaId} onClick={() => onChoose(a.id)}>
-            <MapPin aria-hidden className="row-chevron" />
+            <IconPin aria-hidden className="row-chevron" />
             <span className="row-main">
               <span className="row-title">{a.name[locale]}</span>
               <span className="row-meta">{c("areaKind")}</span>

@@ -1,6 +1,7 @@
 "use client";
 import { useRef, useState, type FormEvent } from "react";
-import { ArrowUp, ArrowUpRight, Check, LockKeyhole, Smartphone } from "lucide-react";
+import { IconAsk, IconCheck, IconDevice, IconLock, IconSend } from "./icons";
+import { ScoreRing } from "./score-ring";
 import { activityAreas } from "../data/activity-areas";
 import { nearestWeatherArea, weatherAreas } from "../data/weather-areas";
 import { localActivityAnswer } from "../domain/tracking/summary";
@@ -124,16 +125,18 @@ export function AskPanel({
         <h3 className="mini-title" id="ask-plan-title">{c("currentPlan")}</h3>
         {plan ? (
           <>
-            <p className="ask-plan-line">
-              <span className="ask-plan-place">{plan.place}</span>
-              <strong>{plan.headline}</strong>
-              {plan.window && (
-                <bdi className="num ask-plan-window">
-                  {clock(plan.window.start)} - {clock(plan.window.end)}
-                </bdi>
-              )}
-              {plan.score != null && <span className="num">{c("scoreShort", { n: plan.score })}</span>}
-            </p>
+            <div className="ask-plan-head">
+              <ScoreRing score={plan.score} label={c("scoreShort", { n: plan.score ?? "–" })} />
+              <p className="ask-plan-line">
+                <span className="ask-plan-place">{plan.place}</span>
+                <strong>{plan.headline}</strong>
+                {plan.window && (
+                  <bdi className="num ask-plan-window">
+                    {clock(plan.window.start)}–{clock(plan.window.end)}
+                  </bdi>
+                )}
+              </p>
+            </div>
             <Meteogram
               hours={plan.hours}
               window={plan.window}
@@ -179,7 +182,7 @@ export function AskPanel({
           </span>
         </div>
         <p className="ask-privacy">
-          <LockKeyhole aria-hidden />
+          <IconLock aria-hidden />
           {c("privacy")}
         </p>
       </section>
@@ -203,29 +206,26 @@ export function AskPanel({
           placeholder={c("placeholder")}
         />
         <button className="btn btn-primary ask-send ai-send" disabled={asking || !prompt.trim()} aria-label={c("send")}>
-          <ArrowUp aria-hidden />
+          <IconSend aria-hidden weight="bold" />
           <span className="ask-send-label">{asking ? c("checking") : c("send")}</span>
         </button>
       </form>
       {!answer && !asking && (
         <section className="ask-suggestions" aria-labelledby="ask-suggest-title">
           <h3 className="mini-title" id="ask-suggest-title">{c("suggestions")}</h3>
-          <div className="rows v2-suggestions">
+          <div className="ask-chips v2-suggestions">
             {suggestions.map((p) => (
-              <button key={p} className="row-btn" onClick={() => use(p)}>
-                <span className="row-main">
-                  <span className="row-title">{p}</span>
-                </span>
-                <ArrowUpRight className="row-chevron flip-rtl" aria-hidden />
+              <button key={p} className="prompt-chip" onClick={() => use(p)}>
+                <IconAsk aria-hidden weight="fill" />
+                {p}
               </button>
             ))}
-            <button className="row-btn ai-local-action" onClick={() => use(c("localPrompt"))}>
-              <Smartphone aria-hidden className="ask-local-icon" />
-              <span className="row-main">
-                <span className="row-title">{c("suggestLocal")}</span>
-                <span className="row-meta">{c("localNote")}</span>
+            <button className="prompt-chip ai-local-action" onClick={() => use(c("localPrompt"))}>
+              <IconDevice aria-hidden className="ask-local-icon" />
+              <span>
+                {c("suggestLocal")}
+                <small>{c("localNote")}</small>
               </span>
-              <ArrowUpRight className="row-chevron flip-rtl" aria-hidden />
             </button>
           </div>
         </section>
@@ -272,7 +272,7 @@ export function AskPanel({
               <ol className="trace-list">
                 {answer.trace.map((item, i) => (
                   <li key={i}>
-                    <Check aria-hidden />
+                    <IconCheck aria-hidden weight="bold" />
                     <span>{label(locale, item.action)}</span>
                     {"count" in item && typeof item.count === "number" && <span className="num trace-count">{item.count}</span>}
                   </li>

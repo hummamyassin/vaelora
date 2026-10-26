@@ -6,9 +6,9 @@ import {
   useImperativeHandle,
   type Ref,
 } from "react";
-import { Activity, ChevronRight, Footprints, Pause, Play, Square } from "lucide-react";
+import { IconGps, IconNext, IconPause, IconPlay, IconRun, IconStop, IconWalk } from "./icons";
 import { ActivityShare } from "./activity-share";
-import { StitchBand, StitchMeter } from "./brand-mark";
+import { ProgressRing, ScoreRing } from "./score-ring";
 import dynamic from "next/dynamic";
 import {
   ActivityRecorder,
@@ -375,6 +375,12 @@ export function TrackApp({
         : degraded
           ? "degraded"
           : "recording";
+  const planMs = plannedMinutes ? plannedMinutes * 60000 : 0,
+    planShare = planMs && current ? Math.min(1, current.activeMs / planMs) : 0,
+    planLabel =
+      planMs && current && current.activeMs >= planMs
+        ? c("planComplete", { n: plannedMinutes ?? 0 })
+        : c("planProgress", { p: Math.floor(planShare * 100), n: plannedMinutes ?? 0 });
   const currentSpeed =
     active && display.currentSpeedMps != null
       ? display.currentSpeedMps * 3.6
@@ -463,10 +469,11 @@ export function TrackApp({
                     setDeleteConfirm(false);
                   }}
                 >
-                  <span className="tag" data-tone={item.activity}>
-                    {kindLabel(item.activity)}
+                  <span className="activity-glyph" data-kind={item.activity} aria-hidden="true">
+                    {item.activity === "walking" ? <IconWalk weight="bold" /> : <IconRun weight="bold" />}
                   </span>
                   <span className="row-main">
+                    <span className="sr-only">{kindLabel(item.activity)}</span>
                     <span className="row-title num">
                       <bdi>
                         {(item.distanceM / 1000).toFixed(2)} {c("km")}
@@ -482,7 +489,7 @@ export function TrackApp({
                       </bdi>
                     </span>
                   </span>
-                  <ChevronRight className="row-chevron flip-rtl" aria-hidden />
+                  <IconNext className="row-chevron flip-rtl" aria-hidden />
                 </button>
               ))}
             </div>
@@ -490,7 +497,7 @@ export function TrackApp({
         </section>
       )}
       {!summary && drafts.length === 0 && (!a || state === "idle" || state === "finished") && (
-        <section className="track-ready" aria-labelledby="ready-title">
+        <section className="track-ready instrument" aria-labelledby="ready-title">
           <div className="track-ready-head">
             <h2 id="ready-title" className="track-ready-title">
               {c("readyTitle")}
@@ -503,11 +510,17 @@ export function TrackApp({
           <div className="seg seg-band track-kind-seg" role="group" aria-label={c("label")}>
             {(["walking", "running"] as const).map((k) => (
               <button key={k} aria-pressed={kind === k} data-activity={k} onClick={() => setKind(k)}>
-                {k === "walking" ? <Footprints aria-hidden /> : <Activity aria-hidden />}
+                {k === "walking" ? <IconWalk aria-hidden weight="bold" /> : <IconRun aria-hidden weight="bold" />}
                 {kindLabel(k)}
               </button>
             ))}
           </div>
+          <button className="track-start" onClick={start}>
+            <span className="track-start-key" aria-hidden="true">
+              <IconPlay weight="fill" />
+            </span>
+            <span className="track-start-label">{c("start")}</span>
+          </button>
           <label className="check check-band track-wake">
             <input
               type="checkbox"
@@ -519,11 +532,6 @@ export function TrackApp({
             />
             {c("keepAwake")}
           </label>
-          <button className="btn btn-course btn-lg btn-block track-start" onClick={start}>
-            <Play aria-hidden />
-            {c("start")}
-          </button>
-          <StitchBand className="track-ready-stitch" />
         </section>
       )}
       {!summary && drafts.length > 0 && (!a || state === "finished") && (
@@ -573,7 +581,7 @@ export function TrackApp({
         </section>
       )}
       {current && live && (
-        <div className="track-session" data-recap="false">
+        <div className="track-session instrument" data-recap="false">
           <section className="track-live" data-state={visualState}>
             <div className="track-status">
               <span className="track-state">
@@ -591,12 +599,19 @@ export function TrackApp({
                 {plannedMinutes ? ` · ${c("planned", { n: plannedMinutes })}` : ""}
               </span>
             </div>
-            <div className="track-timer">
-              <strong data-testid="active-time" className="num">
-                <bdi>{durationLabel(current.activeMs)}</bdi>
-              </strong>
-              <span className="track-label">{c("activeTime")}</span>
-            </div>
+            <ProgressRing
+              className="track-dial"
+              value={planShare}
+              label={plannedMinutes ? planLabel : undefined}
+            >
+              <span className="track-timer">
+                <span className="track-label">{c("activeTime")}</span>
+                <strong data-testid="active-time" className="num">
+                  <bdi>{durationLabel(current.activeMs)}</bdi>
+                </strong>
+                {plannedMinutes ? <span className="track-plan num">{planLabel}</span> : null}
+              </span>
+            </ProgressRing>
             <div className="track-primary">
               <div className="track-metric">
                 <strong data-testid="track-distance" className="num">
@@ -640,6 +655,7 @@ export function TrackApp({
               role="status"
               data-quality={active ? display.quality : "paused"}
             >
+              <IconGps aria-hidden weight="bold" />
               <span>
                 {!active
                   ? c("gpsPaused")
@@ -665,11 +681,11 @@ export function TrackApp({
               className={`btn btn-lg ${active ? "btn-band" : "btn-course"}`}
               onClick={active ? pause : resume}
             >
-              {active ? <Pause aria-hidden /> : <Play aria-hidden />}
+              {active ? <IconPause aria-hidden weight="fill" /> : <IconPlay aria-hidden weight="fill" />}
               {active ? c("pause") : c("resumeShort")}
             </button>
-            <button className="btn btn-lg btn-band" onClick={() => void finish()}>
-              <Square aria-hidden />
+            <button className="btn btn-lg btn-band track-finish" onClick={() => void finish()}>
+              <IconStop aria-hidden weight="fill" />
               {c("finish")}
             </button>
           </div>
@@ -693,6 +709,7 @@ export function TrackApp({
               </strong>
               <span className="recap-hero-unit">{c("km")}</span>
               <span className="tag" data-tone={current.activity}>
+                {current.activity === "walking" ? <IconWalk aria-hidden weight="bold" /> : <IconRun aria-hidden weight="bold" />}
                 {kindLabel(current.activity)}
               </span>
             </div>
@@ -719,7 +736,6 @@ export function TrackApp({
               </div>
             </div>
           </section>
-          <StitchBand variant="line" tone="light" className="recap-stitch" />
           <section className="recap-conditions" aria-labelledby="conditions-title">
             <h2 id="conditions-title" className="mini-title">
               {c("conditions")}
@@ -727,10 +743,10 @@ export function TrackApp({
             {summary.conditions ? (
               <div className="recap-conditions-body">
                 {summary.conditions.score != null && (
-                  <span className="recap-score">
-                    <b className="num">{summary.conditions.score}</b>
-                    <StitchMeter score={summary.conditions.score} label={`VAELORA ${summary.conditions.score}/100`} />
-                  </span>
+                  <ScoreRing
+                    score={summary.conditions.score}
+                    label={`VAELORA ${summary.conditions.score}/100`}
+                  />
                 )}
                 <div>
                   <p className="num">

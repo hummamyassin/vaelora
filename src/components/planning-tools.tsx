@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import { ArrowUpRight, RefreshCw, Trash2 } from "lucide-react";
+import { IconDelete, IconOpen, IconRetry } from "./icons";
 import { weatherAreas } from "../data/weather-areas";
 import { distanceKm, type Coordinates } from "../lib/geography";
 import { numberText, translator, type Locale } from "../lib/i18n";
@@ -177,7 +177,7 @@ export function PlanningTools({
                     aria-label={`${c("remove")} ${s.label}`}
                     onClick={() => save(saved.filter((x) => x.areaId !== s.areaId))}
                   >
-                    <Trash2 aria-hidden size={18} />
+                    <IconDelete aria-hidden />
                   </button>
                 </div>
               ))}
@@ -241,7 +241,7 @@ export function PlanningTools({
             <div role="alert" className="notice" data-tone="danger">
               <p>{c("failed")}</p>
               <button className="btn btn-secondary btn-sm" onClick={() => setRetry((n) => n + 1)}>
-                <RefreshCw aria-hidden />
+                <IconRetry aria-hidden />
                 {c("tryAgain")}
               </button>
             </div>
@@ -311,7 +311,7 @@ export function PlanningTools({
                     {mode !== "outlook" && (
                       <button className="btn btn-secondary btn-sm" onClick={() => onSelect(row.area.id)}>
                         {c("planHere")}
-                        <ArrowUpRight aria-hidden className="flip-rtl" />
+                        <IconOpen aria-hidden className="flip-rtl" />
                       </button>
                     )}
                   </article>

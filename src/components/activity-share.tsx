@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { Download, Share2 } from "lucide-react";
+import { IconDownload, IconShare } from "./icons";
 import type { RecordedActivity } from "../domain/tracking/activity";
 import { shareModel, type ShareTemplate } from "../domain/tracking/share";
 import {
@@ -10,7 +10,7 @@ import {
 } from "../lib/share-image";
 import { shareCopy } from "../lib/copy/track";
 import { translator, type Locale } from "../lib/i18n";
-import { BrandMark, StitchBand } from "./brand-mark";
+import { BrandMark } from "./brand-mark";
 
 const missing = (v: string) => (v === "—" ? "–" : v);
 
@@ -121,16 +121,15 @@ export function ActivityShare({
             )}
           </span>
         )}
-        <StitchBand tone={template === "performance" ? "light" : "dark"} className="share-stitch" />
       </div>
       <p className="fine">{c("privacy")}</p>
       <div className="track-actions share-actions">
         <button className="btn btn-primary" disabled={busy} onClick={() => void exportImage(false)}>
-          <Download aria-hidden />
+          <IconDownload aria-hidden />
           {busy ? c("preparing") : c("save")}
         </button>
         <button className="btn btn-secondary" disabled={busy} onClick={() => void exportImage(true)}>
-          <Share2 aria-hidden />
+          <IconShare aria-hidden />
           {c("share")}
         </button>
       </div>

@@ -9,6 +9,8 @@ export const trackCopy = {
     "يرسم GPS مسارك ويقيس المسافة، ويبقى كل شيء على هذا الجهاز.",
   ],
   planned: ["{n} min plan", "خطة {n} دقيقة"],
+  planProgress: ["{p}% of your {n} min plan", "{p}% من خطتك البالغة {n} دقيقة"],
+  planComplete: ["{n} min plan complete", "اكتملت خطة {n} دقيقة"],
   walking: ["Walking", "المشي"],
   running: ["Running", "الجري"],
   walk: ["Walk", "مشي"],

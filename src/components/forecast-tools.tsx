@@ -2,15 +2,15 @@
 import { useState } from "react";
 import dynamic from "next/dynamic";
 import {
-  ArrowUpRight,
-  CalendarDays,
-  ChevronDown,
-  Columns2,
-  LocateFixed,
-  Map as MapIcon,
-  MapPin,
-  Star,
-} from "lucide-react";
+  IconCalendar,
+  IconCompare,
+  IconExpand,
+  IconLocate,
+  IconMap,
+  IconOpen,
+  IconPin,
+  IconSaved,
+} from "./icons";
 import { scoreBand } from "../domain/recommendation/score";
 import type { DashboardResponse } from "../server/recommendations/dashboard";
 import type { WeatherArea } from "../data/weather-areas";
@@ -112,11 +112,11 @@ export function ForecastTools({
   };
   const weatherDown = error || result?.status === "weather-unavailable";
   const t = translator(toolsCopy, locale);
-  const tools: [Tool, string, typeof Columns2][] = [
-    ["compare", t("compare"), Columns2],
-    ["outlook", t("outlook"), CalendarDays],
-    ["saved", t("saved"), Star],
-    ["map", t("map"), MapIcon],
+  const tools: [Tool, string, typeof IconCompare][] = [
+    ["compare", t("compare"), IconCompare],
+    ["outlook", t("outlook"), IconCalendar],
+    ["saved", t("saved"), IconSaved],
+    ["map", t("map"), IconMap],
   ];
   return (
     <details className="forecast-tools section">
@@ -125,7 +125,7 @@ export function ForecastTools({
           <span className="section-title">{c("tools")}</span>
           <span className="section-note">{c("toolsNote")}</span>
         </span>
-        <ChevronDown aria-hidden className="forecast-chevron" />
+        <IconExpand aria-hidden className="forecast-chevron" />
       </summary>
       <div className="forecast-body">
         <nav className="tool-links" aria-label={c("tools")}>
@@ -133,18 +133,18 @@ export function ForecastTools({
             <button key={id} className="tool-link" onClick={() => openTool(id)}>
               <Icon aria-hidden />
               {name}
-              <ArrowUpRight aria-hidden className="flip-rtl tool-link-arrow" />
+              <IconOpen aria-hidden className="flip-rtl tool-link-arrow" />
             </button>
           ))}
         </nav>
         <div className="forecast-controls">
           <button className="area-control" onClick={openArea}>
-            <MapPin aria-hidden />
+            <IconPin aria-hidden />
             <span>
               <small>{geo === "located" ? c("areaNearest") : c("areaYours")}</small>
               <strong>{area.name[locale]}</strong>
             </span>
-            <ChevronDown aria-hidden />
+            <IconExpand aria-hidden />
           </button>
           <div className="seg" role="group" aria-label={c("today")}>
             {(["today", "tomorrow"] as const).map((d) => (
@@ -205,7 +205,7 @@ export function ForecastTools({
                 : c("needWindow")}
             </span>
             <button className="btn btn-secondary btn-sm" disabled={geo === "locating"} onClick={locate}>
-              <LocateFixed aria-hidden />
+              <IconLocate aria-hidden />
               {geo === "locating" ? c("locating") : c("nearMe")}
             </button>
           </div>
@@ -292,7 +292,7 @@ export function ForecastTools({
             <span className="skeleton skeleton-card" role="status" aria-label={c("finding")} />
           ) : !match ? (
             <div className="empty">
-              <MapPin aria-hidden />
+              <IconPin aria-hidden />
               <h3>
                 {weatherDown
                   ? c("waiting")
@@ -359,7 +359,7 @@ export function ForecastTools({
                     </div>
                   </details>
                   <button className="btn btn-secondary btn-sm" onClick={() => setShowMap((x) => !x)}>
-                    <MapIcon aria-hidden />
+                    <IconMap aria-hidden />
                     {showMap ? c("hideMap") : c("showMap")}
                   </button>
                 </div>

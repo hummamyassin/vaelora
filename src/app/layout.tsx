@@ -6,10 +6,10 @@ import "./styles/tokens.css";
 import "./styles/base.css";
 import "./styles/components.css";
 import "./styles/screens.css";
-import "./styles/material.css";
 
-// Archivo carries UI and metrics, Cormorant Garamond the wordmark and display
-// lines, Readex Pro Arabic. All are self-hosted by next/font (font-src 'self').
+// Archivo carries the interface and every metric, Readex Pro Arabic, and
+// Cormorant Garamond only the VAELORA wordmark. All are self-hosted by
+// next/font (font-src 'self').
 const archivo = Archivo({
   subsets: ["latin"],
   axes: ["wdth"],
@@ -19,7 +19,7 @@ const archivo = Archivo({
 // The identity sheet sets VAELORA in a widely tracked classical serif.
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
-  weight: ["500", "600", "700"],
+  weight: ["600"],
   variable: "--font-cormorant",
   display: "swap",
 });
@@ -31,8 +31,8 @@ const readex = Readex_Pro({
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f4efe6" },
-    { media: "(prefers-color-scheme: dark)", color: "#231f1c" },
+    { media: "(prefers-color-scheme: light)", color: "#f6f6f3" },
+    { media: "(prefers-color-scheme: dark)", color: "#08090b" },
   ],
   width: "device-width",
   initialScale: 1,

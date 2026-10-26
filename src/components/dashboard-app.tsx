@@ -1,13 +1,6 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  Activity,
-  ArrowLeft,
-  MapPin,
-  Navigation,
-  SlidersHorizontal,
-  Sparkles,
-} from "lucide-react";
+import { IconAsk, IconBack, IconFilters, IconHome, IconMap, IconRun } from "./icons";
 import {
   nearestWeatherArea,
   weatherAreas,
@@ -160,7 +153,7 @@ export function DashboardApp() {
       document.documentElement.dataset.theme = theme;
       document
         .querySelectorAll('meta[name="theme-color"]')
-        .forEach((m) => m.setAttribute("content", theme === "dark" ? "#231f1c" : "#f4efe6"));
+        .forEach((m) => m.setAttribute("content", theme === "dark" ? "#08090b" : "#f6f6f3"));
     };
     apply();
     media.addEventListener("change", apply);
@@ -281,11 +274,11 @@ export function DashboardApp() {
       : route.sheet === "area"
         ? s("areaTitle")
         : translator(askCopy, locale)("title");
-  const dock: { id: "home" | "map" | "track"; label: string; Icon: typeof Navigation }[] = [
-    { id: "home", label: s("home"), Icon: Navigation },
-    { id: "map", label: s("map"), Icon: MapPin },
-    { id: "track", label: tracking ? s("recording") : s("track"), Icon: Activity },
+  const tabs: { id: "home" | "map"; label: string; Icon: typeof IconHome }[] = [
+    { id: "home", label: s("home"), Icon: IconHome },
+    { id: "map", label: s("map"), Icon: IconMap },
   ];
+  const askOpen = route.sheet === "ask";
   return (
     <main className="app v2" lang={locale} dir={ar ? "rtl" : "ltr"} data-screen={view}>
       <ServiceWorkerRegistration />
@@ -337,7 +330,7 @@ export function DashboardApp() {
             className="btn btn-secondary btn-sm filter-button"
             onClick={() => navigate({ sheet: "filters" })}
           >
-            <SlidersHorizontal aria-hidden />
+            <IconFilters aria-hidden />
             {s("filters")}
             {preferences.length > 0 && <span className="count-badge num">{preferences.length}</span>}
           </button>
@@ -437,7 +430,7 @@ export function DashboardApp() {
         <div className="screen v2-shell">
           {view !== "map" && (
             <button className="back-link v21-back" onClick={() => close({ screen: "home" })}>
-              <ArrowLeft aria-hidden size={18} />
+              <IconBack aria-hidden />
               {s("back")}
             </button>
           )}
@@ -484,25 +477,39 @@ export function DashboardApp() {
         />
       )}
       <nav className="dock v2-dock" aria-label={s("navLabel")}>
-        {dock.map(({ id, label, Icon }) => (
+        <div className="dock-tabs">
+          {tabs.map(({ id, label, Icon }) => {
+            const current = view === id && !askOpen;
+            return (
+              <button
+                key={id}
+                className="dock-item"
+                aria-current={current ? "page" : undefined}
+                onClick={() => navigate({ screen: id, sheet: null })}
+              >
+                <Icon aria-hidden weight={current ? "fill" : "regular"} />
+                {label}
+              </button>
+            );
+          })}
           <button
-            key={id}
-            className={`dock-item ${id === "track" ? "track-dock" : ""}`}
-            aria-current={view === id ? "page" : undefined}
-            onClick={() => navigate({ screen: id, sheet: null })}
+            className="dock-item ask-dock"
+            aria-current={askOpen ? "page" : undefined}
+            onClick={() => navigate({ sheet: "ask" })}
           >
-            <Icon aria-hidden />
-            {label}
-            {id === "track" && tracking && <span className="dock-live" aria-hidden="true" />}
+            <IconAsk aria-hidden weight={askOpen ? "fill" : "regular"} />
+            {s("ask")}
           </button>
-        ))}
+        </div>
         <button
-          className="dock-item ask-dock"
-          aria-current={route.sheet === "ask" ? "page" : undefined}
-          onClick={() => navigate({ sheet: "ask" })}
+          className="dock-item track-dock"
+          aria-current={view === "track" && !askOpen ? "page" : undefined}
+          data-live={tracking || undefined}
+          onClick={() => navigate({ screen: "track", sheet: null })}
         >
-          <Sparkles aria-hidden />
-          {s("ask")}
+          <IconRun aria-hidden weight="bold" />
+          {tracking ? s("recording") : s("track")}
+          {tracking && <span className="dock-live" aria-hidden="true" />}
         </button>
       </nav>
       {route.sheet && route.sheet !== "profile" && (

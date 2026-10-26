@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { ArrowUpRight, ChevronRight, ShieldCheck } from "lucide-react";
+import { IconNext, IconOpen, IconRun, IconShieldOk, IconWalk } from "./icons";
 import { Sheet } from "./app-dialog";
 import { PersonalProgress } from "./personal-progress";
 import { DataBackup } from "./data-backup";
@@ -79,13 +79,13 @@ export function Onboarding({
         onClick={() => (step === 0 ? setStep(1) : finish())}
       >
         {step === 0 ? c("continue") : c("start")}
-        <ArrowUpRight aria-hidden className="flip-rtl" />
+        <IconOpen aria-hidden className="flip-rtl" />
       </button>
       <button className="btn btn-ghost btn-block product-quiet" onClick={() => finish(true)}>
         {c("skip")}
       </button>
       <p className="privacy-caption">
-        <ShieldCheck aria-hidden size={16} />
+        <IconShieldOk aria-hidden />
         {c("privacy")}
       </p>
     </Sheet>
@@ -203,7 +203,12 @@ export function ProfilePanel({
                 const s = activityTotals(activities, kind);
                 return (
                   <div className="sport-cell" data-kind={kind} key={kind}>
-                    <span className="sport-name">{c(kind)}</span>
+                    <span className="sport-name">
+                      <span className="activity-glyph" data-kind={kind} aria-hidden="true">
+                        {kind === "walking" ? <IconWalk weight="bold" /> : <IconRun weight="bold" />}
+                      </span>
+                      {c(kind)}
+                    </span>
                     <span className="sport-line num">
                       <bdi>
                         {c("sportLine", {
@@ -221,15 +226,20 @@ export function ProfilePanel({
       </section>
 
       {!storageError && activities.length > 0 && (
+        <PersonalProgress activities={activities} locale={profile.locale} />
+      )}
+
+      {!storageError && activities.length > 0 && (
         <section className="profile-section" aria-labelledby="recent-title">
           <h3 className="mini-title" id="recent-title">{c("recent")}</h3>
           <div className="rows">
             {activities.slice(0, 4).map((a) => (
               <button className="row-btn profile-recent" key={a.id} onClick={() => onActivity(a.id)}>
-                <span className="tag" data-tone={a.activity}>
-                  {c(a.activity)}
+                <span className="activity-glyph" data-kind={a.activity} aria-hidden="true">
+                  {a.activity === "walking" ? <IconWalk weight="bold" /> : <IconRun weight="bold" />}
                 </span>
                 <span className="row-main">
+                  <span className="sr-only">{c(a.activity)}</span>
                   <span className="row-title num">
                     <bdi>{(a.distanceM / 1000).toFixed(2)} {ar ? "كم" : "km"}</bdi>
                   </span>
@@ -238,7 +248,7 @@ export function ProfilePanel({
                     <bdi className="num">{durationLabel(a.activeMs)}</bdi>
                   </span>
                 </span>
-                <ChevronRight className="row-chevron flip-rtl" aria-hidden />
+                <IconNext className="row-chevron flip-rtl" aria-hidden />
               </button>
             ))}
           </div>
@@ -253,7 +263,7 @@ export function ProfilePanel({
               <span className="row-title">{c("savedAreas")}</span>
               <span className="row-meta">{c("savedAreasNote")}</span>
             </span>
-            <ChevronRight className="row-chevron flip-rtl" aria-hidden />
+            <IconNext className="row-chevron flip-rtl" aria-hidden />
           </button>
         </div>
       </section>

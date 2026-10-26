@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useId, useRef, type ReactNode } from "react";
-import { X } from "lucide-react";
+import { IconClose } from "./icons";
 
 /**
  * The one modal surface: a bottom sheet on phones, a centred panel from 768px.
@@ -57,7 +57,7 @@ export function Sheet({
             {title}
           </h2>
           <button className="icon-btn" onClick={close} aria-label={closeLabel}>
-            <X size={22} />
+            <IconClose aria-hidden weight="bold" />
           </button>
         </header>
         {children}

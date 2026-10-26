@@ -1,88 +1,43 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-26T08:59:28.363Z",
-  "title": "Design System: VAELORA",
+  "generatedAt": "2026-10-26T09:51:24.910Z",
+  "title": "Design System: VAELORA (V2.5)",
   "extensions": {
     "colorMeta": {
-      "deep-brown": {
+      "ember": {
         "role": "primary",
-        "displayName": "Deep Brown",
-        "canonical": "#231F1C"
+        "displayName": "Ember",
+        "canonical": "#FF5A1F"
       },
-      "warm-cream": {
-        "role": "primary",
-        "displayName": "Warm Cream",
-        "canonical": "#F4EFE6"
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#0E1013"
       },
-      "terracotta": {
+      "field-light": {
+        "role": "neutral",
+        "displayName": "Warm white field",
+        "canonical": "#F6F6F3"
+      },
+      "field-dark": {
+        "role": "neutral",
+        "displayName": "Instrument black",
+        "canonical": "#08090B"
+      },
+      "leaf": {
         "role": "secondary",
-        "displayName": "Terracotta",
-        "canonical": "#B5532A"
+        "displayName": "Leaf",
+        "canonical": "#1A9B4B"
       },
       "gold": {
-        "role": "secondary",
-        "displayName": "Gold",
-        "canonical": "#C8913A"
-      },
-      "olive": {
         "role": "tertiary",
-        "displayName": "Olive",
-        "canonical": "#5F6B34"
+        "displayName": "Gold",
+        "canonical": "#B97F00"
       },
-      "black-chrome": {
-        "role": "material",
-        "displayName": "Black Chrome",
-        "canonical": "#1C1D20",
-        "stops": [
-          "#050506",
-          "#1C1D20",
-          "#5E6268",
-          "#C9CDD2"
-        ]
-      },
-      "platinum": {
-        "role": "material",
-        "displayName": "Platinum",
-        "canonical": "#C7CBCF",
-        "stops": [
-          "#8E949A",
-          "#C7CBCF",
-          "#F4F6F8",
-          "#FFFFFF"
-        ]
-      },
-      "polished-gold": {
-        "role": "material",
-        "displayName": "Polished Gold",
-        "canonical": "#B47E22",
-        "stops": [
-          "#6E4508",
-          "#B47E22",
-          "#E9C065",
-          "#FFF1C2"
-        ]
-      },
-      "copper": {
-        "role": "material",
-        "displayName": "Copper",
-        "canonical": "#A44A22",
-        "stops": [
-          "#5A200C",
-          "#A44A22",
-          "#DC7B48",
-          "#FFC7A2"
-        ]
-      },
-      "green-metal": {
-        "role": "material",
-        "displayName": "Green Metal",
-        "canonical": "#56651F",
-        "stops": [
-          "#26300F",
-          "#56651F",
-          "#93A645",
-          "#E3EEA6"
-        ]
+      "steel": {
+        "role": "neutral",
+        "displayName": "Steel",
+        "canonical": "#808590"
       }
     },
     "typographyMeta": {
@@ -184,54 +139,48 @@
     }
   ],
   "narrative": {
-    "northStar": "The Ribbon and the Stitch",
-    "overview": "The interface is the digital expression of the VAELORA icon, rendered in five metals: deep brown premium surfaces as black chrome, important cream as platinum, gold as polished gold, terracotta as copper and olive as green metal. Black chrome feature surfaces carry the decision and the recorder; warm cream carries reading; the stitch band, in platinum thread, appears where the icon band would.",
+    "northStar": "The wearable instrument",
+    "overview": "VAELORA is a fitness product first: one decision dial on Home, a full-screen dark recorder on Track and an honest completion screen. The V icon from the identity sheet is the only crafted object; the interface around it is clean, athletic and modern on a warm-white or instrument-black field.",
     "keyCharacteristics": [
-      "One black chrome feature band per screen, closed by the icon stitch band in platinum thread.",
-      "Polished gold marks the best moment; copper marks motion.",
-      "Green metal and gold carry conditions; poor conditions read as steel.",
-      "A tracked classical serif wordmark beside the real app icon.",
-      "Warm cream ground with dark brown ink; the only cool tones are chrome and platinum. No blue, lime, purple or neon."
+      "The VAELORA Score is a ten-segment ring, one segment per ten points.",
+      "Ember is the single action and live colour; leaf, gold and steel carry conditions.",
+      "Light is a bright warm-white field with white modules; dark is instrument black.",
+      "The recorder is always a dark instrument.",
+      "Modules separate by tone and one soft shadow, not borders.",
+      "One icon family (Phosphor), regular stroke, filled when selected."
     ],
     "rules": [
       {
-        "name": "The Gold Moment Rule",
-        "body": "Gold marks the single best moment (the recommended window, the V tip). It never decorates.",
+        "name": "The Ember Rule",
+        "body": "Ember means act or live: Start, Resume, Save, recording, the route, the selected place. It never decorates.",
         "section": "colors"
       },
       {
-        "name": "The Motion Rule",
-        "body": "Copper means movement or action: Start, Resume, recording, the live route.",
+        "name": "The Condition Rule",
+        "body": "Leaf comfortable, gold acceptable, steel less suitable, wherever a condition is drawn.",
         "section": "colors"
       },
       {
-        "name": "The Thread Rule",
-        "body": "Conditions use the metals: green metal comfortable, gold acceptable, steel poor. Decorative stitches are platinum.",
+        "name": "The Contrast Rule",
+        "body": "Text is AA on its surface; meaningful fills hold 3:1 against their module.",
         "section": "colors"
       },
       {
-        "name": "The Quiet Serif Rule",
-        "body": "The serif appears only in the wordmark and display lines, never in controls, labels or numbers.",
-        "section": "typography"
-      },
-      {
-        "name": "The Metal Rule",
-        "body": "Brand colour that acts, marks, measures or selects is metal (one light from the top left, brushed grain, specular edge, mid-tone under text, edge shade, tinted shadow). Grounds and reading surfaces stay calm. Gold is never a large area. No idle shine.",
-        "section": "elevation"
+        "name": "The Real Data Rule",
+        "body": "Rings, bars and totals draw only recorded or forecast data; no streaks or achievements.",
+        "section": "components"
       }
     ],
     "dos": [
-      "Do use the real app icon (cropped from the identity sheet) wherever the brand mark appears.",
-      "Do close dark feature surfaces with the stitch band, once per surface.",
-      "Do keep numbers in Archivo tabular figures and Western digits in both languages.",
-      "Do keep notices neutral with a status dot."
+      "Do use the V icon from the identity sheet unchanged wherever the brand appears.",
+      "Do show the number beside every ring.",
+      "Do keep progress, totals and scores to real data."
     ],
     "donts": [
-      "Don't use embroidery as a background texture or on every card.",
-      "Don't introduce cool blues, lime, purple or neon accents.",
-      "Don't set controls, labels or metrics in the serif.",
-      "Don't redraw the V; use the identity artwork.",
-      "Don't add eyebrow labels or em dashes in interface copy."
+      "Don't redraw, simplify or recolour the V.",
+      "Don't put borders on every card or nest cards.",
+      "Don't use ember for decoration or gradient text anywhere.",
+      "Don't use em dashes in interface copy."
     ]
   }
 }

@@ -1,0 +1,47 @@
+/**
+ * The VAELORA icon set: one family (Phosphor), one stroke, slightly rounded
+ * joins. Icons draw in the regular weight; a selected tab switches to fill.
+ * Every screen imports from here so the vocabulary stays single. The V mark
+ * is the brand symbol and never comes from this set.
+ */
+export {
+  ArrowClockwiseIcon as IconRetry,
+  ArrowLeftIcon as IconBack,
+  ArrowUpIcon as IconSend,
+  ArrowUpRightIcon as IconOpen,
+  CalendarBlankIcon as IconCalendar,
+  CaretDownIcon as IconExpand,
+  CaretRightIcon as IconNext,
+  CheckIcon as IconCheck,
+  ClockIcon as IconClock,
+  ColumnsIcon as IconCompare,
+  CrosshairIcon as IconLocate,
+  DeviceMobileIcon as IconDevice,
+  DownloadSimpleIcon as IconDownload,
+  DropIcon as IconHumidity,
+  GaugeIcon as IconSpeed,
+  GpsFixIcon as IconGps,
+  HouseIcon as IconHome,
+  LockSimpleIcon as IconLock,
+  MagnifyingGlassIcon as IconSearch,
+  MapPinIcon as IconPin,
+  MapTrifoldIcon as IconMap,
+  PathIcon as IconRoute,
+  PauseIcon as IconPause,
+  PersonSimpleRunIcon as IconRun,
+  PersonSimpleWalkIcon as IconWalk,
+  PlayIcon as IconPlay,
+  ShareNetworkIcon as IconShare,
+  ShieldCheckIcon as IconShieldOk,
+  ShieldWarningIcon as IconShieldWarn,
+  SlidersHorizontalIcon as IconFilters,
+  SparkleIcon as IconAsk,
+  StarIcon as IconSaved,
+  StopIcon as IconStop,
+  ThermometerSimpleIcon as IconTemperature,
+  TimerIcon as IconTimer,
+  TrashIcon as IconDelete,
+  UploadSimpleIcon as IconUpload,
+  WindIcon as IconWind,
+  XIcon as IconClose,
+} from "@phosphor-icons/react/dist/ssr";

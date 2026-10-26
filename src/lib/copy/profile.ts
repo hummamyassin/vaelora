@@ -3,6 +3,9 @@ import type { Dictionary } from "../i18n.ts";
 export const progressCopy = {
   thisWeek: ["This week", "هذا الأسبوع"],
   weekStitch: ["{day}: {n} activities", "{day}: {n} نشاط"],
+  dayDistance: ["{day}: {km} km", "{day}: {km} كم"],
+  activeDays: ["{n} of 7 days active", "{n} من 7 أيام نشطة"],
+  split: ["Walk and run", "المشي والجري"],
   weekNote: ["Monday to Sunday, Amman time", "من الاثنين إلى الأحد بتوقيت عمّان"],
   activities: ["Activities", "الأنشطة"],
   distance: ["Distance", "المسافة"],

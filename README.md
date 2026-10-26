@@ -56,7 +56,7 @@ Weather primarily helps determine **when** conditions are suitable and secondari
 - Installable PWA with a public offline shell for local tracking and history workflows
 - App-like navigation: screens, place profiles, recaps and sheets have hash routes, so Back, Forward and refresh behave like an installed app without interrupting a recording
 - Local backup and restore: export all finished activities as a JSON file, import with strict validation and duplicate protection, and request persistent browser storage
-- The VAELORA identity: deep brown, warm cream, gold, terracotta and olive; the real app icon and a tracked serif wordmark; the icon's cross-stitch band on dark feature surfaces; an hourly meteogram whose recommended window is bracketed in gold
+- A fitness-app interface around the VAELORA V icon: a ten-segment VAELORA Score ring, an hour-by-hour comfort strip with the best window boxed in gold, a dark full-screen recorder with a plan dial, real weekly progress (active-day ring and daily distance chart), ember actions, leaf and gold conditions, and one Phosphor icon set in light and dark themes
 
 ## Product screenshots
 
@@ -65,27 +65,27 @@ Captured from the production build with synthetic forecast data and simulated GP
 ### Plan
 
 <p align="center">
-  <img src="docs/screenshots/v24/en-390-located-home-viewport.png" width="260" alt="Home plan band with the decision, outing window, VAELORA Score, meteogram strip and Start button">
-  <img src="docs/screenshots/v24/en-390-place.png" width="260" alt="Reviewed place profile with terrain, surface, fit, current conditions and evidence">
-  <img src="docs/screenshots/v24/ar-390-located-home-viewport.png" width="260" alt="Arabic right-to-left Home in dark theme">
+  <img src="docs/screenshots/v25/en-390-located-home-viewport.png" width="260" alt="Home Today module with the VAELORA Score ring, decision, best window, comfort strip and Start key">
+  <img src="docs/screenshots/v25/en-390-place.png" width="260" alt="Reviewed place profile with terrain, surface, fit, current conditions and evidence">
+  <img src="docs/screenshots/v25/ar-390-located-home-viewport.png" width="260" alt="Arabic right-to-left Home in dark theme">
 </p>
 <p align="center"><sub><strong>Plan band and meteogram</strong> · <strong>Reviewed place</strong> · <strong>Arabic RTL</strong></sub></p>
 
 ### Track, recap and profile
 
 <p align="center">
-  <img src="docs/screenshots/v24/en-390-live.png" width="260" alt="Live recording with state, timer, distance, pace, GPS quality, route map and controls">
-  <img src="docs/screenshots/v24/en-390-recap-viewport.png" width="260" alt="Activity recap with route, distance and metrics">
-  <img src="docs/screenshots/v24/en-390-profile.png" width="260" alt="Profile with all-time stats, activity breakdown and recent activities">
+  <img src="docs/screenshots/v25/en-390-live.png" width="260" alt="Live recording instrument with the plan dial, distance and pace tiles, GPS status and controls">
+  <img src="docs/screenshots/v25/en-390-recap-viewport.png" width="260" alt="Activity recap with route, distance and metrics">
+  <img src="docs/screenshots/v25/en-390-profile.png" width="260" alt="Profile with all-time stats, activity breakdown and recent activities">
 </p>
 <p align="center"><sub><strong>Live recorder</strong> · <strong>Recap</strong> · <strong>Profile</strong></sub></p>
 
 ### Ask and desktop
 
 <p align="center">
-  <img src="docs/screenshots/v24/en-390-ask-plan.png" width="260" alt="Ask VAELORA showing the current plan, meteogram, planning context and suggestions">
+  <img src="docs/screenshots/v25/en-390-ask-plan.png" width="260" alt="Ask VAELORA showing the current plan, meteogram, planning context and suggestions">
 </p>
-<p align="center"><img src="docs/screenshots/v24/en-1440-located-home-viewport.png" width="800" alt="Desktop Home with the sticky plan band and nearby places"></p>
+<p align="center"><img src="docs/screenshots/v25/en-1440-located-home-viewport.png" width="800" alt="Desktop Home with the Today module and nearby places"></p>
 
 ## Technology
 

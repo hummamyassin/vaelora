@@ -1,4 +1,5 @@
-import { ChevronRight } from "lucide-react";
+import { IconNext, IconRun, IconWalk } from "./icons";
+import { ProgressRing } from "./score-ring";
 import { personalProgress } from "../domain/tracking/progress";
 import {
   durationLabel,
@@ -12,19 +13,16 @@ const shownPace = (seconds: number | null) => shown(paceLabel(seconds));
 const km = (m: number) => (m / 1000).toFixed(2);
 const dayMs = 86400000;
 const ammanDay = (ms: number) => Math.floor((ms + 10800000) / dayMs);
-/** Monday-to-Sunday days of the current Amman week with the activities finished on each. */
+/** Monday-to-Sunday days of the current Amman week with the distance finished on each, by activity. */
 function weekDays(activities: readonly RecordedActivity[], now = Date.now()) {
   const today = ammanDay(now),
     start = today - ((new Date(today * dayMs).getUTCDay() + 6) % 7);
   return Array.from({ length: 7 }, (_, i) => {
-    const day = start + i;
-    return {
-      day,
-      future: day > today,
-      kinds: activities
-        .filter((a) => a.state === "finished" && ammanDay(a.startedAt) === day)
-        .map((a) => a.activity),
-    };
+    const day = start + i,
+      rows = activities.filter((a) => a.state === "finished" && ammanDay(a.startedAt) === day),
+      sum = (kind: "walking" | "running") =>
+        rows.filter((a) => a.activity === kind).reduce((s, a) => s + a.distanceM, 0);
+    return { day, today: day === today, future: day > today, count: rows.length, walking: sum("walking"), running: sum("running") };
   });
 }
 const activityCount = (locale: Locale, n: number) =>
@@ -67,7 +65,10 @@ export function PersonalProgress({
         </div>
       </section>
     );
-  const maxDistance = Math.max(1, p.walking.distanceM, p.running.distanceM);
+  const days = weekDays(activities),
+    activeDays = days.filter((d) => d.count > 0).length,
+    dayMax = Math.max(1, ...days.map((d) => d.walking + d.running)),
+    weekTotal = p.walking.distanceM + p.running.distanceM;
   return (
     <section className="section progress personal-progress" aria-labelledby="progress-title">
       <div className="section-head">
@@ -81,6 +82,43 @@ export function PersonalProgress({
         </div>
       ) : (
         <>
+          <div className="progress-overview">
+            <ProgressRing className="week-ring" value={activeDays / 7} label={c("activeDays", { n: activeDays })}>
+              <span className="week-ring-value" aria-hidden="true">
+                <b className="num">{activeDays}</b>
+                <small className="num">/7</small>
+              </span>
+            </ProgressRing>
+            <ol className="week-chart" aria-label={c("thisWeek")}>
+              {days.map((d) => {
+                const name = new Date(d.day * dayMs + 43200000).toLocaleDateString(ar ? "ar-JO-u-nu-latn" : "en-GB", {
+                  weekday: "narrow",
+                  timeZone: "UTC",
+                });
+                const total = d.walking + d.running;
+                return (
+                  <li
+                    key={d.day}
+                    data-today={d.today || undefined}
+                    data-future={d.future || undefined}
+                    aria-label={c("dayDistance", { day: name, km: km(total) })}
+                  >
+                    <span className="week-bar" aria-hidden="true">
+                      {total > 0 ? (
+                        <span className="week-bar-fill" style={{ height: `max(8%, ${(total / dayMax) * 100}%)` }}>
+                          {d.running > 0 && <i data-kind="running" style={{ flexGrow: d.running }} />}
+                          {d.walking > 0 && <i data-kind="walking" style={{ flexGrow: d.walking }} />}
+                        </span>
+                      ) : (
+                        <span className="week-bar-empty" />
+                      )}
+                    </span>
+                    <span className="week-day" aria-hidden="true">{name}</span>
+                  </li>
+                );
+              })}
+            </ol>
+          </div>
           <div className="stats progress-metrics">
             <div className="stat">
               <span className="stat-value">{p.week.count}</span>
@@ -100,38 +138,29 @@ export function PersonalProgress({
               <span className="stat-label">{c("activeTime")}</span>
             </div>
           </div>
-          <ol className="week-stitches" aria-label={c("thisWeek")}>
-            {weekDays(activities).map((d) => {
-              const name = new Date(d.day * dayMs + 43200000).toLocaleDateString(ar ? "ar-JO-u-nu-latn" : "en-GB", {
-                weekday: "short",
-                timeZone: "UTC",
-              });
-              return (
-                <li key={d.day} data-future={d.future || undefined} aria-label={c("weekStitch", { day: name, n: d.kinds.length })}>
-                  <span className="week-stitch-marks" aria-hidden="true">
-                    {d.kinds.length ? (
-                      d.kinds.slice(0, 3).map((k, i) => <i key={i} data-kind={k} />)
-                    ) : (
-                      <i data-empty />
-                    )}
-                  </span>
-                  <span className="week-stitch-day">{name}</span>
-                </li>
-              );
-            })}
-          </ol>
+          <div className="sport-split" aria-label={c("split")} role="group">
+            {weekTotal > 0 && (
+              <span className="sport-split-bar" aria-hidden="true">
+                {sports.map((s) =>
+                  s.distanceM > 0 ? <i key={s.kind} data-kind={s.kind} style={{ flexGrow: s.distanceM }} /> : null,
+                )}
+              </span>
+            )}
+          </div>
           <div className="sport-bars">
             {sports.map((s) => (
               <div className="sport-bar" data-kind={s.kind} key={s.kind}>
                 <div className="sport-bar-head">
-                  <span className="sport-name">{c(s.kind)}</span>
+                  <span className="sport-name">
+                    <span className="activity-glyph" data-kind={s.kind} aria-hidden="true">
+                      {s.kind === "walking" ? <IconWalk weight="bold" /> : <IconRun weight="bold" />}
+                    </span>
+                    {c(s.kind)}
+                  </span>
                   <span className="num">
                     <bdi>{c("weekDistance", { km: km(s.distanceM) })}</bdi>
                   </span>
                 </div>
-                <span className="sport-bar-track" aria-hidden="true">
-                  <span style={{ width: s.distanceM > 0 ? `max(6px, ${(s.distanceM / maxDistance) * 100}%)` : 0 }} />
-                </span>
                 <span className="sport-line">
                   {s.paceSeconds !== null && (
                     <bdi>{c("avgPace", { pace: shownPace(s.paceSeconds) })}</bdi>
@@ -170,7 +199,7 @@ export function PersonalProgress({
                     {km(p.recent.distanceM)} {c("km")}
                   </bdi>
                 </span>
-                <ChevronRight className="row-chevron flip-rtl" aria-hidden />
+                <IconNext className="row-chevron flip-rtl" aria-hidden />
               </button>
             </div>
           )}

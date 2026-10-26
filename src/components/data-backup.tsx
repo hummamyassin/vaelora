@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { Download, ShieldCheck, ShieldAlert, Upload } from "lucide-react";
+import { IconDownload, IconShieldOk, IconShieldWarn, IconUpload } from "./icons";
 import {
   BackupError,
   backupFileName,
@@ -111,7 +111,7 @@ export function DataBackup({
       <p className="section-note">{c("dataIntro")}</p>
       {status && (
         <div className="storage-status" data-state={status}>
-          {protectedOn ? <ShieldCheck aria-hidden /> : <ShieldAlert aria-hidden />}
+          {protectedOn ? <IconShieldOk aria-hidden /> : <IconShieldWarn aria-hidden />}
           <span className="row-main">
             <span className="row-title">
               {protectedOn
@@ -137,11 +137,11 @@ export function DataBackup({
       )}
       <div className="backup-actions">
         <button className="btn btn-secondary" disabled={working} onClick={() => void exportBackup()}>
-          <Download aria-hidden />
+          <IconDownload aria-hidden />
           {c("exportBackup")}
         </button>
         <button className="btn btn-secondary" disabled={working} onClick={() => file.current?.click()}>
-          <Upload aria-hidden />
+          <IconUpload aria-hidden />
           {c("importBackup")}
         </button>
         <input

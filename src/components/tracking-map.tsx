@@ -62,13 +62,10 @@ export function TrackingMap({
         type: "geojson",
         data: { type: "FeatureCollection", features: [] },
       });
-      // The route is a copper metal thread: outline, edge shade, body, bright core, glint.
+      // The live route: an ember line on a field-coloured outline.
       const strands = [
-        ["route-outline", "--route-outline", 11, 1],
-        ["route-edge", "--route-edge", 7.5, 1],
+        ["route-outline", "--route-outline", 10, 1],
         ["route-line", "--route", 5.5, 1],
-        ["route-core", "--route-core", 2.6, 1],
-        ["route-glint", "--route-glint", 1, 0.8],
       ] as const;
       for (const [id, token, width, opacity] of strands) {
         map.addLayer({

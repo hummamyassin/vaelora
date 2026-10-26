@@ -140,6 +140,8 @@ try {
         const shell = document.querySelector(".v2-shell:not([hidden])");
         const dock = document.querySelector(".v2-dock")?.getBoundingClientRect();
         if (!shell || !dock) return false;
+        // On desktop the navigation joins the header, so nothing floats over the content end.
+        if (dock.top < innerHeight / 2) return true;
         window.scrollTo(0, document.documentElement.scrollHeight);
         await new Promise((r) => requestAnimationFrame(r));
         const pad = parseFloat(getComputedStyle(shell).paddingBottom);

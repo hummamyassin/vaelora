@@ -1,323 +1,105 @@
 /*
- * VAELORA design tokens, derived from the brand identity sheet (#231F1C deep
- * brown, #F4EFE6 warm cream, #C8913A gold, #B5532A terracotta, #5F6B34 olive)
- * and rendered in the five metals of the material reference: black chrome,
- * platinum, polished gold, copper and green metal. Cream carries reading;
- * metal carries action, state, measurement and selection. Gold marks the best
- * moment; copper marks motion; green metal and gold carry conditions.
+ * VAELORA V2.5 tokens: a wearable activity instrument on a clean field.
+ * The V app icon is the one crafted object; the interface around it is a
+ * bright warm-white field (light) or instrument black (dark) with graphite
+ * modules. Ember is the single action and live colour, Leaf marks comfortable
+ * conditions and walking, Gold the best window and acceptable conditions,
+ * steel the less suitable ones. Every text pair is WCAG AA; every meaningful
+ * fill holds 3:1 against the module it sits on.
  */
-@layer reset, base, components, screens, material, utilities;
+@layer reset, base, components, screens, utilities;
 
 :root {
   color-scheme: light;
 
-  /* Brand constants (identity sheet) */
-  --brand-ink: #231f1c;
-  --brand-cream: #f4efe6;
-  --brand-gold: #c8913a;
-  --brand-terracotta: #b5532a;
-  --brand-olive: #5f6b34;
-  --stitch-platinum: #c7cbcf;
-  --stitch-olive: #93a645;
-  --stitch-copper: #dc7b48;
-  --stitch-gold: #e9c065;
+  /* Brand constants */
+  --brand-ink: #0e1013;
+  --brand-ember: #ff5a1f;
 
-  /* ---------- Metal palette (material reference) ----------
-     Each metal has four stops: base, mid, bright, specular. The brand maps onto
-     them: deep brown surfaces to black chrome, cream to platinum, gold to
-     polished gold, terracotta to copper, olive to green metal. */
-  --chrome-0: #050506;
-  --chrome-1: #1c1d20;
-  --chrome-2: #5e6268;
-  --chrome-3: #c9cdd2;
-  --platinum-0: #8e949a;
-  --platinum-1: #c7cbcf;
-  --platinum-2: #f4f6f8;
-  --platinum-3: #ffffff;
-  --gold-0: #6e4508;
-  --gold-1: #b47e22;
-  --gold-2: #e9c065;
-  --gold-3: #fff1c2;
-  --copper-0: #5a200c;
-  --copper-1: #a44a22;
-  --copper-2: #dc7b48;
-  --copper-3: #ffc7a2;
-  --olive-0: #26300f;
-  --olive-1: #56651f;
-  --olive-2: #93a645;
-  --olive-3: #e3eea6;
-
-  /* ---------- Material construction ----------
-     One light, from the top left. Every metal surface stacks: brushed grain
-     (fine horizontal streaks), a soft secondary highlight, then the body
-     gradient (specular edge, bright, mid-tone under the text, edge shade).
-     Edges add the top reflection, the lower shade and an inner line; shadows
-     are tinted by the metal. Text sits on the 30 to 70% band, checked AA. */
-  --metal-grain: repeating-linear-gradient(180deg, rgb(255 255 255 / 0.024) 0 0.5px, transparent 0.5px 1.7px),
-    repeating-linear-gradient(180deg, rgb(0 0 0 / 0.032) 0 0.5px, transparent 0.5px 2.9px);
-  --metal-grain-soft: repeating-linear-gradient(180deg, rgb(255 255 255 / 0.016) 0 0.5px, transparent 0.5px 1.7px),
-    repeating-linear-gradient(180deg, rgb(0 0 0 / 0.02) 0 0.5px, transparent 0.5px 3.7px);
-  --metal-glint: radial-gradient(120% 90% at 14% 0%, rgb(255 255 255 / 0.26), transparent 52%);
-  --metal-glint-dark: radial-gradient(110% 80% at 14% 0%, rgb(201 205 210 / 0.16), transparent 55%);
-
-  /* Copper: actions, recording, the live route, the selected marker, running. */
-  --metal-copper-body: linear-gradient(172deg, #f2ad84 0%, #dc7b48 8%, #b9572a 22%, #a44a22 40%,
-      #8f3c19 64%, #73300f 86%, #5a200c 100%);
-  --metal-copper: var(--metal-grain), var(--metal-glint), var(--metal-copper-body);
-  --metal-copper-subtle: linear-gradient(172deg, rgb(220 123 72 / 0.34), rgb(164 74 34 / 0.2) 48%, rgb(90 32 12 / 0.3));
-  --metal-copper-text: linear-gradient(180deg, #ffd9bf 0%, #f09a68 34%, #dc7b48 58%, #f2ad84 74%, #cc6a3c 100%);
-  --metal-copper-text-light: linear-gradient(180deg, #b9572a 0%, #a44a22 40%, #5a200c 58%, #8f3c19 80%, #a44a22 100%);
-  --metal-copper-border: linear-gradient(160deg, #ffc7a2, #dc7b48 30%, #a44a22 60%, #5a200c);
-  --metal-copper-edge: inset 0 1px 0 rgb(255 214 186 / 0.72), inset 0 -2px 0 rgb(58 18 6 / 0.34),
-    inset 0 0 0 1px rgb(255 199 162 / 0.14);
-  --metal-copper-shadow: 0 0 0 1px rgb(90 32 12 / 0.55), 0 2px 3px -1px rgb(90 32 12 / 0.45),
-    0 10px 20px -12px rgb(164 74 34 / 0.65);
-
-  /* Polished gold: the best window, verified rims, score accents. Never large areas. */
-  --metal-gold-body: linear-gradient(172deg, #fff1c2 0%, #f0cf7c 10%, #e2b457 28%, #d0a043 50%,
-      #c08c32 72%, #a8761a 88%, #6e4508 100%);
-  --metal-gold: var(--metal-grain), var(--metal-glint), var(--metal-gold-body);
-  --metal-gold-text: linear-gradient(180deg, #fff6d8 0%, #f3d27e 30%, #e9c065 52%, #c8952f 70%, #f0cf7c 84%, #c08a2c 100%);
-  --metal-gold-text-light: linear-gradient(180deg, #a8761a 0%, #8a5c10 38%, #6e4508 56%, #9a6812 78%, #7a500c 100%);
-  --metal-gold-border: linear-gradient(150deg, #fff1c2 0%, #e9c065 28%, #b47e22 58%, #e2b457 76%, #6e4508 100%);
-  --metal-gold-edge: inset 0 1px 0 rgb(255 241 194 / 0.85), inset 0 -1px 0 rgb(110 69 8 / 0.5);
-  --metal-gold-shadow: 0 0 0 1px rgb(110 69 8 / 0.45), 0 6px 14px -8px rgb(180 126 34 / 0.6);
-
-  /* Platinum: selected light controls, metrics on dark, pale keys, the stitch. */
-  --metal-platinum-body: linear-gradient(172deg, #ffffff 0%, #f4f6f8 14%, #e2e5e8 38%, #c7cbcf 64%,
-      #acb1b6 86%, #8e949a 100%);
-  --metal-platinum: var(--metal-grain-soft), var(--metal-glint), var(--metal-platinum-body);
-  --metal-platinum-subtle: var(--metal-grain-soft),
-    linear-gradient(172deg, #ffffff 0%, #f8f9fa 34%, #eceef0 72%, #dcdfe2 100%);
-  --metal-platinum-text: linear-gradient(180deg, #ffffff 0%, #f4f6f8 34%, #c7cbcf 56%, #e6e9ec 70%, #9aa0a6 100%);
-  --metal-platinum-border: linear-gradient(160deg, rgb(255 255 255 / 0.9), rgb(199 203 207 / 0.55) 40%,
-      rgb(142 148 154 / 0.4) 70%, rgb(244 246 248 / 0.65));
-  --metal-platinum-edge: inset 0 1px 0 #ffffff, inset 0 -1px 0 rgb(94 98 104 / 0.38),
-    inset 0 0 0 1px rgb(255 255 255 / 0.35);
-  --metal-platinum-shadow: 0 0 0 1px rgb(94 98 104 / 0.38), 0 6px 14px -8px rgb(28 29 32 / 0.5);
-  /* The stitch thread: darker silver base, steel mid, platinum highlight, pale edge. */
-  --metal-stitch: linear-gradient(180deg, #f4f6f8 0%, #d6d9dc 26%, #9aa0a6 58%, #5e6268 100%);
-  --metal-stitch-light: linear-gradient(180deg, #c7cbcf 0%, #8e949a 40%, #5e6268 76%, #3a3d42 100%);
-
-  /* Green metal: comfortable conditions, positive states, walking. */
-  --metal-olive-body: linear-gradient(172deg, #e3eea6 0%, #b5c763 14%, #93a645 34%, #74862f 60%,
-      #56651f 84%, #3a4614 100%);
-  --metal-olive: var(--metal-grain), var(--metal-glint), var(--metal-olive-body);
-  --metal-olive-deep: var(--metal-grain), var(--metal-glint),
-    linear-gradient(172deg, #c7d77e 0%, #93a645 8%, #6b7c2a 22%, #56651f 42%, #47541a 66%, #37421a 86%, #26300f 100%);
-  --metal-olive-text: linear-gradient(180deg, #f2f8cf 0%, #c9d986 32%, #a3b552 56%, #d3e08f 72%, #86993a 100%);
-  --metal-olive-text-light: linear-gradient(180deg, #6b7d27 0%, #56651f 40%, #26300f 58%, #47541a 80%, #56651f 100%);
-  --metal-olive-edge: inset 0 1px 0 rgb(227 238 166 / 0.7), inset 0 -1px 0 rgb(38 48 15 / 0.5);
-  --metal-olive-shadow: 0 0 0 1px rgb(38 48 15 / 0.45), 0 6px 14px -8px rgb(86 101 31 / 0.6);
-
-  /* Black chrome: dark features, the dock, the recorder, dark chips and plates. */
-  --metal-chrome-body: linear-gradient(172deg, #5e6268 0%, #34373c 10%, #1c1d20 34%, #0e0f11 50%,
-      #1c1d20 66%, #2a2d32 84%, #050506 100%);
-  --metal-chrome: var(--metal-grain), var(--metal-glint-dark), var(--metal-chrome-body);
-  --metal-chrome-raised: var(--metal-grain), var(--metal-glint-dark),
-    linear-gradient(172deg, #6a6e74 0%, #45484e 10%, #2c2e33 40%, #1f2024 60%, #2a2c31 84%, #111214 100%);
-  --metal-chrome-band: var(--metal-grain-soft), var(--metal-glint-dark),
-    linear-gradient(176deg, #2f3136 0%, #1f2024 14%, #17181b 46%, #111214 80%, #0b0b0d 100%);
-  --metal-chrome-well: linear-gradient(180deg, #08090a 0%, #121315 55%, #1a1b1e 100%);
-  --metal-chrome-text: linear-gradient(180deg, #5e6268 0%, #1c1d20 46%, #050506 56%, #3a3d42 80%, #1c1d20 100%);
-  --metal-chrome-border: linear-gradient(160deg, rgb(201 205 210 / 0.55), rgb(94 98 104 / 0.25) 35%,
-      rgb(5 5 6 / 0) 60%, rgb(201 205 210 / 0.2));
-  --metal-chrome-edge: inset 0 1px 0 rgb(201 205 210 / 0.38), inset 0 -1px 0 rgb(0 0 0 / 0.7),
-    inset 0 0 0 1px rgb(201 205 210 / 0.08);
-  --metal-chrome-well-edge: inset 0 2px 4px rgb(0 0 0 / 0.6), inset 0 -1px 0 rgb(201 205 210 / 0.12);
-  --metal-chrome-shadow: 0 0 0 1px rgb(5 5 6 / 0.7), 0 10px 24px -12px rgb(5 5 6 / 0.75);
-
-  /* Stitch thread, as colour stops along each bar: specular end, bright, mid, base.
-     Platinum by default; green metal, gold and copper only where they mean something. */
-  --thread-platinum: #f4f6f8 0%, #d6d9dc 28%, #9aa0a6 64%, #5e6268 100%;
-  --thread-steel: #e6e9ec 0%, #a9aeb4 34%, #6f747a 70%, #4a4e54 100%;
-  --thread-olive: #e3eea6 0%, #b5c763 28%, #7c8f34 66%, #46531a 100%;
-  --thread-gold: #fff1c2 0%, #f0cf7c 28%, #c8952f 66%, #7a500c 100%;
-  --thread-copper: #ffc7a2 0%, #f09a68 28%, #c2602f 66%, #6e2b11 100%;
-  --thread-faint: rgb(255 255 255 / 0.3) 0%, rgb(199 203 207 / 0.18) 50%, rgb(142 148 154 / 0.12) 100%;
-  --thread-ground: #c7cbcf 0%, #8e949a 34%, #5e6268 70%, #3a3d42 100%;
-
-  /* Premium edges on reading cards and section rules: fine platinum, never heavy. */
-  --rim-premium: linear-gradient(160deg, #ffffff 0%, #c7cbcf 30%, #e6ded1 58%, #a9aeb4 100%);
-  --rule-premium: linear-gradient(90deg, rgb(94 98 104 / 0.18), rgb(142 148 154 / 0.55) 30%,
-      rgb(217 207 191 / 0.9) 60%, rgb(94 98 104 / 0.15));
-
-  /* Rods, beads, rules and scenes from the same stops. Rods are lit from the
-     left edge (thin bars read as cylinders); beads from the top left. */
-  --metal-steel-body: linear-gradient(172deg, #a9aeb4 0%, #5e6268 50%, #2a2c31 100%);
-  --metal-steel-text: linear-gradient(180deg, #e6e9ec 0%, #a9aeb4 55%, #8e949a 100%);
-  --metal-olive-rod: linear-gradient(90deg, #e3eea6 0%, #b5c763 18%, #93a645 46%, #6b7c2a 78%, #46531a 100%);
-  --metal-gold-rod: linear-gradient(90deg, #fff1c2 0%, #f0cf7c 18%, #d0a043 46%, #a8761a 78%, #7a500c 100%);
-  --metal-steel-rod: linear-gradient(90deg, #a9aeb4 0%, #7a7f86 22%, #5e6268 50%, #3e4147 80%, #2a2c31 100%);
-  --metal-steel-rod-light: linear-gradient(90deg, #c7cbcf 0%, #a9aeb4 22%, #8e949a 50%, #5e6268 82%, #3a3d42 100%);
-  --metal-rod-edge: inset 0 1px 0 rgb(255 255 255 / 0.55), inset 0 -1px 0 rgb(0 0 0 / 0.3);
-  --metal-olive-bead: radial-gradient(circle at 35% 30%, #e3eea6 0%, #93a645 45%, #56651f 80%, #26300f 100%);
-  --metal-copper-bead: radial-gradient(circle at 35% 30%, #ffd9bf 0%, #dc7b48 42%, #a44a22 78%, #5a200c 100%);
-  --metal-gold-bead: radial-gradient(circle at 35% 30%, #fff1c2 0%, #e9c065 42%, #b47e22 78%, #6e4508 100%);
-  --metal-chrome-bead: radial-gradient(circle at 35% 30%, #5e6268 0%, #1c1d20 60%, #050506 100%);
-  --metal-platinum-bead: radial-gradient(circle at 34% 28%, #ffffff 0%, #eceef0 32%, #c7cbcf 72%, #a9aeb4 100%);
-  --metal-chrome-bead-raised: radial-gradient(circle at 34% 28%, #6a6e74 0%, #34373c 40%, #1c1d20 80%, #050506 100%);
-  --metal-gold-rule: linear-gradient(180deg, #fff1c2, #e9c065 30%, #b47e22 100%);
-  --metal-gold-rule-h: linear-gradient(90deg, #b47e22, #fff1c2 40%, #e9c065 60%, #b47e22);
-  --rule-chrome: linear-gradient(90deg, rgb(201 205 210 / 0.08), rgb(201 205 210 / 0.42) 32%, rgb(201 205 210 / 0.1));
-  --metal-olive-scene: var(--metal-grain-soft), var(--metal-glint-dark),
-    linear-gradient(176deg, #4d5d1d 0%, #36421a 30%, #26300f 70%, #1a2108 100%);
-  --metal-copper-scene: var(--metal-grain-soft), var(--metal-glint-dark),
-    linear-gradient(176deg, #7d3616 0%, #5a200c 36%, #3f1608 74%, #2c0f05 100%);
-  --metal-chrome-raised-hover: var(--metal-grain), var(--metal-glint-dark),
-    linear-gradient(172deg, #7a7e84 0%, #50535a 10%, #33363b 40%, #25272b 60%, #303237 84%, #151619 100%);
-
-  /* Pressed edges: the reflection sinks and the top edge shades. */
-  --metal-copper-pressed: inset 0 2px 5px rgb(58 18 6 / 0.5), inset 0 -1px 0 rgb(255 199 162 / 0.25),
-    0 0 0 1px rgb(90 32 12 / 0.6), 0 1px 2px rgb(90 32 12 / 0.4);
-  --metal-chrome-pressed: inset 0 2px 5px rgb(0 0 0 / 0.6), inset 0 -1px 0 rgb(201 205 210 / 0.14);
-  --metal-platinum-pressed: inset 0 2px 4px rgb(28 29 32 / 0.28), 0 0 0 1px rgb(142 148 154 / 0.45);
-
-  /* Veils: translucent metal for state pills on chrome. */
-  --metal-copper-subtle-edge: inset 0 1px 0 rgb(255 199 162 / 0.32), inset 0 0 0 1px rgb(220 123 72 / 0.3);
-  --metal-gold-subtle: linear-gradient(172deg, rgb(233 192 101 / 0.3), rgb(180 126 34 / 0.18));
-  --metal-platinum-veil: linear-gradient(172deg, rgb(244 246 248 / 0.18), rgb(142 148 154 / 0.1));
-  --on-olive: #fbfdf0;
-  --on-copper-veil: #f6b48c;
-  --on-gold-veil: #f0cf7c;
-
-  /* Tints for tags and score chips: pale metal on cream, deep veils on dark. */
-  --tint-platinum-pale: linear-gradient(180deg, #fbfbfc 0%, #eceef0 55%, #dcdfe2 100%);
-  --tint-olive-pale: linear-gradient(180deg, #f3f7dc 0%, #e4ecc0 55%, #d3dea3 100%);
-  --tint-gold-pale: linear-gradient(180deg, #fdf5dc 0%, #f6e6b8 55%, #ecd394 100%);
-  --tint-copper-pale: linear-gradient(180deg, #fbe9dd 0%, #f4d3bf 55%, #ebbd9f 100%);
-  --tint-platinum-deep: linear-gradient(180deg, rgb(199 203 207 / 0.16), rgb(142 148 154 / 0.1));
-  --tint-olive-deep: linear-gradient(180deg, rgb(147 166 69 / 0.32), rgb(86 101 31 / 0.26));
-  --tint-gold-deep: linear-gradient(180deg, rgb(233 192 101 / 0.26), rgb(180 126 34 / 0.2));
-  --tint-copper-deep: linear-gradient(180deg, rgb(220 123 72 / 0.3), rgb(164 74 34 / 0.24));
-  --on-tint-olive-deep: #c9d986;
-  --on-tint-copper-deep: #f7bf9c;
-  --ring-platinum-deep: rgb(199 203 207 / 0.16);
-  --ring-olive-deep: rgb(147 166 69 / 0.3);
-  --ring-copper-deep: rgb(220 123 72 / 0.3);
-
-  /* Theme-mapped roles (dark values in the dark theme blocks). */
-  --tint-platinum: var(--tint-platinum-pale);
-  --tint-olive: var(--tint-olive-pale);
-  --tint-gold: var(--tint-gold-pale);
-  --tint-copper: var(--tint-copper-pale);
-  --on-tint-platinum: var(--text-2);
-  --on-tint-steel: #4b4f55;
-  --on-tint-olive: #46531a;
-  --on-tint-gold: #6e4508;
-  --on-tint-copper: #7d3315;
-  --tint-edge: inset 0 1px 0 rgb(255 255 255 / 0.85);
-  --ring-platinum: rgb(94 98 104 / 0.18);
-  --ring-olive: rgb(86 101 31 / 0.26);
-  --ring-gold: rgb(180 126 34 / 0.3);
-  --ring-copper: rgb(164 74 34 / 0.26);
-  --metal-key: var(--metal-platinum-subtle) padding-box, var(--metal-platinum-border) border-box;
-  --metal-key-hover: var(--metal-platinum) padding-box, var(--metal-platinum-border) border-box;
-  --metal-key-edge: inset 0 1px 0 #ffffff, inset 0 -1px 0 rgb(94 98 104 / 0.18), 0 0 0 1px rgb(142 148 154 / 0.42),
-    0 4px 10px -8px rgb(28 29 32 / 0.45);
-  --on-metal-key: var(--text);
-  --metal-selected: var(--metal-chrome);
-  --metal-selected-edge: var(--metal-chrome-edge), 0 4px 10px -6px rgb(5 5 6 / 0.6);
-  --on-metal-selected: var(--platinum-2);
-  --metal-bead: var(--metal-platinum-bead);
-  --metal-bead-edge: inset 0 -1px 0 rgb(94 98 104 / 0.35), 0 0 0 1px rgb(142 148 154 / 0.45);
-  --on-metal-bead: var(--chrome-1);
-  --metal-track: linear-gradient(180deg, rgb(28 29 32 / 0.16), rgb(28 29 32 / 0.06));
-  --metal-track-edge: inset 0 1px 2px rgb(28 29 32 / 0.25), inset 0 -1px 0 rgb(255 255 255 / 0.5);
-
-  /* Theme-aware metal text: chrome figures on cream, platinum on dark. */
-  --metal-key-text: var(--metal-chrome-text);
-  --metal-best-text: var(--metal-gold-text-light);
-  --metal-good-text: var(--metal-olive-text-light);
-  --metal-action-text: var(--metal-copper-text-light);
-
-  /* Grounds */
-  --bg: #f4efe6;
-  --surface: #fbf8f3;
-  --surface-2: #ebe4d8;
-  --surface-raised: #fffdf9;
-  --ink-band: #17181b;
-  --ink-band-2: #24262a;
-  --on-band: #f4f1ec;
-  --on-band-2: #c9c6c0;
-  --on-band-3: #a19e99;
-  --band-line: #34363b;
+  /* Field and modules */
+  --bg: #f6f6f3;
+  --surface: #ffffff;
+  --surface-2: #eeeeea;
+  --surface-3: #e4e4df;
+  --surface-raised: #ffffff;
+  --glass: rgb(255 255 255 / 0.78);
+  --scrim: rgb(14 16 19 / 0.42);
 
   /* Text */
-  --text: #231f1c;
-  --text-2: #4d4339;
-  --text-3: #6e6256;
-  --text-inverse: #f4efe6;
+  --text: #0e1013;
+  --text-2: #464a51;
+  --text-3: #62666e;
+  --text-inverse: #f4f5f2;
 
   /* Lines */
-  --line: #d9cfbf;
-  --line-soft: #e6ded1;
-  --line-strong: #a89a88;
+  --line: #e3e3de;
+  --line-soft: #ecece8;
+  --line-strong: #c9cac4;
 
-  /* Brand and action */
-  /* Solid fallbacks and small text, taken from the metal mid-tones (AA on cream) */
-  --brand: #231f1c;
-  --action: #a44a22;
-  --action-hover: #8f3c19;
-  --on-action: #fff6ee;
-  --course: #a44a22;
-  --course-on-band: #dc7b48;
-  --on-course-band: #1c1d20;
-  --highlight: #7a500c;
-  --highlight-on-band: #e9c065;
-  --selected: #efe2d2;
-  --on-selected: #6b3416;
+  /* Ember: action, live, the route, the selected place, running */
+  --accent: #ff5a1f;
+  --accent-press: #e9520f;
+  --on-accent: #120802;
+  --accent-ink: #b83c0a;
+  --accent-soft: #ffe7dc;
+  --on-accent-soft: #9a3208;
 
-  /* Activities: green metal walking, copper running */
-  --walking: #56651f;
-  --walking-soft: #e4e9cc;
-  --running: #a44a22;
-  --running-soft: #f3dfd3;
+  /* Legacy aliases used by tool screens */
+  --action: var(--accent);
+  --action-hover: var(--accent-press);
+  --on-action: var(--on-accent);
+  --course: var(--accent-ink);
+  --course-on-band: var(--accent);
+  --highlight: var(--fair);
+  --selected: #ffe1d3;
+  --on-selected: #7a2806;
 
-  /* Recording */
-  --live: #a44a22;
-  --live-band: #dc7b48;
+  /* Conditions: leaf comfortable, gold acceptable, steel less suitable */
+  --good: #136f37;
+  --good-fill: #1a9b4b;
+  --good-soft: #dff5e6;
+  --fair: #7a5000;
+  --fair-fill: #b97f00;
+  --fair-soft: #fbefd2;
+  --poor: #575c63;
+  --poor-fill: #808590;
+  --poor-soft: #ebecee;
+  --unknown: #8a8e95;
+  --unknown-fill: #d7d8d3;
 
-  /* Conditions: green metal good, gold acceptable, steel poor */
-  --good: #56651f;
-  --good-soft: #e4e9cc;
-  --fair: #7a500c;
-  --fair-soft: #f8efd8;
-  --poor: #5e6268;
-  --poor-soft: #e9eaeb;
-  --unknown: #a89a88;
-  --good-band: #93a645;
-  --fair-band: #e9c065;
-  --poor-band: #5e6268;
-  --unknown-band: #2a2c31;
+  /* Activities */
+  --walking: var(--good);
+  --walking-fill: var(--good-fill);
+  --walking-soft: var(--good-soft);
+  --running: var(--accent-ink);
+  --running-fill: var(--accent);
+  --running-soft: var(--accent-soft);
+  --live: var(--accent);
 
-  --danger: #9e2b1f;
-  --danger-soft: #f3dcd6;
-  --disabled: #b9ad9d;
-  --on-disabled: #f4efe6;
-  --focus: #7a500c;
+  --danger: #b4231a;
+  --danger-soft: #fde4e1;
+  --disabled: #d2d3ce;
+  --on-disabled: #6b7079;
+  --focus: #0e1013;
 
-  /* Map: chrome bodies, copper selection, gold verified rims, green start */
-  --map-marker: #1c1d20;
-  --map-marker-text: #f4f6f8;
-  --map-selected: #a44a22;
-  --map-dynamic: #b47e22;
-  --map-verified: #b47e22;
-  --route: #a44a22;
-  --route-edge: #5a200c;
-  --route-core: #dc7b48;
-  --route-glint: #ffc7a2;
-  --route-outline: #fffdf9;
-  --route-start: #56651f;
-  --route-finish: #1c1d20;
-  --on-strong: #fffdf9;
+  /* Map */
+  --map-marker: #0e1013;
+  --map-marker-text: #ffffff;
+  --map-selected: var(--accent);
+  --map-dynamic: #0e1013;
+  --map-verified: var(--fair-fill);
+  --route: #ff5a1f;
+  --route-outline: #ffffff;
+  --route-start: #1a9b4b;
+  --route-finish: #0e1013;
+  --on-strong: #ffffff;
 
-  /* Type */
-  --font-sans: var(--font-archivo), var(--font-readex), ui-sans-serif, system-ui,
-    -apple-system, "Segoe UI", sans-serif;
-  --font-arabic: var(--font-readex), var(--font-archivo), "Segoe UI", Tahoma,
-    sans-serif;
-  --font-display: var(--font-cormorant), var(--font-readex), Georgia, "Times New Roman", serif;
+  /* Type: Archivo carries interface and metrics, Readex Pro Arabic; the serif is the wordmark only. */
+  --font-sans: var(--font-archivo), var(--font-readex), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", sans-serif;
+  --font-arabic: var(--font-readex), var(--font-archivo), "Segoe UI", Tahoma, sans-serif;
+  --font-brand: var(--font-cormorant), Georgia, "Times New Roman", serif;
+  --text-2xs: 0.6875rem;
   --text-xs: 0.75rem;
   --text-sm: 0.8125rem;
   --text-md: 0.9375rem;
@@ -326,10 +108,11 @@
   --text-xl: 1.375rem;
   --text-2xl: 1.75rem;
   --text-3xl: 2.25rem;
+  --text-title: clamp(1.6rem, 6.6vw, 2.1rem);
   --text-metric: 2.5rem;
   --text-monument: 3.25rem;
-  --text-timer: clamp(4rem, 20vw, 7rem);
-  --wdth-condensed: 84;
+  --text-timer: clamp(4.5rem, 23vw, 8.5rem);
+  --wdth-condensed: 82;
   --wdth-normal: 100;
   --wdth-expanded: 112;
 
@@ -347,206 +130,175 @@
   --gutter: 16px;
   --content-max: 1180px;
 
-  /* Shape: the icon's soft square (controls 10, panels 18, sheets 24) */
-  --r-control: 10px;
+  /* Shape: controls 12, cards 18, modules 24, sheets 28; pills for chips and tabs only */
+  --r-sm: 8px;
+  --r-control: 12px;
   --r-panel: 18px;
-  --r-sheet: 24px;
+  --r-module: 24px;
+  --r-sheet: 28px;
   --r-pill: 999px;
 
-  /* Depth: warm, offset, soft */
-  --shadow-1: 0 1px 2px rgb(35 31 28 / 0.06), 0 2px 8px rgb(35 31 28 / 0.05);
-  --shadow-2: 0 10px 28px rgb(35 31 28 / 0.14), 0 2px 6px rgb(35 31 28 / 0.06);
-  --shadow-dock: 0 12px 30px rgb(35 31 28 / 0.28);
+  /* Depth: tone steps first, one soft offset shadow for floating things */
+  --shadow-1: 0 1px 2px rgb(16 18 22 / 0.05), 0 2px 10px rgb(16 18 22 / 0.04);
+  --shadow-2: 0 12px 32px rgb(16 18 22 / 0.14), 0 2px 8px rgb(16 18 22 / 0.06);
+  --shadow-float: 0 10px 30px rgb(16 18 22 / 0.16), 0 2px 6px rgb(16 18 22 / 0.08);
+  --shadow-dock: var(--shadow-float);
 
-  /* Motion */
+  /* Motion (Emil Kowalski curves) */
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
   --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
   --dur-press: 140ms;
   --dur-fast: 180ms;
   --dur-base: 240ms;
+  --dur-reveal: 520ms;
 
   /* Shell */
-  --topbar-h: 60px;
-  --dock-h: 66px;
+  --topbar-h: 56px;
+  --dock-h: 60px;
   --dock-gap: 12px;
   --dock-reserve: calc(var(--dock-h) + var(--dock-gap) * 2 + env(safe-area-inset-bottom));
   --header-reserve: calc(var(--topbar-h) + env(safe-area-inset-top));
+  --rail-w: 96px;
 }
 
-/* Dark theme: the large dark icon. #231F1C ground, cream text; feature
-   surfaces are black chrome and figures turn platinum. */
+/* Dark theme: instrument black with graphite modules and brighter fills. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --metal-key-text: var(--metal-platinum-text);
-    --metal-best-text: var(--metal-gold-text);
-    --metal-good-text: var(--metal-olive-text);
-    --metal-action-text: var(--metal-copper-text);
-    --thread-ground: var(--thread-platinum);
-    --tint-platinum: var(--tint-platinum-deep);
-    --tint-olive: var(--tint-olive-deep);
-    --tint-gold: var(--tint-gold-deep);
-    --tint-copper: var(--tint-copper-deep);
-    --on-tint-platinum: var(--platinum-1);
-    --on-tint-steel: #c7cbcf;
-    --on-tint-olive: var(--on-tint-olive-deep);
-    --on-tint-gold: #f0cf7c;
-    --on-tint-copper: var(--on-tint-copper-deep);
-    --tint-edge: inset 0 1px 0 rgb(255 255 255 / 0.1);
-    --ring-platinum: var(--ring-platinum-deep);
-    --ring-olive: var(--ring-olive-deep);
-    --ring-gold: rgb(233 192 101 / 0.28);
-    --ring-copper: var(--ring-copper-deep);
-    --metal-key: var(--metal-chrome-raised) padding-box, var(--metal-chrome-border) border-box;
-    --metal-key-hover: var(--metal-chrome-raised-hover) padding-box, var(--metal-chrome-border) border-box;
-    --metal-key-edge: var(--metal-chrome-edge), 0 6px 14px -10px rgb(0 0 0 / 0.8);
-    --on-metal-key: var(--on-band);
-    --metal-selected: var(--metal-platinum);
-    --metal-selected-edge: var(--metal-platinum-edge), 0 4px 10px -6px rgb(0 0 0 / 0.7);
-    --on-metal-selected: var(--chrome-1);
-    --metal-bead: var(--metal-chrome-bead-raised);
-    --metal-bead-edge: inset 0 1px 0 rgb(201 205 210 / 0.3), 0 0 0 1px rgb(5 5 6 / 0.6);
-    --on-metal-bead: var(--platinum-2);
-    --metal-track: var(--metal-chrome-well);
-    --metal-track-edge: var(--metal-chrome-well-edge);
-    --rim-premium: linear-gradient(160deg, rgb(201 205 210 / 0.42) 0%, rgb(94 98 104 / 0.3) 34%, #3a332d 62%, rgb(201 205 210 / 0.22) 100%);
-    --rule-premium: linear-gradient(90deg, rgb(201 205 210 / 0.08), rgb(201 205 210 / 0.32) 30%, rgb(68 60 53 / 0.9) 60%, rgb(201 205 210 / 0.06));
-    --bg: #231f1c;
-    --surface: #2b2622;
-    --surface-2: #352f2a;
-    --surface-raised: #3a332d;
-    --ink-band: #111214;
-    --ink-band-2: #202125;
-    --band-line: #303237;
-    --text: #f4efe6;
-    --text-2: #d2c7b7;
-    --text-3: #a89b8a;
-    --text-inverse: #231f1c;
-    --line: #443c35;
-    --line-soft: #362f2a;
-    --line-strong: #6b5f55;
-    --brand: #f4efe6;
-    --action: #a44a22;
-    --action-hover: #b9572a;
-    --on-action: #fff6ee;
-    --course: #dc7b48;
-    --highlight: #e9c065;
-    --selected: #3d2b20;
-    --on-selected: #f0c9a8;
-    --walking: #93a645;
-    --walking-soft: #333620;
-    --running: #dc7b48;
-    --running-soft: #3d2a20;
-    --live: #dc7b48;
-    --good: #93a645;
-    --good-soft: #31341f;
-    --fair: #e9c065;
-    --fair-soft: #3a2f1c;
-    --poor: #a9aeb4;
-    --poor-soft: #352f2a;
-    --unknown: #5e6268;
-    --danger: #f08a78;
-    --danger-soft: #3d221d;
-    --disabled: #4d433b;
-    --on-disabled: #a89b8a;
-    --focus: #e9c065;
-    --map-marker: #1c1d20;
-    --map-marker-text: #f4f6f8;
-    --map-selected: #a44a22;
-    --route: #dc7b48;
-    --route-outline: #1c1d20;
-    --route-start: #93a645;
-    --route-finish: #f4f6f8;
-    --on-strong: #231f1c;
-    --shadow-1: 0 1px 2px rgb(0 0 0 / 0.3);
-    --shadow-2: 0 12px 30px rgb(0 0 0 / 0.42);
-    --shadow-dock: 0 12px 32px rgb(0 0 0 / 0.5);
+    --brand-ink: #f4f5f2;
+    --bg: #08090b;
+    --surface: #131519;
+    --surface-2: #1b1e23;
+    --surface-3: #252930;
+    --surface-raised: #1b1e23;
+    --glass: rgb(27 30 35 / 0.78);
+    --scrim: rgb(0 0 0 / 0.6);
+    --text: #f4f5f2;
+    --text-2: #b4b8bf;
+    --text-3: #8f949c;
+    --text-inverse: #0e1013;
+    --line: #23262c;
+    --line-soft: #1d2025;
+    --line-strong: #353941;
+    --accent: #ff6a2e;
+    --accent-press: #ff7f4a;
+    --on-accent: #120802;
+    --accent-ink: #ff7a45;
+    --accent-soft: #3a1a0e;
+    --on-accent-soft: #ff8a5c;
+    --selected: #3a1a0e;
+    --on-selected: #ffb08f;
+    --good: #6ee79a;
+    --good-fill: #4ad37a;
+    --good-soft: #10301c;
+    --fair: #f5c35c;
+    --fair-fill: #f2b23c;
+    --fair-soft: #3a2c0b;
+    --poor: #b4b8bf;
+    --poor-fill: #6b717a;
+    --poor-soft: #23272d;
+    --unknown: #6b717a;
+    --unknown-fill: #2a2e35;
+    --danger: #ff8a7d;
+    --danger-soft: #3a1714;
+    --disabled: #2a2e35;
+    --on-disabled: #8f949c;
+    --focus: #f4f5f2;
+    --map-marker: #131519;
+    --map-marker-text: #f4f5f2;
+    --map-dynamic: #f4f5f2;
+    --route: #ff6a2e;
+    --route-outline: #08090b;
+    --route-start: #4ad37a;
+    --route-finish: #f4f5f2;
+    --on-strong: #0e1013;
+    --shadow-1: 0 1px 2px rgb(0 0 0 / 0.4);
+    --shadow-2: 0 14px 36px rgb(0 0 0 / 0.55);
+    --shadow-float: 0 12px 32px rgb(0 0 0 / 0.55), 0 2px 6px rgb(0 0 0 / 0.4);
   }
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --metal-key-text: var(--metal-platinum-text);
-  --metal-best-text: var(--metal-gold-text);
-  --metal-good-text: var(--metal-olive-text);
-  --metal-action-text: var(--metal-copper-text);
-  --thread-ground: var(--thread-platinum);
-  --tint-platinum: var(--tint-platinum-deep);
-  --tint-olive: var(--tint-olive-deep);
-  --tint-gold: var(--tint-gold-deep);
-  --tint-copper: var(--tint-copper-deep);
-  --on-tint-platinum: var(--platinum-1);
-  --on-tint-steel: #c7cbcf;
-  --on-tint-olive: var(--on-tint-olive-deep);
-  --on-tint-gold: #f0cf7c;
-  --on-tint-copper: var(--on-tint-copper-deep);
-  --tint-edge: inset 0 1px 0 rgb(255 255 255 / 0.1);
-  --ring-platinum: var(--ring-platinum-deep);
-  --ring-olive: var(--ring-olive-deep);
-  --ring-gold: rgb(233 192 101 / 0.28);
-  --ring-copper: var(--ring-copper-deep);
-  --metal-key: var(--metal-chrome-raised) padding-box, var(--metal-chrome-border) border-box;
-  --metal-key-hover: var(--metal-chrome-raised-hover) padding-box, var(--metal-chrome-border) border-box;
-  --metal-key-edge: var(--metal-chrome-edge), 0 6px 14px -10px rgb(0 0 0 / 0.8);
-  --on-metal-key: var(--on-band);
-  --metal-selected: var(--metal-platinum);
-  --metal-selected-edge: var(--metal-platinum-edge), 0 4px 10px -6px rgb(0 0 0 / 0.7);
-  --on-metal-selected: var(--chrome-1);
-  --metal-bead: var(--metal-chrome-bead-raised);
-  --metal-bead-edge: inset 0 1px 0 rgb(201 205 210 / 0.3), 0 0 0 1px rgb(5 5 6 / 0.6);
-  --on-metal-bead: var(--platinum-2);
-  --metal-track: var(--metal-chrome-well);
-  --metal-track-edge: var(--metal-chrome-well-edge);
-  --rim-premium: linear-gradient(160deg, rgb(201 205 210 / 0.42) 0%, rgb(94 98 104 / 0.3) 34%, #3a332d 62%, rgb(201 205 210 / 0.22) 100%);
-  --rule-premium: linear-gradient(90deg, rgb(201 205 210 / 0.08), rgb(201 205 210 / 0.32) 30%, rgb(68 60 53 / 0.9) 60%, rgb(201 205 210 / 0.06));
-  --bg: #231f1c;
-  --surface: #2b2622;
-  --surface-2: #352f2a;
-  --surface-raised: #3a332d;
-  --ink-band: #111214;
-  --ink-band-2: #202125;
-  --band-line: #303237;
-  --text: #f4efe6;
-  --text-2: #d2c7b7;
-  --text-3: #a89b8a;
-  --text-inverse: #231f1c;
-  --line: #443c35;
-  --line-soft: #362f2a;
-  --line-strong: #6b5f55;
-  --brand: #f4efe6;
-  --action: #a44a22;
-  --action-hover: #b9572a;
-  --on-action: #fff6ee;
-  --course: #dc7b48;
-  --highlight: #e9c065;
-  --selected: #3d2b20;
-  --on-selected: #f0c9a8;
-  --walking: #93a645;
-  --walking-soft: #333620;
-  --running: #dc7b48;
-  --running-soft: #3d2a20;
-  --live: #dc7b48;
-  --good: #93a645;
-  --good-soft: #31341f;
-  --fair: #e9c065;
-  --fair-soft: #3a2f1c;
-  --poor: #a9aeb4;
-  --poor-soft: #352f2a;
-  --unknown: #5e6268;
-  --danger: #f08a78;
-  --danger-soft: #3d221d;
-  --disabled: #4d433b;
-  --on-disabled: #a89b8a;
-  --focus: #e9c065;
-  --map-marker: #1c1d20;
-  --map-marker-text: #f4f6f8;
-  --map-selected: #a44a22;
-  --route: #dc7b48;
-  --route-outline: #1c1d20;
-  --route-start: #93a645;
-  --route-finish: #f4f6f8;
-  --on-strong: #231f1c;
-  --shadow-1: 0 1px 2px rgb(0 0 0 / 0.3);
-  --shadow-2: 0 12px 30px rgb(0 0 0 / 0.42);
-  --shadow-dock: 0 12px 32px rgb(0 0 0 / 0.5);
+  --brand-ink: #f4f5f2;
+  --bg: #08090b;
+  --surface: #131519;
+  --surface-2: #1b1e23;
+  --surface-3: #252930;
+  --surface-raised: #1b1e23;
+  --glass: rgb(27 30 35 / 0.78);
+  --scrim: rgb(0 0 0 / 0.6);
+  --text: #f4f5f2;
+  --text-2: #b4b8bf;
+  --text-3: #8f949c;
+  --text-inverse: #0e1013;
+  --line: #23262c;
+  --line-soft: #1d2025;
+  --line-strong: #353941;
+  --accent: #ff6a2e;
+  --accent-press: #ff7f4a;
+  --on-accent: #120802;
+  --accent-ink: #ff7a45;
+  --accent-soft: #3a1a0e;
+  --on-accent-soft: #ff8a5c;
+  --selected: #3a1a0e;
+  --on-selected: #ffb08f;
+  --good: #6ee79a;
+  --good-fill: #4ad37a;
+  --good-soft: #10301c;
+  --fair: #f5c35c;
+  --fair-fill: #f2b23c;
+  --fair-soft: #3a2c0b;
+  --poor: #b4b8bf;
+  --poor-fill: #6b717a;
+  --poor-soft: #23272d;
+  --unknown: #6b717a;
+  --unknown-fill: #2a2e35;
+  --danger: #ff8a7d;
+  --danger-soft: #3a1714;
+  --disabled: #2a2e35;
+  --on-disabled: #8f949c;
+  --focus: #f4f5f2;
+  --map-marker: #131519;
+  --map-marker-text: #f4f5f2;
+  --map-dynamic: #f4f5f2;
+  --route: #ff6a2e;
+  --route-outline: #08090b;
+  --route-start: #4ad37a;
+  --route-finish: #f4f5f2;
+  --on-strong: #0e1013;
+  --shadow-1: 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-2: 0 14px 36px rgb(0 0 0 / 0.55);
+  --shadow-float: 0 12px 32px rgb(0 0 0 / 0.55), 0 2px 6px rgb(0 0 0 / 0.4);
+}
+
+/* The recorder is always a dark instrument, whatever the app theme. */
+.instrument {
+  color-scheme: dark;
+  --bg: #08090b;
+  --surface: #131519;
+  --surface-2: #1b1e23;
+  --surface-3: #252930;
+  --surface-raised: #1b1e23;
+  --glass: rgb(27 30 35 / 0.82);
+  --text: #f4f5f2;
+  --text-2: #b4b8bf;
+  --text-3: #8f949c;
+  --line: #23262c;
+  --line-strong: #353941;
+  --accent: #ff6a2e;
+  --accent-press: #ff7f4a;
+  --accent-ink: #ff7a45;
+  --accent-soft: #3a1a0e;
+  --on-accent-soft: #ff8a5c;
+  --good: #6ee79a;
+  --good-fill: #4ad37a;
+  --good-soft: #10301c;
+  --fair: #f5c35c;
+  --fair-fill: #f2b23c;
+  --fair-soft: #3a2c0b;
+  --poor: #b4b8bf;
+  --poor-fill: #6b717a;
+  --poor-soft: #23272d;
+  --focus: #f4f5f2;
 }

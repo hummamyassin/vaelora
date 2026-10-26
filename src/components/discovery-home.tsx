@@ -2,15 +2,19 @@
 import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import {
-  Activity,
-  ArrowUpRight,
-  ChevronRight,
-  Footprints,
-  LocateFixed,
-  Map as MapIcon,
-  RefreshCw,
-  Search,
-} from "lucide-react";
+  IconHumidity,
+  IconLocate,
+  IconMap,
+  IconNext,
+  IconOpen,
+  IconPin,
+  IconRetry,
+  IconRun,
+  IconSearch,
+  IconTemperature,
+  IconWalk,
+  IconWind,
+} from "./icons";
 import { activityAreas } from "../data/activity-areas";
 import { weatherAreas } from "../data/weather-areas";
 import { locationContext } from "../lib/dynamic-location";
@@ -36,7 +40,7 @@ import { LocationArt } from "./location-art";
 import { PersonalProgress } from "./personal-progress";
 import { Sheet } from "./app-dialog";
 import { Meteogram } from "./meteogram";
-import { StitchBand, StitchMeter } from "./brand-mark";
+import { ScoreRing, scoreTone as toneOf } from "./score-ring";
 import { planningState } from "../domain/recommendation/plan-state";
 import {
   isRefreshDue,
@@ -121,19 +125,19 @@ export function DiscoveryMap({
       {place && (
         <article className="map-card" aria-live="polite">
           <div className="map-card-head">
-            <h2>{areaName(locale, place.area)}</h2>
-            <span className="score-chip num" data-tone={place.score == null ? "unknown" : place.score >= 70 ? "good" : place.score >= 50 ? "fair" : "poor"}>
-              {place.score ?? "–"}
-            </span>
-          </div>
-          <p className="row-meta">
+            <ScoreRing score={place.score} label={`${c("placeFit")} ${place.score ?? "–"}`} />
+            <div className="map-card-title">
+              <h2>{areaName(locale, place.area)}</h2>
+              <p className="row-meta">
             {numberText(locale, distanceKm(data.point, place.area), 1)} {locale === "ar" ? "كم" : "km"} ·{" "}
             {place.plan.status === "now"
               ? c("goodNowShort")
               : place.plan.window
                 ? c("bestAt", { time: clock(place.plan.window.start) })
                 : c("noUsable")}
-          </p>
+              </p>
+            </div>
+          </div>
           <p>{areaDescription(locale, place.area)}</p>
           <p className="row-meta">
             {label(locale, place.area.terrain)} · {place.area.surfaces.map((s) => label(locale, s)).join(" · ")}
@@ -149,6 +153,7 @@ export function DiscoveryMap({
               aria-pressed={selected === p.area.id}
               onClick={() => setSelected(p.area.id)}
             >
+              <span className="map-chip-dot" data-tone={toneOf(p.score)} aria-hidden="true" />
               {areaName(locale, p.area)} <bdi className="num">{p.score ?? "–"}</bdi>
             </button>
           ))}
@@ -507,7 +512,7 @@ export function DiscoveryHome({
     outside: c("geoOutside"),
   };
   const score = plan?.window?.score ?? current?.score ?? null;
-  const scoreTone = score == null ? "unknown" : score >= 80 ? "good" : score >= 60 ? "fair" : "poor";
+  const scoreTone = toneOf(score);
   const activityLabel = activity === "walking" ? c("walk") : c("run");
   const planWindow = plan?.window ?? null;
   useEffect(() => {
@@ -526,7 +531,10 @@ export function DiscoveryHome({
         data-plan-state={planState}
       >
         <div className="plan-top">
-          <span className="plan-place">{name || c("greaterAmman")}</span>
+          <span className="plan-place">
+            <IconPin aria-hidden weight="fill" />
+            {name || c("greaterAmman")}
+          </span>
           {live && receivedAt !== null && (
             <span
               className="plan-updated"
@@ -551,7 +559,7 @@ export function DiscoveryHome({
                 aria-pressed={activity === k}
                 data-activity={k}
               >
-                {k === "walking" ? <Footprints aria-hidden /> : <Activity aria-hidden />}
+                {k === "walking" ? <IconWalk aria-hidden weight="bold" /> : <IconRun aria-hidden weight="bold" />}
                 {k === "walking" ? c("walk") : c("run")}
               </button>
             ))}
@@ -572,41 +580,58 @@ export function DiscoveryHome({
             ))}
           </div>
         </div>
-        <div className="plan-decision">
-          <h2 className="plan-headline" id="plan-headline">
-            {headline}
-          </h2>
-          {subline && <p className="plan-sub">{subline}</p>}
-        </div>
-        {point && !busy && (
-          <div className="plan-figures">
-            <div className="plan-window">
-              <span className="plan-label">{c("window")}</span>
-              {plan?.window ? (
-                <strong className="plan-window-time num">
-                  <bdi>
-                    {clock(plan.window.start)}
-                    <span className="plan-dash">-</span>
-                    {clock(plan.window.end)}
-                  </bdi>
-                </strong>
-              ) : (
-                <strong className="plan-window-time plan-window-none">–</strong>
-              )}
-            </div>
+        <div className="plan-hero" data-ready={(point && !busy) || undefined}>
+          {point && !busy && (
             <div className="plan-score" data-tone={scoreTone}>
-              <span className="plan-label">{c("score")}</span>
-              <strong className="num">
-                <bdi>{score ?? "–"}</bdi>
-                <small>/100</small>
-              </strong>
-              <StitchMeter score={score} label={c("scoreMeter", { n: score ?? "–" })} />
+              <ScoreRing size="lg" max score={score} label={c("scoreMeter", { n: score ?? "–" })} />
               <span className="plan-score-note">
+                {c("score")}
+                <br />
                 {plan?.window ? c("scoreWindow") : c("scoreNow")}
               </span>
             </div>
+          )}
+          <div className="plan-decision">
+            <h2 className="plan-headline" id="plan-headline">
+              {headline}
+            </h2>
+            {subline && <p className="plan-sub">{subline}</p>}
+            {point && !busy && (
+              <p className="plan-window">
+                <span className="plan-label">{c("window")}</span>
+                {plan?.window ? (
+                  <strong className="plan-window-time num">
+                    <bdi>
+                      {clock(plan.window.start)}
+                      <span className="plan-dash">–</span>
+                      {clock(plan.window.end)}
+                    </bdi>
+                  </strong>
+                ) : (
+                  <strong className="plan-window-time plan-window-none">–</strong>
+                )}
+              </p>
+            )}
+            {current && !busy && (
+              <p className="plan-weather">
+                <span>
+                  <IconTemperature aria-hidden />
+                  <bdi className="num">{current.conditions.temperatureC ?? "–"}°C</bdi>
+                </span>
+                <span>
+                  <IconWind aria-hidden />
+                  <span className="sr-only">{c("wind")}</span>
+                  <bdi className="num">{c("kmh", { n: current.conditions.windKmh ?? "–" })}</bdi>
+                </span>
+                <span>
+                  <IconHumidity aria-hidden />
+                  <span className="sr-only">{c("humidity")}</span>
+                  <bdi className="num">{current.conditions.relativeHumidityPercent ?? "–"}%</bdi>
+                </span>
+              </p>
+            )}
           </div>
-        )}
+        </div>
         {busy && (
           <div className="plan-skeleton" role="status" aria-label={c("checking")}>
             <span className="skeleton skeleton-band" />
@@ -622,20 +647,9 @@ export function DiscoveryHome({
             clock={clock}
           />
         )}
-        {current && !busy && (
-          <p className="plan-weather">
-            <span className="num">{current.conditions.temperatureC ?? "–"}°C</span>
-            <span>
-              {c("wind")} <bdi className="num">{c("kmh", { n: current.conditions.windKmh ?? "–" })}</bdi>
-            </span>
-            <span>
-              {c("humidity")} <bdi className="num">{current.conditions.relativeHumidityPercent ?? "–"}%</bdi>
-            </span>
-          </p>
-        )}
         {(failed || refreshFailed || (data && !live)) && point && (
           <button className="btn btn-band btn-sm plan-retry" onClick={() => setRefresh((n) => n + 1)}>
-            <RefreshCw aria-hidden /> {c("retry")}
+            <IconRetry aria-hidden /> {c("retry")}
           </button>
         )}
         <button
@@ -643,26 +657,30 @@ export function DiscoveryHome({
           onClick={onStart}
           data-recommended={planState === "recommended" && plan?.status === "now"}
         >
+          {activity === "walking" ? <IconWalk aria-hidden weight="bold" /> : <IconRun aria-hidden weight="bold" />}
           {planAction}
-          <ArrowUpRight aria-hidden className="flip-rtl" />
         </button>
         <p className="plan-note">{c("startNote")}</p>
         {best && (
           <button className="plan-nearby" onClick={() => onSelectPlace(best.area.id)}>
-            <span className="plan-label">{c("nearbyOption")}</span>
-            <span className="plan-nearby-name">{areaName(locale, best.area)}</span>
-            <span className="num">{c("kmApprox", { n: numberText(locale, distanceKm(point!, best.area), 1) })}</span>
-            <ChevronRight aria-hidden className="flip-rtl" />
+            <ScoreRing size="sm" score={best.score} label={`${c("placeFit")} ${best.score ?? "–"}`} />
+            <span className="plan-nearby-text">
+              <span className="plan-label">{c("nearbyOption")}</span>
+              <span className="plan-nearby-name">{areaName(locale, best.area)}</span>
+            </span>
+            <span className="num plan-nearby-distance">
+              {c("kmApprox", { n: numberText(locale, distanceKm(point!, best.area), 1) })}
+            </span>
+            <IconNext aria-hidden className="flip-rtl" />
           </button>
         )}
-        <StitchBand className="plan-stitch" />
       </section>
 
       <section className="section near" aria-labelledby="near-title">
         <div className="section-head">
           <h2 className="section-title" id="near-title">{c("nearYou")}</h2>
           <button className="btn btn-secondary btn-sm" onClick={locate} disabled={geo === "locating"}>
-            <LocateFixed aria-hidden />
+            <IconLocate aria-hidden />
             {geo === "locating" ? c("locating") : c("useLocation")}
           </button>
         </div>
@@ -682,6 +700,7 @@ export function DiscoveryHome({
           <label className="sr-only" htmlFor="discovery-query">
             {c("searchLabel")}
           </label>
+          <IconSearch aria-hidden className="search-icon" />
           <input
             id="discovery-query"
             className="input"
@@ -692,8 +711,8 @@ export function DiscoveryHome({
             placeholder={c("searchPlaceholder")}
             enterKeyHint="search"
           />
-          <button className="btn btn-primary" disabled={searching || query.trim().length < 2}>
-            <Search aria-hidden />
+          <button className="btn btn-secondary search-go" disabled={searching || query.trim().length < 2}>
+            <IconOpen aria-hidden className="flip-rtl" />
             <span className="sr-only">{c("search")}</span>
           </button>
         </form>
@@ -705,7 +724,7 @@ export function DiscoveryHome({
                 <span className="row-main">
                   <span className="row-title">{p.name}</span>
                 </span>
-                <ChevronRight className="row-chevron flip-rtl" aria-hidden />
+                <IconNext className="row-chevron flip-rtl" aria-hidden />
               </button>
             ))}
           </div>
@@ -757,7 +776,7 @@ export function DiscoveryHome({
                     onMap({ point, name, activity, places: live?.places ?? [], selectedAreaId: selected ?? best?.area.id })
                   }
                 >
-                  <MapIcon aria-hidden />
+                  <IconMap aria-hidden />
                   {c("viewMap")}
                 </button>
                 <button
@@ -794,7 +813,11 @@ export function DiscoveryHome({
                     return (
                       <li key={p.area.id}>
                         <button className="row-btn nearby-card" onClick={() => onSelectPlace(p.area.id)}>
-                          <span className="nearby-rank num">{i + 1}</span>
+                          <ScoreRing
+                            size="sm"
+                            score={p.score}
+                            label={`${i + 1}. ${c("placeFit")} ${p.score ?? "–"}`}
+                          />
                           <span className="row-main">
                             <span className="row-title">{areaName(locale, p.area)}</span>
                             <span className="row-meta">
@@ -812,10 +835,7 @@ export function DiscoveryHome({
                                   : c("noUsable")}
                             </span>
                           </span>
-                          <span className="row-end nearby-score">
-                            <b className="num">{p.score ?? "–"}</b>
-                            <small>{c("placeFit")}</small>
-                          </span>
+                          <IconNext className="row-chevron flip-rtl" aria-hidden />
                         </button>
                       </li>
                     );
@@ -847,7 +867,7 @@ export function DiscoveryHome({
                 <span>{label(locale, a.terrain)}</span>
                 <span className="featured-open">
                   {c("openProfile")}
-                  <ArrowUpRight aria-hidden className="flip-rtl" />
+                  <IconOpen aria-hidden className="flip-rtl" />
                 </span>
               </span>
             </button>
@@ -900,14 +920,19 @@ export function DiscoveryHome({
                 </button>
               </p>
             ) : placeData?.outlook.current ? (
-              <p>
-                <span className="plan-label">{c("conditionsNow")}</span>
-                <span className="place-now num">
-                  <bdi>{placeData.outlook.current.score ?? "–"}/100</bdi> ·{" "}
-                  <bdi>{placeData.outlook.current.conditions.temperatureC ?? "–"}°C</bdi> · {c("wind")}{" "}
-                  <bdi>{c("kmh", { n: placeData.outlook.current.conditions.windKmh ?? "–" })}</bdi>
-                </span>
-              </p>
+              <div className="place-now-row">
+                <ScoreRing
+                  score={placeData.outlook.current.score}
+                  label={c("scoreMeter", { n: placeData.outlook.current.score ?? "–" })}
+                />
+                <p>
+                  <span className="plan-label">{c("conditionsNow")}</span>
+                  <span className="place-now num">
+                    <bdi>{placeData.outlook.current.conditions.temperatureC ?? "–"}°C</bdi> · {c("wind")}{" "}
+                    <bdi>{c("kmh", { n: placeData.outlook.current.conditions.windKmh ?? "–" })}</bdi>
+                  </span>
+                </p>
+              </div>
             ) : (
               <p className="row-meta">{c("placeNoCurrent")}</p>
             )}
@@ -916,7 +941,7 @@ export function DiscoveryHome({
                 <span className="plan-label">{c("bestWindow")}</span>
                 <span className="place-now num">
                   <bdi>
-                    {clock(detailWeather.plan.window.start)} - {clock(detailWeather.plan.window.end)}
+                    {clock(detailWeather.plan.window.start)}–{clock(detailWeather.plan.window.end)}
                   </bdi>{" "}
                   · {detailWeather.score}/100
                 </span>

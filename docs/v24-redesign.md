@@ -187,3 +187,34 @@ olive becomes green metal. See [DESIGN.md](../DESIGN.md) for the role of each me
   every point of that band (copper 4.86:1, green metal 4.90:1, platinum 5.50:1 with ink). Metal
   text uses a darkest stop that passes on its ground; forced-colours mode drops all gradient
   text. No idle shine; press compresses the reflection and reduced motion keeps only the edge.
+
+## V2.5 fitness-product redesign
+
+The interface was replaced around one fixed element, the V app icon from the identity sheet.
+VAELORA now reads like a premium mobile fitness product rather than a styled website. Product
+logic, scoring, weather, GPS, privacy, storage, routing, AI grounding and the share model are
+unchanged. See [DESIGN.md](../DESIGN.md).
+
+- **Colour:** a warm-white field (light) or instrument black (dark) with white or graphite
+  modules; ember (#FF5A1F) is the single action and live colour; leaf, gold and steel carry
+  conditions. The metal material layer, gradient text and stitch bands were removed.
+- **Type:** Archivo for everything, with heavy condensed tabular metrics; Readex Pro for Arabic;
+  Cormorant Garamond only for the wordmark.
+- **Icons:** Phosphor (one family, regular stroke, filled when selected) replaces lucide.
+- **Navigation:** a glass tab capsule (Home, Map, Ask) beside an ember Track key that becomes a
+  live indicator while recording; on desktop it joins the header.
+- **Home:** the Today module with the ten-segment Score ring, decision, gold best window,
+  conditions with icons, the comfort strip and the Start key; Near you as a grouped list with mini
+  rings; reviewed places as a rail.
+- **Track:** an always-dark instrument: a round Start key when ready; while live a dial of elapsed
+  time against the planned minutes, distance and pace tiles, secondary metrics, GPS status and
+  thumb-sized controls. Recording, acquiring, weak GPS and paused are colour-coded.
+- **Summary and share:** a completion screen with the route, hero distance, stat tiles and the
+  conditions ring; the share card and its 1080x1440 export use the new palette.
+- **Progress and Profile:** a weekly active-day ring, a seven-day distance chart split by walk and
+  run, a walk/run split bar, stat tiles; Profile leads with identity and totals, then this week,
+  recent activities and settings.
+- **Map and Ask:** condition-ringed score pills, an ember selected place, an ink reference dot,
+  themed MapLibre controls; Ask has a compact plan card with the Score ring and prompt chips.
+- **Browser QA:** on desktop the navigation sits in the header, so the dock-clearance check now
+  applies only when the dock floats at the bottom.
