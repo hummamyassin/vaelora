@@ -1,4 +1,4 @@
-# Pre-deployment security audit
+# Production security and privacy
 
 ## V2.3 privacy amendment
 
@@ -10,11 +10,11 @@ routes never enter the AI payload. Maps still request OSM tiles for the viewed
 region. Share images trim all start/end-zone crossings locally, contain no raw
 coordinates, and do not alter original history. GPX retains explicit confirmation.
 See [V2.3 details and limitations](v23.md). Public geocoder traffic requires
-deployment-wide limits/provider review before scaling. No deployment performed.
+deployment-wide limits/provider review before scaling; v2.5.0 adds the edge rule below.
 
 ## Readiness
 
-READY WITH NOTES for a small public portfolio. Do not enable public AI until the edge rule below is published and verified. No deployment or external infrastructure configuration was performed by this audit.
+Deployed to production as v2.5.0 (26 October 2026, [release notes](releases/v2.5.0.md)) for a small public portfolio. Public AI stays in the on-device Ask mode until the edge rule below is published and verified and `VAELORA_AI_PUBLIC_ENABLED=true` is set. The firewall rule and production environment variables are configured in the Vercel dashboard, outside this repository.
 
 ## Public AI activation and abuse protection
 

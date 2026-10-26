@@ -6,7 +6,7 @@ VAELORA is a bilingual web application and installable PWA for deciding when and
 
 **Plan → Track → Analyze → Share**
 
-[Open the live application](https://vaelora-chi.vercel.app) · Current geographic focus: **Greater Amman, Jordan**
+[Open the live application](https://vaelora-chi.vercel.app) · Current release: **v2.5.0** ([changelog](CHANGELOG.md)) · Current geographic focus: **Greater Amman, Jordan**
 
 ## What is VAELORA?
 
@@ -30,7 +30,8 @@ Weather primarily helps determine **when** conditions are suitable and secondari
 - Deterministic walking and running recommendations for Greater Amman
 - Live Open-Meteo conditions and hourly weather-aware VAELORA Scores
 - Complete 30, 60, and 90-minute outing windows
-- Today, tomorrow, and three-day planning views
+- Today, tomorrow, and three-day planning views, with a fallback to tomorrow's next good window when today has none left
+- Home reopens on the last planned area; a GPS location is remembered only as a coarse ~2 km forecast cell
 - Location-aware nearby discovery with approximate straight-line distance
 - Reviewed activity places with explicit terrain, surface, fit, evidence, and uncertainty
 - Interactive MapLibre maps with OpenStreetMap tiles, marker clustering, and selected-place behavior
@@ -42,6 +43,7 @@ Weather primarily helps determine **when** conditions are suitable and secondari
 - Browser GPS recording for walking and running with point-quality and movement filters
 - Live route drawing, timer, distance, pace, speed, and GPS status
 - Pause, resume, finish, interruption recovery, and unfinished-session drafts
+- Keep Awake on by default while recording, and a clear resume prompt if the app was backgrounded or the screen locked
 - Device-local activity history, summaries, profile statistics, and weekly progress
 - Local GPX 1.1 generation with an explicit precise-location confirmation
 - Three locally generated activity-card layouts with English and Arabic output
@@ -117,7 +119,7 @@ Detailed design and validation notes live in [`docs/`](docs/).
 
 Ask VAELORA is a focused recommendation interface rather than an unrestricted chatbot. The model interprets an English or Arabic request and produces validated structured intent. VAELORA's deterministic tools then resolve eligibility, weather, constraints, scoring, time windows, and matches. Final answers are checked against tool output and include a safe factual action trace instead of hidden reasoning.
 
-The provider sits behind an adapter, and AI credentials remain in server-only environment variables. The application still supports manual planning when AI configuration is absent or unavailable.
+The provider sits behind an adapter, and AI credentials remain in server-only environment variables. On the public deployment, live AI runs only when the Vercel Firewall rule `vaelora-api` is published and `VAELORA_AI_PUBLIC_ENABLED=true` is set. Otherwise Ask runs in an on-device mode: it shows the current plan and answers questions about your own activities without calling a model. Manual planning never depends on AI.
 
 See [AI agent architecture, contracts, configuration, and evaluation](docs/ai-agent.md).
 
@@ -134,27 +136,28 @@ VAELORA uses a local-first activity model:
 - Share cards are rendered locally. They remove 300-metre zones around both route endpoints, but a remaining route shape may still be recognizable; this is risk reduction, not anonymity.
 - GPX export is separate and intentionally contains precise route coordinates.
 - API credentials are server-side, use no `NEXT_PUBLIC_` prefix, and must never be committed.
+- Every API route is rate limited at the edge by one Vercel Firewall rule, with in-memory budgets as a secondary guard.
 
 See [production security and privacy controls](docs/production-security.md) and the [V2.3 privacy notes](docs/v23.md#local-recap-sharing-and-progress).
 
 ## Quality and validation
 
-The repository includes offline domain, dataset, weather, security, tracking, UI, navigation, backup and AI contract tests. The V2.4 verification (October 25, 2026) records:
+The repository includes offline domain, dataset, weather, security, tracking, UI, navigation, backup and AI contract tests. The v2.5.0 release validation (October 26, 2026) records:
 
-- **182/182** repository tests passed, including backup/restore, hash routing, copy coverage and refresh-policy cases
-- **28/28** fixed AI replay evaluations and **16/16** V2 grounding/contract checks passed
+- **186/186** repository tests passed, including backup/restore, hash routing, copy coverage, remembered-area privacy, edge rate-limit and refresh-policy cases
+- **16/16** offline AI replay evaluations passed
 - Dataset validation passed for 35 researched candidates, 11 production places, and 9 weather reference areas
 - TypeScript, zero-warning ESLint, production build (Turbopack), and PWA asset generation passed
 - Synthetic Playwright flows passed against the production build in English and Arabic at 320, 390, 430 and 1440 px, light and dark: onboarding, location states, plan and meteogram, routed place sheet, map, Back/Forward/refresh, recording across navigation, pause/resume, recap, three PNG exports, GPX, progress, profile, backup export/import and errors, Ask, with no horizontal overflow or page errors
 
 These results use synthetic or mocked inputs where documented. Browser GPS validation is not physical-device field certification, and offline AI replay evaluates contracts and grounding rather than live-model language accuracy.
 
-See [V2.3 verification](docs/v23.md#completion-validation--september-23-2026), [V2.1 QA](docs/v2.1-qa.md), and [weather validation](docs/weather-integration.md).
+See the [v2.5.0 release notes](docs/releases/v2.5.0.md), [V2.3 verification](docs/v23.md#completion-validation--september-23-2026), [V2.1 QA](docs/v2.1-qa.md), and [weather validation](docs/weather-integration.md).
 
 ## Current limitations
 
 - Production coverage is limited to VAELORA's defined urban Greater Amman service area and its reviewed places.
-- Browser/PWA tracking is designed for foreground use. Continuous GPS while backgrounded or screen-locked is not guaranteed, particularly on iOS.
+- Browser/PWA tracking is designed for foreground use. Continuous GPS while backgrounded or screen-locked is not guaranteed, particularly on iOS. VAELORA keeps the screen awake while recording, pauses when it is backgrounded and asks to resume, rather than recording a silent gap.
 - Weather is regional forecast data rather than street-level or park-microclimate certainty. AQI is not currently assessed.
 - Place facts follow the evidence dataset. Unknown terrain, surface, access, opening conditions, shade, or accessibility are not inferred.
 - Recommendations are provisional comfort guidance, not medical advice, route verification, or a guarantee of safety or access.
@@ -164,7 +167,8 @@ See [V2.3 verification](docs/v23.md#completion-validation--september-23-2026), [
 
 ## Documentation
 
-- [V2.4 redesign, navigation, backup and CI](docs/v24-redesign.md)
+- [Changelog](CHANGELOG.md) and [v2.5.0 release notes](docs/releases/v2.5.0.md)
+- [V2.4 and V2.5 redesign, navigation, backup and CI](docs/v24-redesign.md)
 - [Product context](PRODUCT.md) and [design system](DESIGN.md)
 - [V2.3 real-user architecture, privacy, and QA](docs/v23.md)
 - [V2.2 product experience](docs/v2.2-product.md)
@@ -204,6 +208,10 @@ The same checks run in GitHub Actions on every pull request and on pushes to `ma
 `npm run qa:browser` runs the synthetic Playwright flows in English and Arabic at 320, 390, 430 and 1440 px. It needs Playwright (`VAELORA_PLAYWRIGHT_MODULE` may point to an installed copy), Microsoft Edge (`VAELORA_BROWSER_CHANNEL` to override) and a running server (`VAELORA_QA_URL`, default http://localhost:3001). It is not part of CI.
 
 `npm run smoke:weather` performs a controlled live Open-Meteo check. `npm run smoke:agent` uses a configured live provider; neither is required for offline unit tests. Never commit `.env.local` or API credentials.
+
+## Deployment
+
+Production runs on Vercel from `main` at [vaelora-chi.vercel.app](https://vaelora-chi.vercel.app). Server-only AI settings and the firewall rule are described in [production security](docs/production-security.md); without them, the deployment serves planning, tracking and the on-device Ask mode.
 
 ## Scope
 
