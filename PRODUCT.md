@@ -12,7 +12,7 @@ web
 
 ## Users
 
-People in Greater Amman who walk or run outdoors and decide, often on a phone and often already
+People across Jordan who walk or run outdoors and decide, often on a phone and often already
 outside, whether conditions suit an outing now or later and where to go. They return to record
 the activity, review it, and occasionally share a recap. Bilingual audience: Arabic (RTL) and
 English are equally first-class.
@@ -26,8 +26,8 @@ trusts the recommendation, records the outing, and comes back.
 
 ## Positioning
 
-Recommendations come from a deterministic, testable engine over a small set of reviewed Amman
-places with explicit evidence and uncertainty. Unknown terrain, surface, access or conditions
+Recommendations come from a deterministic, testable engine over curated Jordan places: reviewed
+Amman places and open-data parks, reserves and trails, each with explicit evidence and uncertainty. Unknown terrain, surface, access or conditions
 stay unknown. The AI assistant only extracts intent and never invents scores, weather or places.
 Activity history is local-first: GPS routes stay on the device, and share images strip endpoint
 zones.
@@ -40,13 +40,13 @@ used for planning and review.
 
 ## Capabilities and Constraints
 
-- Walking and running only; today, tomorrow and a 3-day outlook; Greater Amman service polygon only.
-- 11 reviewed production places; dynamic locations never gain place attributes.
+- Walking and running only; today, tomorrow and a 3-day outlook; planning coverage is Jordan.
+- 30 curated places (11 reviewed, 19 open data); dynamic locations never gain place attributes.
 - VAELORA Score bands come from the existing scorer; no invented score differences.
 - Tracking: foreground GPS, pause/resume/finish, interrupted-session recovery, IndexedDB history,
   GPX export with explicit precise-location confirmation, three local 1080x1440 share cards.
 - AI: one grounded agent, offline-safe evaluations; private routes and GPS cells never reach the model.
-- Out of scope: accounts, social feeds, challenges, payments, cloud GPS, tourism, other cities.
+- Out of scope: accounts, social feeds, challenges, payments, cloud GPS, tourism, places outside Jordan.
 
 ## Brand Commitments
 

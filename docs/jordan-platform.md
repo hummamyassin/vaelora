@@ -1,0 +1,96 @@
+# Jordan-wide outdoor platform
+
+VAELORA moves from Greater Amman to all of Jordan. The flow is Plan, Discover, Track, Analyze, Share, Return. The differentiator is not route count: it is Jordan coverage, weather intelligence, outdoor fitness, tracking and sharing together.
+
+## Coverage
+
+- **One source of truth:** `src/lib/jordan.ts`. It provides `JORDAN_BOUNDS`, `JORDAN_DEFAULT_VIEW`, `isInsideJordan`, `governorateAt` and `normalizeJordanLocation`, over a simplified geoBoundaries country ring and governorate rings (`src/data/jordan-geography.ts`, generated).
+- **Border checks:** Eilat, Taba, Daraa, Jericho, Ein Gedi and Tabuk are outside. Aqaba, Ar-Ramtha, Umm Qais, the Dead Sea shore and Wadi Araba are inside. Points within 1 km of Jordan's own Aqaba shoreline are accepted, because simplification cuts the waterline; the window stops south of the Eilat border.
+- **Planning cells:** the existing 0.02° (~2 km) grid now covers all of Jordan. Cells carry their governorate. Remembered places and privacy are unchanged. Legacy `amman:` cell IDs still parse.
+- **Outside Jordan:** nothing is substituted. VAELORA says it "currently supports outdoor planning inside Jordan", and free tracking still works.
+- **Weather:** Open-Meteo for any Jordan coordinate. Jordan's own time zone, Asia/Amman (UTC+3, no DST), drives date rollover, forecast days and the tomorrow fallback. Scoring thresholds are unchanged: they were never Amman-specific.
+- **Weather reference points:** 25, across all 12 governorates. The regional map uses one per governorate.
+- **Search:** Photon, bounded to Jordan. Results outside Jordan are dropped and labelled "outside". Each result carries its governorate in English and Arabic from VAELORA's own boundary data, not from a reverse geocoder.
+
+## Discovery
+
+- **Near Me Now** (Explore) asks `/api/discovery` for the user's cell with a 50 km radius. The server evaluates only the nearest 8 curated places (one forecast each) and ranks them by:
+  1. a usable window now or later;
+  2. score;
+  3. reviewed tier;
+  4. distance.
+
+  Rows show distance, place or trail, mapped km, difficulty and time, the score, and "Good until …" or "Best at …".
+- **Library filters** stay deliberately few:
+  - **Chips:** time I have (30, 60, 90+), type, saved.
+  - **More filters:** difficulty, distance, governorate, VAELORA reviewed.
+
+  Difficulty and distance exist only for trails with a mapped line.
+- **Featured** on Home follows the area being planned: the closest curated places within 40 km, with reviewed places leading at similar distances. Without a location, or with nothing near (for example Ruwaished), it shows an honest line and a link to Explore, never Amman.
+- **Home radii** go up to 50 km. A saved places row flags saved places with good conditions today.
+
+## Route and place details
+
+One sheet for every curated place:
+- **Basics:** tier, governorate, VAELORA's description.
+- **Facts:** distance, time and difficulty as labelled estimates, climb, and route shape with endpoints. Places without a line show terrain, surface and fit, with "Not documented" where unknown.
+- **Weather fit:** today's best window or the next good window tomorrow, current temperature and wind, and the regional-forecast caveat. Wording is "favourable", "fair" or "less suitable", never "safe".
+- **On demand:** a north-up route sketch and elevation profile, loaded from `public/routes/<id>.json` only when the sheet opens.
+- **Before you go:** the place's caveats.
+- **Actions:** Save, Follow route and Plan here.
+- **Sources:** with licence text.
+
+## Follow Route
+
+- Track shows the planned line (charcoal dashes on a white casing) under the recorded route, with "On route" or "Off route by N m" (beyond 60 m) and the distance left on the line.
+- The activity stores `routeId`, and the recap names the route.
+- It is not turn-by-turn navigation, and it works only while VAELORA is open with the screen on. Keep Awake is on by default; backgrounding pauses recording with the existing resume prompt.
+
+## Share Studio
+
+The user picks a photo, previews the overlay, chooses one of five positions and a size, and exports.
+
+- **Format:** a 9:16 PNG at 1080 × 1920, drawn locally on canvas by `src/lib/share-story.ts`. The preview and the export use the same drawing function.
+- **Route:** privacy-trimmed (300 m at both ends, as before), aspect preserved, with no map tiles. Runs draw luminous platinum, walks luminous olive: a bright core, a metallic body, a soft glow and a halo. On bright photos a faint dark under-stroke separates the line.
+- **Activity icon:** a small runner or walker beside the route's start, never the words RUN or WALK.
+- **Numbers:** distance is the hero figure. Below it, clock, lightning and mountain glyphs with values only; climb appears only when the phone recorded altitude for most of the route.
+- **Signature:** the approved V only, keyed out of the brand tile (`public/brand/v-mark.png`, generated by `scripts/brand-icons.mjs`). No wordmark.
+- **Readability:** a light local scrim that adapts to photo brightness, plus two text shadows. Without a photo, a dark VAELORA ground.
+- **Privacy:** the photo is decoded in the browser and never uploaded, sent to AI or stored. The classic three 1080 × 1440 cards remain under "Classic cards".
+
+## Ask VAELORA
+
+- Coverage is Jordan: towns on the weather reference list may be named; places outside Jordan stay unsupported.
+- The prompt forbids asserting trail existence, surface or road quality, lighting, safety or crime, water, opening hours or access, or current conditions unless the tool data contains them.
+- Answers ground on the curated places, the regional forecast and the deterministic plan. Routes, GPS history and photos never reach the model.
+
+## Privacy
+
+- **Precise GPS:** stays in memory and on the device. Only ~2 km cells reach the server.
+- **Activities, saved places and preferences:** device-local.
+- **Hash routes:** carry only screen, sheet and public place or local activity IDs (`#/track?follow=dana-rummana-trail`), never coordinates.
+- **Share photos:** local only.
+- **Route files:** fetched only for the trail being viewed or followed.
+
+## Limitations
+
+- Web and PWA recording is foreground-only. Locking the screen or switching apps pauses it, including route following.
+- Curated coverage is uneven: Mafraq has none yet, and Madaba has none filed under it. Open-data entries are not field-checked, and most parks lack mapped paths.
+- Elevation comes from a 90 m DEM: approximate climb on short steep trails, and none for parks. Phone altitude is noisy; climb shows only when it was recorded.
+- Route following is a context aid: no rerouting, no turn instructions, and a 60 m off-route threshold that GPS error can trip in canyons or under trees.
+- Real-device testing is still needed for GPS accuracy, battery, wake lock, the share sheet and photo orientation on iOS and Android.
+
+## Validation
+
+- `npm run validate`: reviewed places, weather references and Jordan places.
+- `npm test`: includes `tests/domain/jordan-platform.test.ts`.
+- `npm run eval`
+- `npm run build`
+- `node scripts/v26-jordan-qa.mjs`, against a production build, covering:
+  - Irbid planning and Featured;
+  - trail details and Save;
+  - Explore near Aqaba, filters and saved;
+  - the outside-Jordan message;
+  - Ask;
+  - Follow Route live and recap;
+  - Share Studio exports (light, dark and no photo; 0.9, 6.01, 7.2 and 12.42 km; over 100 minutes; with and without climb), in English and Arabic at 320, 390, 430 and 1440 px.

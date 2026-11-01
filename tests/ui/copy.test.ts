@@ -5,6 +5,7 @@ import { askCopy, shellCopy } from "../../src/lib/copy/shell.ts";
 import { gpsQualityCopy, shareCopy, trackCopy } from "../../src/lib/copy/track.ts";
 import { onboardingCopy, profileCopy, progressCopy } from "../../src/lib/copy/profile.ts";
 import { forecastCopy, toolsCopy } from "../../src/lib/copy/tools.ts";
+import { exploreCopy, followCopy, placeCopy, studioCopy } from "../../src/lib/copy/explore.ts";
 import { arabicCount, tr, translator } from "../../src/lib/i18n.ts";
 
 const dictionaries = {
@@ -19,11 +20,15 @@ const dictionaries = {
   onboardingCopy,
   toolsCopy,
   forecastCopy,
+  exploreCopy,
+  placeCopy,
+  followCopy,
+  studioCopy,
 };
 const placeholders = (s: string) => [...s.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort();
 // Brand and format tokens that are legitimately identical in both languages.
 // The language switch is labelled in the language it switches to.
-const sameInBoth = new Set(["gpx", "switchLanguage", "languageName"]);
+const sameInBoth = new Set(["gpx", "switchLanguage", "languageName", "approx"]);
 
 test("Every UI string has polished English and Arabic with matching placeholders", () => {
   for (const [name, dict] of Object.entries(dictionaries))

@@ -155,7 +155,7 @@ export function PlaceSheet({
           <div>
             <dt>{p("climb")}</dt>
             <dd className="num">
-              <bdi>+{summary.elevationGainM} m</bdi>
+              <bdi>+{summary.elevationGainM} {ar ? "م" : "m"}</bdi>
             </dd>
           </div>
           <div>

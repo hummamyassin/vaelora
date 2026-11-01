@@ -4,6 +4,26 @@ All notable changes to VAELORA are recorded here. The format follows [Keep a Cha
 
 Earlier milestones (V1 to V2.4) are documented in [`docs/`](docs/); this file starts with the first tagged release.
 
+## [Unreleased] - Jordan-wide outdoor platform (draft, branch feature/jordan-wide-outdoor-platform)
+
+### Added
+
+- Jordan-wide planning coverage from one boundary module, with governorate labels; weather reference points in every governorate.
+- 19 open-data places and trails (RSCN reserves, town parks, Dana and Mujib trails, Wadi al-Hasa, four Jordan Trail sections), with validated provenance; 30 curated places in total.
+- Explore: Near Me Now ranked by conditions, the library with simple filters, saved places and honest empty states.
+- Route details: labelled distance, time, climb and difficulty estimates, route shape, weather fit with best window or tomorrow, route sketch and elevation profile.
+- Follow Route: planned line, on/off-route context and distance left while the screen is on.
+- Share Studio: a 9:16 story over the user's own photo with platinum (run) or olive (walk) route light, compact metrics and the V signature, processed locally.
+
+### Changed
+
+- Home, search, Featured, maps, onboarding and copy describe and serve all of Jordan; Featured follows the planned area.
+- Ask VAELORA grounds on Jordan coverage and refuses unsupported claims about trails.
+
+### Known limitations
+
+- Foreground-only web GPS, including route following; uneven curated coverage (none yet in Mafraq); open-data entries are not field-checked; elevation is approximate.
+
 ## [2.5.0] - 2026-10-26
 
 The modern fitness experience release. VAELORA moves from a planning website to a fitness product built around the VAELORA V icon, and becomes more dependable while you are actually outdoors.

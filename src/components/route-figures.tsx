@@ -68,7 +68,7 @@ export function ElevationProfile({ profile, locale, label }: { profile: [number,
           textAnchor={i === 0 ? "start" : i === 2 ? "end" : "middle"}
           className="elevation-tick num"
         >
-          {numberText(locale, t, 1)} km
+          {numberText(locale, t, 1)} {locale === "ar" ? "كم" : "km"}
         </text>
       ))}
     </svg>

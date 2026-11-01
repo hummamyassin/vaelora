@@ -12,6 +12,17 @@ coordinates, and do not alter original history. GPX retains explicit confirmatio
 See [V2.3 details and limitations](v23.md). Public geocoder traffic requires
 deployment-wide limits/provider review before scaling; v2.5.0 adds the edge rule below.
 
+## Jordan-wide amendment (feature branch, not deployed)
+
+Planning, weather, search and discovery cover Jordan through `src/lib/jordan.ts`; cells stay
+0.02° and the server still receives only cells, never precise GPS. Photon search is bounded to
+Jordan and foreign results are dropped. Curated route geometry is static (`public/routes/`),
+fetched only for the trail being viewed or followed. Share Studio photos are decoded and drawn in
+the browser and are never uploaded, sent to AI or stored; exports reuse the 300 m endpoint
+trimming. Discovery evaluates at most 8 places per request to bound weather calls. Ask is
+instructed never to assert trail existence, surface, lighting, safety, water, opening status or
+current conditions without tool data. See [Jordan-wide platform](jordan-platform.md).
+
 ## Readiness
 
 Deployed to production as v2.5.0 (26 October 2026, [release notes](releases/v2.5.0.md)) for a small public portfolio. Public AI stays in the on-device Ask mode until the edge rule below is published and verified and `VAELORA_AI_PUBLIC_ENABLED=true` is set. The firewall rule and production environment variables are configured in the Vercel dashboard, outside this repository.

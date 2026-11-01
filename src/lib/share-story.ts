@@ -68,16 +68,17 @@ export function drawStory(c: CanvasRenderingContext2D, model: StoryModel, assets
 
   // Readability: a soft, local scrim behind the overlay only, stronger on bright photos.
   const light = assets.photo ? brightness(c, L.box) : 0;
-  const strength = assets.photo ? 0.18 + 0.32 * Math.min(1, Math.max(0, (light - 0.25) / 0.5)) : 0;
+  const strength = assets.photo ? 0.08 + 0.2 * Math.min(1, Math.max(0, (light - 0.3) / 0.45)) : 0;
   if (strength > 0) {
     const cx = L.box.x + L.box.width / 2,
       cy = L.box.y + L.box.height / 2;
-    const r = Math.max(L.box.width, L.box.height) * 0.75;
+    const r = Math.max(L.box.width, L.box.height) * 0.62;
     c.save();
     c.translate(cx, cy);
     c.scale(L.box.width / Math.max(L.box.width, L.box.height), L.box.height / Math.max(L.box.width, L.box.height));
-    const g = c.createRadialGradient(0, 0, r * 0.2, 0, 0, r);
+    const g = c.createRadialGradient(0, 0, r * 0.15, 0, 0, r);
     g.addColorStop(0, `rgba(6,7,9,${strength})`);
+    g.addColorStop(0.6, `rgba(6,7,9,${strength * 0.45})`);
     g.addColorStop(1, "rgba(6,7,9,0)");
     c.fillStyle = g;
     c.fillRect(-r, -r, r * 2, r * 2);
@@ -85,6 +86,7 @@ export function drawStory(c: CanvasRenderingContext2D, model: StoryModel, assets
   }
 
   // Route: halo, glow, metallic body, bright core. Never a map.
+  let startAnchor: { x: number; y: number; dx: number; dy: number } | null = null;
   if (model.route && L.route) {
     const { paths } = model.route;
     const flat = paths.flat();
@@ -102,6 +104,14 @@ export function drawStory(c: CanvasRenderingContext2D, model: StoryModel, assets
     c.lineJoin = "round";
     c.lineCap = "round";
     const s = L.scale;
+    if (light > 0.55) {
+      c.strokeStyle = "rgba(10,12,16,0.28)";
+      c.lineWidth = 12 * s;
+      c.shadowColor = "rgba(10,12,16,0.35)";
+      c.shadowBlur = 10 * s;
+      trace();
+      c.stroke();
+    }
     for (const [color, width, blur] of [
       [p.halo, 26 * s, 28 * s],
       [p.glow, 14 * s, 16 * s],
@@ -120,6 +130,13 @@ export function drawStory(c: CanvasRenderingContext2D, model: StoryModel, assets
     // Start: a filled dot; end: a ring.
     const first = paths[0][0],
       last = paths.at(-1)!.at(-1)!;
+    const cx = flat.reduce((a, q) => a + q[0], 0) / flat.length,
+      cy = flat.reduce((a, q) => a + q[1], 0) / flat.length;
+    let dx = first[0] - cx,
+      dy = first[1] - cy;
+    const len = Math.hypot(dx, dy) || 1;
+    [dx, dy] = len < 1e-6 ? [-0.7, -0.7] : [dx / len, dy / len];
+    startAnchor = { x: ox + first[0] * k, y: oy + first[1] * k, dx, dy };
     c.save();
     c.shadowColor = "rgba(0,0,0,0.45)";
     c.shadowBlur = 8 * s;
@@ -136,17 +153,32 @@ export function drawStory(c: CanvasRenderingContext2D, model: StoryModel, assets
   }
 
   // Shadowed drawing for text and glyphs over any photo.
+  // Two shadows: a tight edge for crispness and a soft lift for busy photos.
   const shadowed = (draw: () => void) => {
     c.save();
-    c.shadowColor = "rgba(0,0,0,0.5)";
-    c.shadowBlur = 14 * L.scale;
+    c.shadowColor = "rgba(0,0,0,0.45)";
+    c.shadowBlur = 18 * L.scale;
     c.shadowOffsetY = 2 * L.scale;
+    draw();
+    c.shadowColor = "rgba(0,0,0,0.35)";
+    c.shadowBlur = 3 * L.scale;
+    c.shadowOffsetY = 1 * L.scale;
     draw();
     c.restore();
   };
   const icon = L.icon.size;
-  const iconX = L.align === "right" ? L.box.x + L.box.width - icon : L.box.x;
-  const iconY = L.route ? L.route.y : L.distance.baseline - L.distance.size * 0.8 - icon - 12 * L.scale;
+  const edge = 36;
+  let iconX = L.align === "right" ? L.box.x + L.box.width - icon : L.box.x,
+    iconY = L.distance.baseline - L.distance.size * 0.8 - icon - 12 * L.scale;
+  if (startAnchor) {
+    const gap = 14 * L.scale;
+    const side = startAnchor.dx < 0 ? -1 : 1;
+    iconX = side < 0 ? startAnchor.x - gap - icon : startAnchor.x + gap;
+    if (iconX < edge || iconX + icon > STORY.width - edge) iconX = side < 0 ? startAnchor.x + gap : startAnchor.x - gap - icon;
+    iconX = Math.min(STORY.width - edge - icon, Math.max(edge, iconX));
+    const textTop = L.distance.baseline - L.distance.size * 0.8 - 8 * L.scale;
+    iconY = Math.max(edge, Math.min(startAnchor.y - icon / 2, textTop - icon));
+  }
   if (assets.icons.activity) shadowed(() => c.drawImage(assets.icons.activity!, iconX, iconY, icon, icon));
 
   // Distance, the hero figure. Latin digits and LTR in every language.
@@ -184,8 +216,9 @@ export function drawStory(c: CanvasRenderingContext2D, model: StoryModel, assets
   c.font = `650 ${size}px ${latin}`;
   const widths = items.map(([, text]) => glyph + gap + c.measureText(text).width);
   const rowW = widths.reduce((a, b) => a + b, 0) + spacing * (items.length - 1);
-  let x = L.align === "left" ? L.box.x : L.align === "right" ? L.box.x + L.box.width - rowW : L.box.x + (L.box.width - rowW) / 2;
+  const rowX = L.align === "left" ? L.box.x : L.align === "right" ? L.box.x + L.box.width - rowW : L.box.x + (L.box.width - rowW) / 2;
   shadowed(() => {
+    let x = rowX;
     items.forEach(([img, text], i) => {
       if (img) c.drawImage(img, x, L.metrics.baseline - glyph * 0.84, glyph, glyph);
       c.fillStyle = "#f2f4f6";
