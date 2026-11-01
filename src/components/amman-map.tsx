@@ -5,7 +5,7 @@ import * as maplibregl from "../lib/maplibre";
 import type { Map as MapLibreMap, Marker, StyleSpecification } from "maplibre-gl";
 import type { MatchView } from "./types";
 import { areaName, t, type Locale } from "../lib/i18n";
-import { coverage } from "../lib/coverage";
+import { JORDAN_DEFAULT_VIEW } from "../lib/jordan";
 import {useMapLabels} from "./use-map-labels";
 
 interface AmmanMapProps {
@@ -36,11 +36,11 @@ export function ActivityMap({ matches, selectedAreaId, onSelect, locale = "en" }
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
-    const center = coverage.cities[0].center;
+    const center = JORDAN_DEFAULT_VIEW.center;
     const style = structuredClone(mapStyle);
     if (locale === "ar") (style.sources.osm as maplibregl.RasterSourceSpecification).attribution = '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">مساهمو OpenStreetMap</a>';
     let map: MapLibreMap;
-    try { map = new maplibregl.Map({ container: containerRef.current, style, center: [center.longitude, center.latitude], zoom: 10.7, minZoom: 3, maxZoom: 17, attributionControl: false, locale: { "NavigationControl.ZoomIn": t(locale,"zoomIn"), "NavigationControl.ZoomOut": t(locale,"zoomOut"), "AttributionControl.ToggleAttribution": t(locale,"attribution"), "Map.Title": t(locale,"map") } }); }
+    try { map = new maplibregl.Map({ container: containerRef.current, style, center: [center.longitude, center.latitude], zoom: JORDAN_DEFAULT_VIEW.zoom, minZoom: 3, maxZoom: 17, attributionControl: false, locale: { "NavigationControl.ZoomIn": t(locale,"zoomIn"), "NavigationControl.ZoomOut": t(locale,"zoomOut"), "AttributionControl.ToggleAttribution": t(locale,"attribution"), "Map.Title": t(locale,"map") } }); }
     catch { requestAnimationFrame(() => setFailed(true)); return; }
     map.on("error", () => setFailed(true));
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");

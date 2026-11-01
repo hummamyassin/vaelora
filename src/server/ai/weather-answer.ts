@@ -7,7 +7,7 @@ import {
   activityOutlook,
   placeScore,
 } from "../../domain/recommendation/score.ts";
-import { activityAreas } from "../../data/activity-areas.ts";
+import { placeById } from "../../data/outdoor-places.ts";
 import { bandMatches } from "../../domain/recommendation/recommend.ts";
 import type { Match } from "../../domain/recommendation/types.ts";
 import { areaName } from "../../lib/i18n.ts";
@@ -158,7 +158,7 @@ export async function answerWeather(
           const candidates: Match[] = [];
           for (const weather of data.weather) {
             if (!weather.result.ok) continue;
-            const place = activityAreas.find((a) => a.id === weather.areaId)!;
+            const place = placeById(weather.areaId)!;
             const fit = place.suitability[activity];
             if (fit !== "suitable" && fit !== "limited") continue;
             const placeOutlook = activityOutlook(
@@ -227,8 +227,8 @@ export async function answerWeather(
   if (!intent.weatherAreaIds?.length && !context)
     statements.unshift(
       text(
-        "Using Central Amman by default.",
-        "تُستخدم منطقة وسط عمّان افتراضيًا.",
+        "Using Central Amman by default. Name a town or use your location for elsewhere in Jordan.",
+        "تُستخدم منطقة وسط عمّان افتراضيًا. اذكر مدينة أو استخدم موقعك لمكان آخر في الأردن.",
       ),
     );
   return {

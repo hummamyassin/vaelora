@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { distanceKm, forecastHours, orderNearby } from "../../src/lib/geography.ts";
-import { coverage } from "../../src/lib/coverage.ts";
+import { outdoorPlaces } from "../../src/data/outdoor-places.ts";
 import { messages, areaName, areaDescription } from "../../src/lib/i18n.ts";
 import { activityAreas } from "../../src/data/activity-areas.ts";
 import { parseIntent, resolveIntent } from "../../src/server/ai/intent.ts";
@@ -10,9 +10,11 @@ import { createAgentHandler } from "../../src/server/ai/http.ts";
 import { evaluationClock, evaluationPipeline, replayModel } from "../../scripts/agent-evaluation.ts";
 import cases from "../../docs/evaluation/agent/cases.json" with { type: "json" };
 
-test("V1.1 coverage maps each production ID once and every area has Arabic caveats", () => {
-  assert.deepEqual([...coverage.cities.flatMap(c=>c.areaIds)].sort(), activityAreas.map(a=>a.id).sort());
-  for (const area of activityAreas) {
+test("Curated places include every reviewed ID once and every place has Arabic copy", () => {
+  const ids = outdoorPlaces.map(p=>p.id);
+  assert.equal(new Set(ids).size, ids.length);
+  for (const area of activityAreas) assert.equal(outdoorPlaces.find(p=>p.id===area.id)?.tier, "reviewed");
+  for (const area of outdoorPlaces) {
     assert.match(areaName("ar",area), /[\u0600-\u06ff]/);
     assert.match(areaDescription("ar",area), /[\u0600-\u06ff]/);
     assert.equal(areaName("en",area),area.name);

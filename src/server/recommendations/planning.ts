@@ -34,7 +34,7 @@ export function parsePlanningRequest(value: unknown): PlanningRequest {
     new Set(x.areaIds).size !== x.areaIds.length ||
     x.areaIds.some((id) => !weatherAreas.some((a) => a.id === id)) ||
     x.areaIds.length < (x.mode === "compare" ? 2 : 1) ||
-    x.areaIds.length > (x.mode === "outlook" ? 1 : x.mode === "compare" ? 3 : 9)
+    x.areaIds.length > (x.mode === "outlook" ? 1 : x.mode === "compare" ? 3 : 12)
   )
     throw new InvalidRecommendationRequest("Invalid planning request");
   return structuredClone(x);

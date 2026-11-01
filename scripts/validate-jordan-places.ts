@@ -92,6 +92,7 @@ export function validateJordanPlaces(
     if (record(p.route)) {
       const route = p.route;
       if (!["loop", "out-and-back", "point-to-point", "line"].includes(String(route.shape))) errors.push(`${id}: invalid route shape`);
+      if (route.summaryId !== id) errors.push(`${id}: route summary and geometry must share the place ID`);
       if (route.shape === "point-to-point" && (!localized(route.from) || !localized(route.to))) errors.push(`${id}: point-to-point route needs bilingual endpoints`);
       const s = summaries[String(route.summaryId)];
       if (!record(s)) {

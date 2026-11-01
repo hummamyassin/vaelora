@@ -5,12 +5,12 @@ import { validCoordinates, type Coordinates } from "./geography.ts";
  * The one source of truth for VAELORA's planning coverage: Jordan. Planning,
  * weather, discovery and search are scoped by these helpers; recording is not.
  */
-export const JORDAN_BOUNDS = { west: 34.88, south: 29.18, east: 39.31, north: 33.38 } as const;
+export const JORDAN_BOUNDS = { west: 34.88, south: 29.15, east: 39.33, north: 33.40 } as const;
 /** A country-level view that fits all of Jordan, Aqaba to the Yarmouk. */
 export const JORDAN_DEFAULT_VIEW = {
   center: { latitude: 31.25, longitude: 36.4 },
   zoom: 6.2,
-  bounds: [[34.9, 29.15], [39.3, 33.4]] as [[number, number], [number, number]],
+  bounds: [[34.9, 29.15], [39.33, 33.4]] as [[number, number], [number, number]],
 } as const;
 
 function inRing(point: Coordinates, ring: Ring) {

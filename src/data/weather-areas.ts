@@ -298,6 +298,8 @@ export function searchWeatherAreas(query: string) {
     ),
   );
 }
+/** One forecast reference per governorate, for the country-wide regional map. */
+export const regionalReferenceIds = ["amman-central", "irbid", "ajloun", "jerash", "mafraq", "zarqa", "salt", "madaba", "karak", "tafilah", "maan", "aqaba"] as const;
 /** The closest reference point for a location in Jordan; null outside Jordan or far from any. */
 export function nearestWeatherArea(point: Coordinates) {
   if (!isInsideJordan(point)) return null;

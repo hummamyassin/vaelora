@@ -2,7 +2,7 @@
 import { useRef, useState, type FormEvent } from "react";
 import { IconAsk, IconCheck, IconDevice, IconLock, IconSend } from "./icons";
 import { ScoreRing } from "./score-ring";
-import { activityAreas } from "../data/activity-areas";
+import { outdoorPlaces } from "../data/outdoor-places";
 import { nearestWeatherArea, weatherAreas } from "../data/weather-areas";
 import { localActivityAnswer } from "../domain/tracking/summary";
 import { loadActivities } from "../lib/activity-store";
@@ -96,7 +96,7 @@ export function AskPanel({
         preferences,
         ...(point
           ? {
-              placeIds: activityAreas
+              placeIds: outdoorPlaces
                 .filter((a) => a.verificationStatus !== "unverified" && distanceKm(point, a) <= radius)
                 .map((a) => a.id),
             }

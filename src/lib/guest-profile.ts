@@ -87,4 +87,5 @@ export function clearPreferences(storage: Pick<Storage, "removeItem">) {
 export function clearAppPreferences(storage: Pick<Storage, "removeItem">) {
   clearPreferences(storage);
   storage.removeItem("vaelora:saved-areas");
+  storage.removeItem("vaelora:saved-places");
 }
