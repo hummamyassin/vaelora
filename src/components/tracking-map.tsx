@@ -7,16 +7,22 @@ import { routeSegments } from "../domain/tracking/export";
 import { translator, type Locale } from "../lib/i18n";
 import { trackCopy } from "../lib/copy/track";
 import {useMapLabels} from "./use-map-labels";
+import { JORDAN_DEFAULT_VIEW } from "../lib/jordan";
 export function TrackingMap({
   points,
   revision,
   finished,
   locale,
+  planned = null,
+  plannedLabel,
 }: {
   points: readonly GPSPoint[];
   revision: number;
   finished: boolean;
   locale: Locale;
+  /** A followed route's planned line, drawn under the recorded route. */
+  planned?: readonly (readonly [number, number])[] | null;
+  plannedLabel?: string;
 }) {
   const container = useRef<HTMLDivElement>(null),
     mapRef = useRef<ml.Map | null>(null),
@@ -44,8 +50,8 @@ export function TrackingMap({
           },
           layers: [{ id: "osm", type: "raster", source: "osm" }],
         },
-        center: [35.9, 31.97],
-        zoom: 12,
+        center: [JORDAN_DEFAULT_VIEW.center.longitude, JORDAN_DEFAULT_VIEW.center.latitude],
+        zoom: JORDAN_DEFAULT_VIEW.zoom,
         attributionControl: { compact: false },
       });
     } catch {
@@ -58,6 +64,25 @@ export function TrackingMap({
     map.on("style.load", () => {
       const tokens = getComputedStyle(document.documentElement);
       const color = (name: string) => tokens.getPropertyValue(name).trim();
+      map.addSource("planned", {
+        type: "geojson",
+        data: { type: "FeatureCollection", features: [] },
+      });
+      // The followed route: a dashed guide on a white casing, beneath the live line.
+      map.addLayer({
+        id: "planned-casing",
+        type: "line",
+        source: "planned",
+        paint: { "line-color": "#ffffff", "line-width": 8, "line-opacity": 0.85 },
+        layout: { "line-cap": "round", "line-join": "round" },
+      });
+      map.addLayer({
+        id: "planned-line",
+        type: "line",
+        source: "planned",
+        paint: { "line-color": color("--route-planned") || "#2f343c", "line-width": 4, "line-opacity": 0.95, "line-dasharray": [2, 1.4] },
+        layout: { "line-cap": "round", "line-join": "round" },
+      });
       map.addSource("route", {
         type: "geojson",
         data: { type: "FeatureCollection", features: [] },
@@ -109,6 +134,21 @@ export function TrackingMap({
       mapRef.current = null;
     };
   }, []);
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!ready || !map) return;
+    container.current?.parentElement?.setAttribute("data-planned", String(planned?.length ?? 0));
+    (map.getSource("planned") as ml.GeoJSONSource).setData({
+      type: "FeatureCollection",
+      features: planned && planned.length > 1 ? [{ type: "Feature", properties: {}, geometry: { type: "LineString", coordinates: planned.map((q) => [q[0], q[1]]) } }] : [],
+    });
+    // Before the first fix, frame the planned route.
+    if (planned && planned.length > 1 && !points.length) {
+      const bounds = new ml.LngLatBounds();
+      planned.forEach((q) => bounds.extend([q[0], q[1]]));
+      map.fitBounds(bounds, { padding: 40, maxZoom: 15, duration: 0 });
+    }
+  }, [planned, ready, points.length]);
   useEffect(() => {
     const map = mapRef.current;
     if (!ready || !map) return;
@@ -174,6 +214,7 @@ export function TrackingMap({
       <span className="track-map-key">
         <span><i data-kind="start" />{c("mapStart")}</span>
         <span><i data-kind="end" />{c("mapPosition")}</span>
+        {planned && plannedLabel && <span><i data-kind="planned" />{plannedLabel}</span>}
         <span className="track-map-key-text">{c("mapNoSnap")}</span>
       </span>
       {failed && <p className="track-map-error">{c("mapError")}</p>}

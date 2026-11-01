@@ -3,7 +3,7 @@ import type { Dictionary } from "../i18n.ts";
 export const homeCopy = {
   greeting: ["Ready, {name}?", "مستعد يا {name}؟"],
   today: ["Today", "اليوم"],
-  greaterAmman: ["Greater Amman", "عمّان الكبرى"],
+  jordan: ["Jordan", "الأردن"],
   planLabel: ["Today’s outing plan", "خطة نشاطك اليوم"],
   activity: ["Activity", "النشاط"],
   walk: ["Walk", "مشي"],
@@ -91,18 +91,18 @@ export const homeCopy = {
     "Your precise position stays on this device. Forecasts use an approximate 2 km area.",
     "يبقى موقعك الدقيق على هذا الجهاز، وتستخدم التوقعات منطقة تقريبية بنحو 2 كم.",
   ],
-  searchLabel: ["Search an area or place in Amman", "ابحث عن منطقة أو مكان في عمّان"],
-  searchPlaceholder: ["Search an area or place", "ابحث عن منطقة أو مكان"],
+  searchLabel: ["Search a city, town or place in Jordan", "ابحث عن مدينة أو بلدة أو مكان في الأردن"],
+  searchPlaceholder: ["City, town or place in Jordan", "مدينة أو بلدة أو مكان في الأردن"],
   search: ["Search", "بحث"],
   searchNote: [
     "Search text is sent to Photon (OpenStreetMap). No autocomplete.",
     "يُرسل نص البحث إلى Photon (OpenStreetMap) دون إكمال تلقائي.",
   ],
   searchOutside: [
-    "Those results are outside VAELORA’s Greater Amman coverage.",
-    "هذه النتائج خارج نطاق VAELORA في عمّان الكبرى.",
+    "Those results are outside Jordan. VAELORA currently supports outdoor planning inside Jordan.",
+    "هذه النتائج خارج الأردن. تغطي VAELORA حاليًا التخطيط للأنشطة الخارجية داخل الأردن.",
   ],
-  searchEmpty: ["No match in the service area. Try another name.", "لا نتيجة ضمن نطاق الخدمة. جرّب اسمًا آخر."],
+  searchEmpty: ["No match in Jordan. Try another name.", "لا نتيجة داخل الأردن. جرّب اسمًا آخر."],
   searchError: [
     "Search is unavailable or busy. Try again, or choose an area below.",
     "البحث غير متاح أو مشغول. حاول مجددًا أو اختر منطقة أدناه.",
@@ -125,9 +125,10 @@ export const homeCopy = {
   supported: ["Source-supported", "مدعوم بمصادر"],
   placeFit: ["place fit", "ملاءمة"],
   noneInRadius: [
-    "No reviewed places in this radius. Your area’s conditions still apply. Try 10 km or fewer preferences.",
-    "لا أماكن مراجعة ضمن هذا النطاق. تبقى ظروف منطقتك صالحة. جرّب 10 كم أو تفضيلات أقل.",
+    "No curated places in this radius. Your area’s conditions still apply. Try a wider radius or fewer preferences.",
+    "لا أماكن مختارة ضمن هذا النطاق. تبقى ظروف منطقتك صالحة. جرّب نطاقًا أوسع أو تفضيلات أقل.",
   ],
+  openData: ["Open data", "بيانات مفتوحة"],
   conditionsFailed: ["Conditions couldn’t load.", "تعذّر تحميل الظروف."],
   geoDenied: [
     "Location permission was declined. Search or choose an area.",
@@ -140,16 +141,27 @@ export const homeCopy = {
     "دقة GPS منخفضة هنا. حاول في مكان مكشوف أو اختر منطقة.",
   ],
   geoOutside: [
-    "You’re outside VAELORA’s Amman service area. Choose a supported area to plan.",
-    "أنت خارج نطاق خدمة VAELORA في عمّان. اختر منطقة مدعومة للتخطيط.",
+    "VAELORA currently supports outdoor planning inside Jordan. You can still record a free walk or run.",
+    "تغطي VAELORA حاليًا التخطيط للأنشطة الخارجية داخل الأردن. ما زال بإمكانك تسجيل مشي أو جري حر.",
   ],
   areaFacts: [
-    "Weather is evaluated for this area. Terrain, surface and access are only known for reviewed places.",
-    "تُقيَّم الظروف لهذه المنطقة. التضاريس والسطح وإمكانية الدخول معروفة للأماكن المراجعة فقط.",
+    "Weather is evaluated for this area. Terrain, surface and access are only described for curated places, and only where sources document them.",
+    "تُقيَّم الظروف لهذه المنطقة. التضاريس والسطح وإمكانية الدخول موصوفة للأماكن المختارة فقط، وحيثما توثّقها المصادر.",
   ],
   // Featured
-  featured: ["Reviewed places", "أماكن مراجعة"],
-  featuredNote: ["Evidence-backed profiles", "ملفات مدعومة بالأدلة"],
+  featured: ["Featured near you", "مختارات بالقرب منك"],
+  featuredNote: ["Curated places within 40 km", "أماكن مختارة ضمن 40 كم"],
+  featuredChoose: [
+    "Choose an area or use your location to see curated places near it.",
+    "اختر منطقة أو استخدم موقعك لترى الأماكن المختارة بالقرب منها.",
+  ],
+  featuredNone: [
+    "No curated places within 40 km yet. Weather planning and free tracking still work here.",
+    "لا توجد أماكن مختارة ضمن 40 كم بعد. يبقى التخطيط حسب الطقس والتسجيل الحر متاحين هنا.",
+  ],
+  exploreAll: ["Explore places across Jordan", "استكشف الأماكن في أنحاء الأردن"],
+  savedPlaces: ["Your saved places", "أماكنك المحفوظة"],
+  savedGood: ["Good conditions today", "ظروف جيدة اليوم"],
   openProfile: ["Open profile", "افتح الملف"],
   // Place sheet
   terrain: ["Terrain", "التضاريس"],
@@ -173,11 +185,11 @@ export const homeCopy = {
   mapTitleGps: ["Places near you", "أماكن قريبة منك"],
   mapLegendSelected: ["Selected place", "المكان المحدد"],
   mapLegendOrigin: ["Your reference point", "نقطتك المرجعية"],
-  mapLegendScore: ["Reviewed place, place fit", "مكان مراجع وملاءمته"],
+  mapLegendScore: ["Curated place, place fit", "مكان مختار وملاءمته"],
   mapLegendCluster: ["Group of places", "مجموعة أماكن"],
   regionalMap: ["Regional forecast map", "خريطة توقعات المناطق"],
   mapEmpty: [
-    "No reviewed places in range for this plan. The area forecast still applies.",
-    "لا أماكن مراجعة ضمن النطاق لهذه الخطة، وتبقى توقعات المنطقة صالحة.",
+    "No curated places in range for this plan. The area forecast still applies.",
+    "لا أماكن مختارة ضمن النطاق لهذه الخطة، وتبقى توقعات المنطقة صالحة.",
   ],
 } as const satisfies Dictionary;

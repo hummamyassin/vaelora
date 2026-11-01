@@ -90,6 +90,8 @@
   --map-verified: var(--fair-fill);
   --route: #ff5a1f;
   --route-outline: #ffffff;
+
+  --route-planned: #2f343c;
   --route-start: #1a9b4b;
   --route-finish: #0e1013;
   --on-strong: #ffffff;
@@ -210,6 +212,8 @@
     --map-dynamic: #f4f5f2;
     --route: #ff6a2e;
     --route-outline: #08090b;
+
+    --route-planned: #2f343c;
     --route-start: #4ad37a;
     --route-finish: #f4f5f2;
     --on-strong: #0e1013;
@@ -264,6 +268,8 @@
   --map-dynamic: #f4f5f2;
   --route: #ff6a2e;
   --route-outline: #08090b;
+
+  --route-planned: #2f343c;
   --route-start: #4ad37a;
   --route-finish: #f4f5f2;
   --on-strong: #0e1013;

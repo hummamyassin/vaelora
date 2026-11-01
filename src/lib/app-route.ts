@@ -5,6 +5,7 @@
  */
 export const screens = [
   "home",
+  "explore",
   "map",
   "track",
   "compare",
@@ -17,16 +18,19 @@ export type SheetName = (typeof sheets)[number];
 export interface AppRoute {
   screen: Screen;
   sheet: SheetName | null;
-  /** Reviewed place profile open over Home. */
+  /** Curated place profile open over Home or Explore. */
   place: string | null;
   /** Saved activity recap open on Track. */
   activity: string | null;
+  /** Curated route being followed on Track (a public place ID, never coordinates). */
+  follow: string | null;
 }
 export const homeRoute: AppRoute = {
   screen: "home",
   sheet: null,
   place: null,
   activity: null,
+  follow: null,
 };
 const idPattern = /^[a-zA-Z0-9-]{1,80}$/;
 const validId = (v: string | null) => (v && idPattern.test(v) ? v : null);
@@ -44,16 +48,18 @@ export function parseRoute(hash: string): AppRoute {
     sheet: (sheets as readonly string[]).includes(sheet ?? "")
       ? (sheet as SheetName)
       : null,
-    // Place profiles live on Home and recaps on Track; anything else is dropped.
-    place: screen === "home" ? validId(params.get("place")) : null,
+    // Place profiles live on Home and Explore, recaps and followed routes on Track.
+    place: screen === "home" || screen === "explore" ? validId(params.get("place")) : null,
     activity: screen === "track" ? validId(params.get("activity")) : null,
+    follow: screen === "track" ? validId(params.get("follow")) : null,
   };
 }
 export function formatRoute(route: AppRoute) {
   const params = new URLSearchParams();
-  if (route.screen === "home" && route.place) params.set("place", route.place);
+  if ((route.screen === "home" || route.screen === "explore") && route.place) params.set("place", route.place);
   if (route.screen === "track" && route.activity)
     params.set("activity", route.activity);
+  if (route.screen === "track" && route.follow) params.set("follow", route.follow);
   if (route.sheet) params.set("sheet", route.sheet);
   const query = params.toString();
   return `#/${route.screen}${query ? `?${query}` : ""}`;
@@ -76,6 +82,7 @@ export function nextRoute(current: AppRoute, change: Partial<AppRoute>): AppRout
           : screenChanged
             ? null
             : current.activity,
+      follow: "follow" in change ? (change.follow ?? null) : screenChanged ? null : current.follow,
     }),
   );
 }

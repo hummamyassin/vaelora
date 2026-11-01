@@ -13,7 +13,7 @@ const shownPace = (seconds: number | null) => shown(paceLabel(seconds));
 const km = (m: number) => (m / 1000).toFixed(2);
 const dayMs = 86400000;
 const ammanDay = (ms: number) => Math.floor((ms + 10800000) / dayMs);
-/** Monday-to-Sunday days of the current Amman week with the distance finished on each, by activity. */
+/** Monday-to-Sunday days of the current Jordan-time week with the distance finished on each, by activity. */
 function weekDays(activities: readonly RecordedActivity[], now = Date.now()) {
   const today = ammanDay(now),
     start = today - ((new Date(today * dayMs).getUTCDay() + 6) % 7);

@@ -165,3 +165,27 @@ await Promise.all([
   write(apple, 180, "apple-touch-icon-180.png"),
 ]);
 console.log(`VAELORA icons written to ${OUT} from ${input}`);
+
+/**
+ * The share signature: the same V keyed out of the tile's dark ground (and
+ * above the stitch band) into a transparent white/platinum mark. Brightness
+ * keeps the V's own shading; nothing is redrawn.
+ */
+{
+  const top = Math.round(S * 0.15), bottom = Math.round(S * 0.79), left = Math.round(S * 0.27), right = Math.round(S * 0.92);
+  const w = right - left, h = bottom - top;
+  const mark = Buffer.alloc(w * h * 4);
+  for (let y = 0; y < h; y++)
+    for (let x = 0; x < w; x++) {
+      const i = ((y + top) * S + (x + left)) * 3, o = (y * w + x) * 4;
+      const lum = 0.3 * src[i] + 0.59 * src[i + 1] + 0.11 * src[i + 2];
+      const alpha = Math.max(0, Math.min(1, (lum - 62) / 48));
+      const v = Math.round(178 + 77 * Math.max(0, Math.min(1, (lum - 60) / 180)));
+      mark[o] = v;
+      mark[o + 1] = Math.round(v * 0.995);
+      mark[o + 2] = Math.min(255, Math.round(v * 1.01));
+      mark[o + 3] = Math.round(alpha * 255);
+    }
+  await sharp(mark, { raw: { width: w, height: h, channels: 4 } }).trim({ threshold: 1 }).png({ compressionLevel: 9 }).toFile("public/brand/v-mark.png");
+  console.log("Share signature written to public/brand/v-mark.png");
+}

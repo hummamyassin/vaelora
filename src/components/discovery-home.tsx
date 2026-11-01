@@ -15,8 +15,10 @@ import {
   IconWalk,
   IconWind,
 } from "./icons";
-import { activityAreas } from "../data/activity-areas";
+import { outdoorPlaces, placeById } from "../data/outdoor-places";
+import { featuredNear } from "../domain/discovery/library";
 import { weatherAreas } from "../data/weather-areas";
+import { IconBookmark, IconExplore } from "./icons";
 import { locationContext } from "../lib/dynamic-location";
 import { parsePlanPlace, planPlaceFor, planPlaceKey } from "../lib/plan-place";
 import { rankNearby } from "../domain/recommendation/nearby";
@@ -39,7 +41,6 @@ import type {
 } from "../domain/tracking/activity";
 import { LocationArt } from "./location-art";
 import { PersonalProgress } from "./personal-progress";
-import { Sheet } from "./app-dialog";
 import { Meteogram } from "./meteogram";
 import { ScoreRing, scoreTone as toneOf } from "./score-ring";
 import { planningState } from "../domain/recommendation/plan-state";
@@ -73,7 +74,6 @@ const ammanClock = (locale: Locale) => (value: string) =>
     minute: "2-digit",
     hour12: false,
   }).format(new Date(value));
-const featuredIds = ["sports-city", "king-hussein-park", "national-gallery-park"];
 
 export function DiscoveryMap({
   data,
@@ -140,9 +140,12 @@ export function DiscoveryMap({
             </div>
           </div>
           <p>{areaDescription(locale, place.area)}</p>
-          <p className="row-meta">
-            {label(locale, place.area.terrain)} · {place.area.surfaces.map((s) => label(locale, s)).join(" · ")}
-          </p>
+          {place.area.terrain !== "unknown" && (
+            <p className="row-meta">
+              {label(locale, place.area.terrain)}
+              {!place.area.surfaces.includes("unknown") && <> · {place.area.surfaces.map((s) => label(locale, s)).join(" · ")}</>}
+            </p>
+          )}
         </article>
       )}
       {data.places.length > 1 && (
@@ -182,6 +185,9 @@ export function DiscoveryHome({
   selectedPlace,
   onSelectPlace,
   onPlan,
+  onExplore,
+  savedIds = [],
+  planAt = null,
 }: {
   locale: Locale;
   activity: ActivityKind;
@@ -200,6 +206,10 @@ export function DiscoveryHome({
   selectedPlace: string | null;
   onSelectPlace: (id: string | null) => void;
   onPlan?: (plan: PlanSummary | null) => void;
+  onExplore?: () => void;
+  savedIds?: string[];
+  /** A request from a place sheet to plan around that place. */
+  planAt?: { latitude: number; longitude: number; name: string; nonce: number } | null;
 }) {
   const ar = locale === "ar",
     c = translator(homeCopy, locale);
@@ -219,14 +229,7 @@ export function DiscoveryHome({
     [failed, setFailed] = useState(false),
     [refreshFailed, setRefreshFailed] = useState(false),
     [refresh, setRefresh] = useState(0);
-  const selected =
-    selectedPlace && activityAreas.some((a) => a.id === selectedPlace)
-      ? selectedPlace
-      : null;
-  const [placeData, setPlaceData] = useState<DiscoveryResponse | null>(null),
-    [placeLoading, setPlaceLoading] = useState(false),
-    [placeFailed, setPlaceFailed] = useState(false),
-    [placeRetry, setPlaceRetry] = useState(0);
+  const selected = selectedPlace && placeById(selectedPlace) ? selectedPlace : null;
   // Request bookkeeping read by effects without re-triggering them.
   const lastKey = useRef(""),
     handledRefresh = useRef(0),
@@ -238,45 +241,6 @@ export function DiscoveryHome({
     setRefreshFailed(false);
     receivedAtRef.current = null;
   }
-  const selectedCell = selected
-    ? locationContext(activityAreas.find((a) => a.id === selected)!)?.cellId
-    : null;
-  useEffect(() => {
-    if (!selectedCell) return;
-    const controller = new AbortController();
-    queueMicrotask(() => {
-      setPlaceData(null);
-      setPlaceFailed(false);
-      setPlaceLoading(true);
-    });
-    void fetch("/api/discovery", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        cellId: selectedCell,
-        activity,
-        minutes,
-        radius: 3,
-        preferences,
-      }),
-      signal: controller.signal,
-    })
-      .then(async (r) => {
-        const x = await r.json();
-        if (!x.outlook) throw new Error();
-        return x as DiscoveryResponse;
-      })
-      .then((x) => {
-        if (!controller.signal.aborted) setPlaceData(x);
-      })
-      .catch(() => {
-        if (!controller.signal.aborted) setPlaceFailed(true);
-      })
-      .finally(() => {
-        if (!controller.signal.aborted) setPlaceLoading(false);
-      });
-    return () => controller.abort();
-  }, [selectedCell, activity, minutes, preferences, placeRetry]);
   // Expired conditions are withdrawn at render time, even if no refresh succeeds.
   const live = data && isWithinMaxAge(receivedAt, now) ? data : null;
   useEffect(() => {
@@ -435,6 +399,15 @@ export function DiscoveryHome({
     onSelectPlace(null);
     document.querySelector(".plan")?.scrollIntoView({ block: "start" });
   }
+  // A place sheet's "Plan here" arrives as a one-shot request.
+  const handledPlanAt = useRef(0);
+  useEffect(() => {
+    if (!planAt || planAt.nonce === handledPlanAt.current) return;
+    handledPlanAt.current = planAt.nonce;
+    queueMicrotask(() => choose(planAt, planAt.name, "manual"));
+    // choose() reads current state; the request itself is the trigger.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [planAt]);
   function locate() {
     setGeo("locating");
     if (!navigator.geolocation) {
@@ -533,9 +506,9 @@ export function DiscoveryHome({
           : planState === "location-unavailable"
             ? c("trackNoLocation")
             : c("trackDefault");
-  const featured = activityAreas.filter((a) => featuredIds.includes(a.id));
-  const detail = activityAreas.find((a) => a.id === selected);
-  const detailWeather = placeData?.places.find((p) => p.area.id === selected);
+  // Featured follows where the user is planning; never a fixed Amman list.
+  const featured = featuredNear(outdoorPlaces, point, activity);
+  const saved = savedIds.map((id) => placeById(id)).filter((p) => p !== null).slice(0, 3);
   const geoCopy: Record<string, string> = {
     denied: c("geoDenied"),
     timeout: c("geoTimeout"),
@@ -566,7 +539,7 @@ export function DiscoveryHome({
         <div className="plan-top">
           <span className="plan-place">
             <IconPin aria-hidden weight="fill" />
-            {name || c("greaterAmman")}
+            {name || c("jordan")}
           </span>
           {live && receivedAt !== null && (
             <span
@@ -796,7 +769,7 @@ export function DiscoveryHome({
                 <label className="near-radius">
                   <span className="sr-only">{c("radius")}</span>
                   <select className="input" value={radius} onChange={(e) => setRadius(+e.target.value)}>
-                    {[3, 5, 10].map((r) => (
+                    {[3, 5, 10, 25, 50].map((r) => (
                       <option key={r} value={r}>
                         {r} {ar ? "كم" : "km"}
                       </option>
@@ -861,7 +834,11 @@ export function DiscoveryHome({
                             <span className="row-meta">
                               <bdi className="num">{c("kmApprox", { n: numberText(locale, distanceKm(point, p.area), 1) })}</bdi>
                               {" · "}
-                              {p.area.verificationStatus === "verified" ? c("verified") : c("supported")}
+                              {placeById(p.area.id)?.tier === "open-data"
+                                ? c("openData")
+                                : p.area.verificationStatus === "verified"
+                                  ? c("verified")
+                                  : c("supported")}
                               {" · "}
                               {label(locale, p.fit)}
                             </span>
@@ -887,121 +864,79 @@ export function DiscoveryHome({
         )}
       </section>
 
+      {saved.length > 0 && (
+        <section className="section saved-places" aria-labelledby="saved-title">
+          <div className="section-head">
+            <h2 className="section-title" id="saved-title">
+              {c("savedPlaces")}
+            </h2>
+          </div>
+          <ul className="rows">
+            {saved.map((place) => {
+              const row = live?.places.find((x) => x.area.id === place.id);
+              return (
+                <li key={place.id}>
+                  <button className="row-btn" onClick={() => onSelectPlace(place.id)}>
+                    <IconBookmark aria-hidden weight="fill" className="row-icon" />
+                    <span className="row-main">
+                      <span className="row-title">{areaName(locale, place)}</span>
+                      <span className="row-meta">
+                        {ar ? place.locality.ar : place.locality.en}
+                        {point && <> · <bdi className="num">{c("kmApprox", { n: numberText(locale, distanceKm(point, place), 0) })}</bdi></>}
+                      </span>
+                      {row && (row.plan.status === "now" || row.plan.status === "later") && (
+                        <span className="tag" data-tone="good">
+                          {c("savedGood")}
+                        </span>
+                      )}
+                    </span>
+                    <IconNext className="row-chevron flip-rtl" aria-hidden />
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      )}
+
       <section className="section featured" aria-labelledby="featured-title">
         <div className="section-head">
           <h2 className="section-title" id="featured-title">{c("featured")}</h2>
-          <span className="section-note">{c("featuredNote")}</span>
+          {featured.length > 0 && <span className="section-note">{c("featuredNote")}</span>}
         </div>
-        <div className="featured-rail">
-          {featured.map((a) => (
-            <button className="featured-card" key={a.id} onClick={() => onSelectPlace(a.id)}>
-              <LocationArt
-                areaId={a.id}
-                locale={locale}
-                name={areaName(locale, a)}
-                environment={a.environment}
-              />
-              <span className="featured-foot">
-                <span>{label(locale, a.terrain)}</span>
-                <span className="featured-open">
-                  {c("openProfile")}
-                  <IconOpen aria-hidden className="flip-rtl" />
+        {featured.length > 0 ? (
+          <div className="featured-rail">
+            {featured.map((a) => (
+              <button className="featured-card" key={a.id} onClick={() => onSelectPlace(a.id)}>
+                <LocationArt
+                  areaId={a.id}
+                  locale={locale}
+                  name={areaName(locale, a)}
+                  environment={a.environment}
+                />
+                <span className="featured-foot">
+                  <span className="num">{point && c("kmApprox", { n: numberText(locale, distanceKm(point, a), 0) })}</span>
+                  <span className="featured-open">
+                    {c("openProfile")}
+                    <IconOpen aria-hidden className="flip-rtl" />
+                  </span>
                 </span>
-              </span>
-            </button>
-          ))}
-        </div>
+              </button>
+            ))}
+          </div>
+        ) : (
+          <p className="empty-line">{point ? c("featuredNone") : c("featuredChoose")}</p>
+        )}
+        {onExplore && (
+          <button className="btn btn-secondary btn-sm featured-explore" onClick={onExplore}>
+            <IconExplore aria-hidden />
+            {c("exploreAll")}
+          </button>
+        )}
       </section>
 
       <PersonalProgress activities={activities} locale={locale} onOpen={onOpen} />
 
-      {detail && (
-        <Sheet
-          title={areaName(locale, detail)}
-          close={() => onSelectPlace(null)}
-          closeLabel={ar ? "إغلاق" : "Close"}
-          className="place-sheet"
-        >
-          <LocationArt
-            areaId={detail.id}
-            locale={locale}
-            name={areaName(locale, detail)}
-            environment={detail.environment}
-          />
-          <p className="place-description">{areaDescription(locale, detail)}</p>
-          <dl className="place-facts">
-            <div>
-              <dt>{c("terrain")}</dt>
-              <dd>{label(locale, detail.terrain)}</dd>
-            </div>
-            <div>
-              <dt>{c("surface")}</dt>
-              <dd>{detail.surfaces.map((s) => label(locale, s)).join(" · ")}</dd>
-            </div>
-            <div>
-              <dt>{c("walkingFit")}</dt>
-              <dd>{label(locale, detail.suitability.walking)}</dd>
-            </div>
-            <div>
-              <dt>{c("runningFit")}</dt>
-              <dd>{label(locale, detail.suitability.running)}</dd>
-            </div>
-          </dl>
-          <div className="place-conditions">
-            {placeLoading ? (
-              <p role="status" className="row-meta">{c("checkingPlace")}</p>
-            ) : placeFailed ? (
-              <p role="status" className="notice" data-tone="danger">
-                {c("placeFailed")}{" "}
-                <button className="btn btn-secondary btn-sm" onClick={() => setPlaceRetry((n) => n + 1)}>
-                  {c("tryAgain")}
-                </button>
-              </p>
-            ) : placeData?.outlook.current ? (
-              <div className="place-now-row">
-                <ScoreRing
-                  score={placeData.outlook.current.score}
-                  label={c("scoreMeter", { n: placeData.outlook.current.score ?? "–" })}
-                />
-                <p>
-                  <span className="plan-label">{c("conditionsNow")}</span>
-                  <span className="place-now num">
-                    <bdi>{placeData.outlook.current.conditions.temperatureC ?? "–"}°C</bdi> · {c("wind")}{" "}
-                    <bdi>{c("kmh", { n: placeData.outlook.current.conditions.windKmh ?? "–" })}</bdi>
-                  </span>
-                </p>
-              </div>
-            ) : (
-              <p className="row-meta">{c("placeNoCurrent")}</p>
-            )}
-            {detailWeather?.plan.window && (
-              <p>
-                <span className="plan-label">{c("bestWindow")}</span>
-                <span className="place-now num">
-                  <bdi>
-                    {clock(detailWeather.plan.window.start)}–{clock(detailWeather.plan.window.end)}
-                  </bdi>{" "}
-                  · {detailWeather.score}/100
-                </span>
-              </p>
-            )}
-          </div>
-          <p className="fine">{c("placeCaution")}</p>
-          <button className="btn btn-primary btn-block" onClick={() => choose(detail, areaName(locale, detail), "manual")}>
-            {c("planHere")}
-          </button>
-          <details className="disclosure">
-            <summary>{c("evidence")}</summary>
-            <div className="disclosure-body">
-              {detail.evidence.map((e) => (
-                <a key={e.url} href={e.url} target="_blank" rel="noreferrer">
-                  {new URL(e.url).hostname}
-                </a>
-              ))}
-            </div>
-          </details>
-        </Sheet>
-      )}
     </div>
   );
 }

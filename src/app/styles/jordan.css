@@ -1,0 +1,386 @@
+/* Jordan-wide discovery, place details, Follow Route and the Share Studio.
+   Built only from the V2.5 tokens and components; no second system. */
+@layer screens {
+  /* ---------- Dock: four tabs beside the Track key ---------- */
+  .dock-tabs {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  @media (max-width: 380px) {
+    .track-dock {
+      min-width: 92px;
+      padding: 0 var(--s-3);
+    }
+  }
+  @media (min-width: 1080px) {
+    .dock-tabs {
+      grid-template-columns: repeat(4, 104px);
+    }
+  }
+
+  /* ---------- Explore ---------- */
+  .explore {
+    display: grid;
+    gap: var(--s-4);
+  }
+  .explore .section-note {
+    max-width: 60ch;
+  }
+  .explore-activity {
+    justify-self: start;
+  }
+  .explore-near .near-origin {
+    color: var(--text-2);
+    font-size: var(--text-sm);
+  }
+  .near-now-list .tag,
+  .nearby-card .tag {
+    justify-self: start;
+    margin-top: var(--s-1);
+  }
+  .empty-state {
+    display: grid;
+    gap: var(--s-2);
+    padding: var(--s-4);
+    border-radius: var(--r-panel);
+    background: var(--surface-2);
+    color: var(--text-2);
+    font-size: var(--text-md);
+  }
+  .empty-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+  }
+  .explore-filters {
+    display: grid;
+    gap: var(--s-2);
+    margin-bottom: var(--s-3);
+  }
+  .explore-more summary {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+  }
+  .explore-more-body {
+    display: grid;
+    gap: var(--s-4);
+    padding-top: var(--s-3);
+  }
+  .filter-group {
+    display: grid;
+    gap: var(--s-2);
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  .filter-group legend,
+  .filter-label {
+    margin-bottom: var(--s-1);
+    padding: 0;
+    color: var(--text-2);
+    font-size: var(--text-sm);
+    font-weight: 650;
+  }
+  .filter-group select {
+    max-width: 320px;
+  }
+  .explore-list .row-btn {
+    align-items: start;
+  }
+  .place-kind {
+    flex: none;
+    width: 10px;
+    height: 10px;
+    margin-top: 7px;
+    border-radius: var(--r-pill);
+    background: var(--fair-fill);
+  }
+  .place-kind[data-kind="trail"] {
+    border-radius: 2px;
+    background: var(--text-2);
+    transform: rotate(45deg);
+  }
+  .explore-marks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-1);
+  }
+  .explore-marks:empty {
+    display: none;
+  }
+  .explore-marks .tag svg,
+  .saved-places .row-icon {
+    width: 14px;
+    height: 14px;
+  }
+  .saved-places .row-icon {
+    flex: none;
+    width: 20px;
+    height: 20px;
+    color: var(--good-fill);
+  }
+  .featured-explore {
+    margin-top: var(--s-3);
+  }
+
+  /* ---------- Place and route details ---------- */
+  .place-where {
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+    margin-top: var(--s-3);
+    color: var(--text-2);
+    font-size: var(--text-sm);
+  }
+  .place-where svg {
+    flex: none;
+    width: 16px;
+    height: 16px;
+    color: var(--accent);
+  }
+  .place-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+    margin-top: var(--s-2);
+  }
+  .route-facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .route-facts .route-shape {
+    grid-column: 1 / -1;
+  }
+  .place-weather {
+    display: grid;
+    gap: var(--s-2);
+    margin-top: var(--s-4);
+    padding: var(--s-4);
+    border-radius: var(--r-panel);
+    background: var(--surface-2);
+  }
+  .place-fit {
+    font-weight: 700;
+  }
+  .place-window {
+    margin-top: var(--s-1);
+  }
+  .place-route {
+    display: grid;
+    gap: var(--s-4);
+    margin-top: var(--s-4);
+  }
+  .route-figure {
+    display: grid;
+    gap: var(--s-2);
+  }
+  .route-preview,
+  .elevation-profile {
+    width: 100%;
+    height: auto;
+    border-radius: var(--r-panel);
+    background: var(--surface-2);
+  }
+  .route-preview-glow {
+    fill: none;
+    stroke: var(--accent-soft);
+    stroke-width: 9;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .route-preview-line {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 3.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .route-preview-start {
+    fill: var(--text);
+  }
+  .route-preview-end {
+    fill: var(--surface);
+    stroke: var(--text);
+    stroke-width: 2.5;
+  }
+  .elevation-area {
+    fill: var(--good-soft);
+  }
+  .elevation-line {
+    fill: none;
+    stroke: var(--good-fill);
+    stroke-width: 2.2;
+    stroke-linejoin: round;
+  }
+  .elevation-tick {
+    fill: var(--text-2);
+    font-size: 11px;
+  }
+  .place-caveats {
+    margin-top: var(--s-4);
+  }
+  .place-caveats .mini-title {
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+  }
+  .place-caveats .mini-title svg {
+    width: 18px;
+    height: 18px;
+    color: var(--fair-fill);
+  }
+  .place-caveats ul {
+    display: grid;
+    gap: var(--s-2);
+    margin-top: var(--s-2);
+    padding-inline-start: var(--s-5);
+    color: var(--text-2);
+    font-size: var(--text-md);
+    list-style: disc;
+  }
+  .place-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+    margin-top: var(--s-5);
+  }
+  .place-actions .btn {
+    flex: 1 1 140px;
+  }
+  .place-sheet .disclosure-body a {
+    overflow-wrap: anywhere;
+  }
+
+  /* ---------- Follow Route ---------- */
+  .track-follow-ready {
+    display: grid;
+    gap: var(--s-1);
+    padding: var(--s-3) var(--s-4);
+    border-radius: var(--r-panel);
+    background: rgb(255 255 255 / 0.06);
+  }
+  .track-follow-ready p:first-child,
+  .track-follow-status strong,
+  .recap-route {
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+    font-weight: 700;
+  }
+  .track-follow-ready svg,
+  .track-follow-status svg,
+  .recap-route svg {
+    flex: none;
+    width: 18px;
+    height: 18px;
+  }
+  .track-follow-ready .btn {
+    justify-self: start;
+  }
+  .track-follow-status {
+    display: grid;
+    gap: 2px;
+    padding: var(--s-3) var(--s-4);
+    border-radius: var(--r-panel);
+    background: rgb(255 255 255 / 0.06);
+    font-size: var(--text-md);
+  }
+  .track-follow-status[data-off] {
+    background: rgb(185 127 0 / 0.22);
+  }
+  .track-map-key i[data-kind="planned"] {
+    width: 16px;
+    height: 0;
+    border-top: 3px dashed var(--route-planned, #2f343c);
+    border-radius: 0;
+    background: none;
+  }
+  .recap-route {
+    color: var(--text-2);
+    font-size: var(--text-sm);
+  }
+
+  /* ---------- Share Studio ---------- */
+  .share-studio {
+    display: grid;
+    gap: var(--s-3);
+    margin-top: var(--s-5);
+  }
+  .studio-glyphs {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  .studio-body {
+    display: grid;
+    gap: var(--s-4);
+    justify-items: center;
+  }
+  .studio-preview {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--r-panel);
+    background: #08090b;
+    box-shadow: var(--shadow-2);
+  }
+  .studio-controls {
+    display: grid;
+    gap: var(--s-3);
+    width: 100%;
+    max-width: 420px;
+  }
+  .studio-photo {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s-2);
+  }
+  .studio-photo label.btn {
+    cursor: pointer;
+  }
+  .studio-photo input:focus-visible + label {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+  /* Five positions laid out where they land on the story. */
+  .studio-positions {
+    display: grid;
+    grid-template-columns: repeat(3, 44px);
+    grid-template-rows: repeat(2, 44px);
+    gap: var(--s-2);
+  }
+  .studio-positions .chip {
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+  }
+  .studio-positions [data-pos="lower-left"] {
+    grid-area: 2 / 1;
+  }
+  .studio-positions [data-pos="lower-right"] {
+    grid-area: 2 / 3;
+  }
+  .studio-pos-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: var(--r-pill);
+    background: currentColor;
+  }
+  .studio-controls input[type="range"] {
+    width: 100%;
+    accent-color: var(--accent);
+  }
+  .classic-share {
+    margin-top: var(--s-4);
+  }
+  @media (min-width: 768px) {
+    .studio-body {
+      grid-template-columns: auto minmax(0, 1fr);
+      align-items: start;
+      justify-items: start;
+    }
+  }
+}

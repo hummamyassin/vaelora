@@ -4,6 +4,7 @@ import * as ml from "../lib/maplibre";
 import type { Coordinates } from "../lib/geography";
 import type { Locale } from "../lib/i18n";
 import { useMapLabels } from "./use-map-labels";
+import { JORDAN_DEFAULT_VIEW } from "../lib/jordan";
 export function ScoreMap({
   rows,
   activity,
@@ -48,8 +49,8 @@ export function ScoreMap({
           },
           layers: [{ id: "osm", type: "raster", source: "osm" }],
         },
-        center: [35.89, 31.98],
-        zoom: 10,
+        center: [JORDAN_DEFAULT_VIEW.center.longitude, JORDAN_DEFAULT_VIEW.center.latitude],
+        zoom: JORDAN_DEFAULT_VIEW.zoom,
         renderWorldCopies: false,
         attributionControl: { compact: false },
       });

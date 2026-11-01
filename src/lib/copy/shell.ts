@@ -3,6 +3,7 @@ import type { Dictionary } from "../i18n.ts";
 export const shellCopy = {
   home: ["Home", "الرئيسية"],
   map: ["Map", "الخريطة"],
+  explore: ["Explore", "استكشف"],
   track: ["Track", "تتبّع"],
   recording: ["Recording", "تسجيل"],
   ask: ["Ask", "اسأل"],
@@ -49,7 +50,7 @@ export const shellCopy = {
   // Area sheet
   areaTitle: ["Choose a forecast area", "اختر منطقة التوقعات"],
   areaSearch: ["Search in Arabic or English", "ابحث بالعربية أو الإنجليزية"],
-  areaPlaceholder: ["Search Amman areas", "ابحث في مناطق عمّان"],
+  areaPlaceholder: ["Search areas and towns in Jordan", "ابحث في مناطق الأردن ومدنه"],
   areaKind: ["Forecast reference point", "نقطة مرجعية للتوقعات"],
   areaNone: [
     "This area is not supported yet. No coordinates or places are guessed.",

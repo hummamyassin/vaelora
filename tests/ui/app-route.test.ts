@@ -61,3 +61,13 @@ test("Closing an overlay steps back only over entries this session pushed", () =
   assert.equal(closeStrategy(null), "replace");
   assert.equal(closeStrategy({ foreign: true }), "replace");
 });
+
+test("Explore and followed routes travel by public place IDs only", () => {
+  for (const hash of ["#/explore", "#/explore?place=dana-rummana-trail", "#/track?follow=jordan-trail-ajloun-104"])
+    assert.equal(formatRoute(parseRoute(hash)), hash);
+  assert.equal(parseRoute("#/track?follow=32.1,35.9").follow, null);
+  assert.equal(parseRoute("#/home?follow=dana-rummana-trail").follow, null);
+  // Leaving Track drops the follow parameter; the shell keeps following until stopped.
+  assert.equal(formatRoute(nextRoute(parseRoute("#/track?follow=dana-rummana-trail"), { screen: "home" })), "#/home");
+  assert.equal(nextRoute(homeRoute, { screen: "explore", place: "aqaba-city-park" }).place, "aqaba-city-park");
+});

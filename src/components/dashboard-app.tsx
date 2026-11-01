@@ -1,12 +1,16 @@
 "use client";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { IconAsk, IconBack, IconFilters, IconHome, IconMap, IconRun } from "./icons";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { IconAsk, IconBack, IconExplore, IconFilters, IconHome, IconMap, IconRun } from "./icons";
+import { ExplorePlaces } from "./explore-places";
+import { PlaceSheet } from "./place-sheet";
+import { placeById } from "../data/outdoor-places";
+import { loadSavedPlaces, savedPlacesEvent, toggleSavedPlace } from "../lib/saved-places";
 import {
   nearestWeatherArea,
   weatherAreas,
 } from "../data/weather-areas";
 import { validCoordinates, type Coordinates } from "../lib/geography";
-import { translator, type Locale } from "../lib/i18n";
+import { areaName, translator, type Locale } from "../lib/i18n";
 import { homeCopy } from "../lib/copy/home";
 import { askCopy, shellCopy } from "../lib/copy/shell";
 import { TrackApp } from "./track-app";
@@ -86,6 +90,24 @@ export function DashboardApp({ aiLive = true }: { aiLive?: boolean }) {
     [radius, setRadius] = useState(5);
   const [scrolled, setScrolled] = useState(false);
   const [planSummary, setPlanSummary] = useState<PlanSummary | null>(null);
+  const [savedIds, setSavedIds] = useState<string[]>([]),
+    [planAt, setPlanAt] = useState<{ latitude: number; longitude: number; name: string; nonce: number } | null>(null),
+    // The followed route outlives screen changes until it is stopped or finished.
+    [followId, setFollowId] = useState<string | null>(null);
+  useEffect(() => {
+    const sync = () => setSavedIds(loadSavedPlaces());
+    sync();
+    globalThis.addEventListener(savedPlacesEvent, sync);
+    return () => globalThis.removeEventListener(savedPlacesEvent, sync);
+  }, []);
+  useEffect(() => {
+    if (route.screen === "track" && route.follow && placeById(route.follow)?.route)
+      queueMicrotask(() => setFollowId(route.follow));
+  }, [route.screen, route.follow]);
+  const completedIds = localActivities.flatMap((a) => (a.state === "finished" && a.routeId ? [a.routeId] : []));
+  const followPlace = followId ? placeById(followId) : null;
+  const followName = followPlace ? areaName(locale, followPlace) : null;
+  const follow = useMemo(() => (followId && followName ? { id: followId, name: followName } : null), [followId, followName]);
   const ar = locale === "ar",
     s = translator(shellCopy, locale),
     h = translator(homeCopy, locale);
@@ -275,10 +297,12 @@ export function DashboardApp({ aiLive = true }: { aiLive?: boolean }) {
       : route.sheet === "area"
         ? s("areaTitle")
         : translator(askCopy, locale)("title");
-  const tabs: { id: "home" | "map"; label: string; Icon: typeof IconHome }[] = [
+  const tabs: { id: "home" | "explore" | "map"; label: string; Icon: typeof IconHome }[] = [
     { id: "home", label: s("home"), Icon: IconHome },
+    { id: "explore", label: s("explore"), Icon: IconExplore },
     { id: "map", label: s("map"), Icon: IconMap },
   ];
+  const sheetPlace = (route.screen === "home" || route.screen === "explore") && route.place ? placeById(route.place) : null;
   const askOpen = route.sheet === "ask";
   return (
     <main className="app v2" lang={locale} dir={ar ? "rtl" : "ltr"} data-screen={view}>
@@ -362,6 +386,9 @@ export function DashboardApp({ aiLive = true }: { aiLive?: boolean }) {
           }}
           onSnapshot={setDiscoverySnapshot}
           onPlan={setPlanSummary}
+          onExplore={() => navigate({ screen: "explore" })}
+          savedIds={savedIds}
+          planAt={planAt}
         />
         <ForecastTools
           locale={locale}
@@ -398,6 +425,11 @@ export function DashboardApp({ aiLive = true }: { aiLive?: boolean }) {
           startRef={quickStart}
           recapId={route.screen === "track" ? route.activity : null}
           onRecapChange={onRecapChange}
+          follow={follow}
+          onStopFollow={() => {
+            setFollowId(null);
+            if (routeRef.current.follow) navigate({ follow: null }, { replace: true });
+          }}
           snapshot={(kind) => {
             if (
               discoverySnapshot &&
@@ -427,7 +459,25 @@ export function DashboardApp({ aiLive = true }: { aiLive?: boolean }) {
           }}
         />
       </div>
-      {view !== "home" && view !== "track" && (
+      {view === "explore" && (
+        <div className="screen v2-shell explore-screen">
+          <ExplorePlaces
+            locale={locale}
+            activity={activity}
+            setActivity={setActivity}
+            homeOrigin={discoveryMap ? { point: discoveryMap.point, name: discoveryMap.name } : null}
+            savedIds={savedIds}
+            completedIds={completedIds}
+            onOpenPlace={(id) => navigate({ place: id })}
+            onPlanWeather={() => navigate({ screen: "home" })}
+            onStartFree={() => {
+              dynamicStart.current = true;
+              navigate({ screen: "track" });
+            }}
+          />
+        </div>
+      )}
+      {view !== "home" && view !== "track" && view !== "explore" && (
         <div className="screen v2-shell">
           {view !== "map" && (
             <button className="back-link v21-back" onClick={() => close({ screen: "home" })}>
@@ -458,6 +508,25 @@ export function DashboardApp({ aiLive = true }: { aiLive?: boolean }) {
             />
           )}
         </div>
+      )}
+      {sheetPlace && (
+        <PlaceSheet
+          key={sheetPlace.id}
+          placeId={sheetPlace.id}
+          locale={locale}
+          activity={activity}
+          minutes={minutes}
+          preferences={preferences}
+          saved={savedIds.includes(sheetPlace.id)}
+          completed={completedIds.includes(sheetPlace.id)}
+          onToggleSave={() => setSavedIds((ids) => toggleSavedPlace(sheetPlace.id, ids))}
+          onClose={() => close({ place: null })}
+          onPlanHere={() => {
+            setPlanAt({ latitude: sheetPlace.latitude, longitude: sheetPlace.longitude, name: areaName(locale, sheetPlace), nonce: Date.now() });
+            navigate({ screen: "home", place: null });
+          }}
+          onFollow={sheetPlace.route ? () => navigate({ screen: "track", follow: sheetPlace.id }) : undefined}
+        />
       )}
       {ready && !profile.onboarding && <Onboarding profile={{ ...profile, locale }} save={updateProfile} />}
       {route.sheet === "profile" && profile.onboarding && (

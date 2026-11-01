@@ -6,6 +6,7 @@ import "./styles/tokens.css";
 import "./styles/base.css";
 import "./styles/components.css";
 import "./styles/screens.css";
+import "./styles/jordan.css";
 
 // Archivo carries the interface and every metric, Readex Pro Arabic, and
 // Cormorant Garamond only the VAELORA wordmark. All are self-hosted by
@@ -51,7 +52,7 @@ export const metadata: Metadata = {
   },
   title: "VAELORA: find your best time outside",
   description:
-    "Weather-aware walking and running for Greater Amman. Find when and where to go, record your outing, and keep your history on your device.",
+    "Outdoor planning and activity tracking across Jordan. Find when and where to walk or run, record your outing, and keep your history on your device.",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
