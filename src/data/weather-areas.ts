@@ -1,6 +1,10 @@
 import { distanceKm, type Coordinates } from "../lib/geography.ts";
+import { isInsideJordan } from "../lib/jordan.ts";
 
-/** Forecast reference points, never activity places or surveyed neighborhood boundaries. */
+/**
+ * Forecast reference points across Jordan, never activity places or surveyed
+ * neighborhood boundaries. `city` is the governorate (src/lib/jordan.ts).
+ */
 export interface WeatherArea {
   id: string;
   city: string;
@@ -115,6 +119,167 @@ export const weatherAreas: readonly WeatherArea[] = [
     sources: [geo],
     reviewedAt: "2026-09-13",
   },
+  // Town reference points across Jordan; `city` is the governorate id.
+  {
+    id: "irbid",
+    city: "irbid",
+    name: { en: "Irbid", ar: "إربد" },
+    aliases: ["Irbed","اربد"],
+    latitude: 32.55556,
+    longitude: 35.85,
+    sources: ["https://www.wikidata.org/wiki/Q194165"],
+    reviewedAt: "2026-11-01",
+  },
+  {
+    id: "ramtha",
+    city: "irbid",
+    name: { en: "Ar-Ramtha", ar: "الرمثا" },
+    aliases: ["Ramtha","Al Ramtha","رمثا"],
+    latitude: 32.55917,
+    longitude: 36.00694,
+    sources: ["https://www.wikidata.org/wiki/Q31594"],
+    reviewedAt: "2026-11-01",
+  },
+  {
+    id: "zarqa",
+    city: "zarqa",
+    name: { en: "Zarqa", ar: "الزرقاء" },
+    aliases: ["Az Zarqa","Zarka","زرقاء"],
+    latitude: 32.08333,
+    longitude: 36.1,
+    sources: ["https://www.wikidata.org/wiki/Q148062"],
+    reviewedAt: "2026-11-01",
+  },
+  {
+    id: "salt",
+    city: "balqa",
+    name: { en: "As-Salt", ar: "السلط" },
+    aliases: ["Salt","Al Salt","سلط"],
+    latitude: 32.03917,
+    longitude: 35.72722,
+    sources: ["https://www.wikidata.org/wiki/Q867586"],
+    reviewedAt: "2026-11-01",
+  },
+  {
+    id: "fuheis",
+    city: "balqa",
+    name: { en: "Fuheis", ar: "الفحيص" },
+    aliases: ["Fuhais","Al Fuhays"],
+    latitude: 32.01667,
+    longitude: 35.76667,
+    sources: ["https://www.wikidata.org/wiki/Q986769"],
+    reviewedAt: "2026-11-01",
+  },
+  {
+    id: "sweimeh",
+    city: "balqa",
+    name: { en: "Sweimeh (Dead Sea)", ar: "السويمة (البحر الميت)" },
+    aliases: ["Dead Sea","Suwayma","البحر الميت","سويمة"],
+    latitude: 31.76589,
+    longitude: 35.59844,
+    sources: ["https://www.wikidata.org/wiki/Q110921589"],
+    reviewedAt: "2026-11-01",
+  },
+  {
+    id: "madaba",
+    city: "madaba",
+    name: { en: "Madaba", ar: "مادبا" },
+    aliases: ["Madaba City"],
+    latitude: 31.71667,
+    longitude: 35.8,
+    sources: ["https://www.wikidata.org/wiki/Q1683958"],
+    reviewedAt: "2026-11-01",
+  },
+  {
+    id: "jerash",
+    city: "jerash",
+    name: { en: "Jerash", ar: "جرش" },
+    aliases: ["Jarash","Gerasa"],
+    latitude: 32.27228,
+    longitude: 35.8914,
+    sources: ["https://www.wikidata.org/wiki/Q31565"],
+    reviewedAt: "2026-11-01",
+  },
+  {
+    id: "ajloun",
+    city: "ajloun",
+    name: { en: "Ajloun", ar: "عجلون" },
+    aliases: ["Ajlun","Ajlune"],
+    latitude: 32.3325,
+    longitude: 35.75167,
+    sources: ["https://www.wikidata.org/wiki/Q1141858"],
+    reviewedAt: "2026-11-01",
+  },
+  {
+    id: "mafraq",
+    city: "mafraq",
+    name: { en: "Mafraq", ar: "المفرق" },
+    aliases: ["Al Mafraq","مفرق"],
+    latitude: 32.34278,
+    longitude: 36.205,
+    sources: ["https://www.wikidata.org/wiki/Q276747"],
+    reviewedAt: "2026-11-01",
+  },
+  {
+    id: "azraq",
+    city: "zarqa",
+    name: { en: "Azraq", ar: "الأزرق" },
+    aliases: ["Al Azraq","ازرق"],
+    latitude: 31.83333,
+    longitude: 36.81667,
+    sources: ["https://www.wikidata.org/wiki/Q2426928"],
+    reviewedAt: "2026-11-01",
+  },
+  {
+    id: "karak",
+    city: "karak",
+    name: { en: "Al-Karak", ar: "الكرك" },
+    aliases: ["Karak","Kerak","كرك"],
+    latitude: 31.18444,
+    longitude: 35.705,
+    sources: ["https://www.wikidata.org/wiki/Q31572"],
+    reviewedAt: "2026-11-01",
+  },
+  {
+    id: "tafilah",
+    city: "tafilah",
+    name: { en: "Tafilah", ar: "الطفيلة" },
+    aliases: ["Tafila","At Tafilah","طفيلة"],
+    latitude: 30.8375,
+    longitude: 35.60444,
+    sources: ["https://www.wikidata.org/wiki/Q2550996"],
+    reviewedAt: "2026-11-01",
+  },
+  {
+    id: "wadi-musa",
+    city: "maan",
+    name: { en: "Wadi Musa", ar: "وادي موسى" },
+    aliases: ["Petra","البتراء","Wadi Mousa"],
+    latitude: 30.32,
+    longitude: 35.4784,
+    sources: ["https://www.wikidata.org/wiki/Q2739446"],
+    reviewedAt: "2026-11-01",
+  },
+  {
+    id: "maan",
+    city: "maan",
+    name: { en: "Ma'an", ar: "معان" },
+    aliases: ["Maan","Ma’an"],
+    latitude: 30.19333,
+    longitude: 35.73333,
+    sources: ["https://www.wikidata.org/wiki/Q31616"],
+    reviewedAt: "2026-11-01",
+  },
+  {
+    id: "aqaba",
+    city: "aqaba",
+    name: { en: "Aqaba", ar: "العقبة" },
+    aliases: ["Akaba","Al Aqaba","عقبة"],
+    latitude: 29.53222,
+    longitude: 35.00611,
+    sources: ["https://www.wikidata.org/wiki/Q180522"],
+    reviewedAt: "2026-11-01",
+  },
 ];
 export function normalizeAreaText(text: string) {
   return text
@@ -133,9 +298,11 @@ export function searchWeatherAreas(query: string) {
     ),
   );
 }
+/** The closest reference point for a location in Jordan; null outside Jordan or far from any. */
 export function nearestWeatherArea(point: Coordinates) {
+  if (!isInsideJordan(point)) return null;
   const area = [...weatherAreas].sort(
     (a, b) => distanceKm(point, a) - distanceKm(point, b),
   )[0];
-  return distanceKm(point, area) <= 25 ? area : null;
+  return distanceKm(point, area) <= 60 ? area : null;
 }

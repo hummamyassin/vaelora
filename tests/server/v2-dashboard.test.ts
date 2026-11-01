@@ -76,7 +76,9 @@ test("Weather area records have evidence, finite reference points and no fabrica
       false,
     );
   }
-  assert.equal(weatherAreas.length, 9);
+  // Amman neighbourhoods plus town reference points across every governorate.
+  assert.equal(weatherAreas.length, 25);
+  assert.equal(new Set(weatherAreas.map((a) => a.city)).size, 12);
 });
 test("English Arabic aliases resolve the same supported area; unknown names remain unknown", () => {
   for (const q of ["Shafa Badran", "شفا بدران"])

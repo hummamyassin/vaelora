@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { weatherAreas, normalizeAreaText } from "../src/data/weather-areas.ts";
+import { governorateAt, isInsideJordan } from "../src/lib/jordan.ts";
 const ids = new Set<string>(),
   points = new Set<string>();
 for (const area of weatherAreas) {
@@ -8,20 +9,13 @@ for (const area of weatherAreas) {
   const point = `${area.latitude},${area.longitude}`;
   assert.ok(!points.has(point));
   points.add(point);
-  assert.ok(
-    Number.isFinite(area.latitude) &&
-      area.latitude > 31.8 &&
-      area.latitude < 32.2,
-  );
-  assert.ok(
-    Number.isFinite(area.longitude) &&
-      area.longitude > 35.7 &&
-      area.longitude < 36.1,
-  );
+  const coords = { latitude: area.latitude, longitude: area.longitude };
+  assert.ok(isInsideJordan(coords), `${area.id}: outside Jordan`);
+  // `city` names the governorate the point actually lies in.
+  assert.equal(governorateAt(coords)?.id, area.city, `${area.id}: governorate mismatch`);
   assert.ok(
     area.name.ar &&
       area.name.en &&
-      area.city === "amman" &&
       /^\d{4}-\d{2}-\d{2}$/.test(area.reviewedAt),
   );
   assert.ok(
@@ -36,5 +30,5 @@ for (const area of weatherAreas) {
     );
 }
 console.log(
-  `Weather-area validation passed: ${weatherAreas.length} sourced forecast reference points; no route or place attributes.`,
+  `Weather-area validation passed: ${weatherAreas.length} sourced forecast reference points in ${new Set(weatherAreas.map((a) => a.city)).size} governorates; no route or place attributes.`,
 );

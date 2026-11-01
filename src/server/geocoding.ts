@@ -1,5 +1,5 @@
 import { edgeLimit } from "./edge-limit.ts";
-import { supportedCity, serviceCities } from "../lib/dynamic-location.ts";
+import { governorateAt, isInsideJordan, JORDAN_BOUNDS } from "../lib/jordan.ts";
 import { validCoordinates } from "../lib/geography.ts";
 import {
   BodyError,
@@ -13,6 +13,8 @@ export interface SearchPlace {
   name: string;
   latitude: number;
   longitude: number;
+  /** Governorate from VAELORA's own boundary data, for a localized label. */
+  governorate: { id: string; en: string; ar: string } | null;
 }
 export function parseSearch(input: unknown) {
   const x = input as Record<string, unknown>;
@@ -57,9 +59,11 @@ export function parseSearchOutcome(raw: unknown) {
     )
       continue;
     if (!validCoordinates({ latitude, longitude })) continue;
-    if (!supportedCity({ latitude, longitude })) outside = true;
+    // Only places inside Jordan are offered; nearby foreign results are dropped.
+    const inJordan = isInsideJordan({ latitude, longitude });
+    if (!inJordan) outside = true;
     if (
-      supportedCity({ latitude, longitude }) &&
+      inJordan &&
       !rows.some(
         (p) =>
           p.name === name &&
@@ -67,7 +71,7 @@ export function parseSearchOutcome(raw: unknown) {
           p.longitude === longitude,
       )
     )
-      rows.push({ name, latitude, longitude });
+      rows.push({ name, latitude, longitude, governorate: governorateAt({ latitude, longitude }) });
   }
   const places = rows.slice(0, 6);
   return { places, status: places.length ? "found" : outside ? "outside" : "empty" };
@@ -98,25 +102,19 @@ export function createGeocoder(
         process.env.VAELORA_GEOCODER_URL ?? "https://photon.komoot.io/api/",
       );
       if (url.protocol !== "https:") throw new Error("HTTPS geocoder required");
-      const polygon = serviceCities[0].polygon;
       url.search = new URLSearchParams({
         q: query,
         // Public Photon supports default/de/en/fr. Default preserves local Arabic names.
         lang: locale === "ar" ? "default" : "en",
         limit: "10",
-        bbox: [
-          Math.min(...polygon.map((p) => p[0])),
-          Math.min(...polygon.map((p) => p[1])),
-          Math.max(...polygon.map((p) => p[0])),
-          Math.max(...polygon.map((p) => p[1])),
-        ].join(","),
+        bbox: [JORDAN_BOUNDS.west, JORDAN_BOUNDS.south, JORDAN_BOUNDS.east, JORDAN_BOUNDS.north].join(","),
       }).toString();
       const response = await fetcher(url, {
         signal: AbortSignal.timeout(8000),
         cache: "no-store",
         redirect: "error",
         headers: {
-          "User-Agent": "VAELORA/2.3 (Greater Amman outdoor planner)",
+          "User-Agent": "VAELORA/2.6 (Jordan outdoor fitness planner)",
           Accept: "application/json",
         },
       });

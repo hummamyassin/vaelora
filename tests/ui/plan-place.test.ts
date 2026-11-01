@@ -18,7 +18,10 @@ test("Named plan places round-trip and malformed or out-of-area data is ignored"
   const area = planPlaceFor({ latitude: 31.9678, longitude: 35.8789 }, " Abdoun ", "area")!;
   assert.equal(area.name, "Abdoun");
   assert.deepEqual(parsePlanPlace(area), area);
-  assert.equal(planPlaceFor({ latitude: 32.55, longitude: 35.85 }, "Irbid", "area"), null);
-  for (const bad of [null, [], "x", { ...area, extra: 1 }, { ...area, kind: "home" }, { ...area, name: "" }, { ...area, latitude: "31" }, { ...area, latitude: 32.55, longitude: 35.85 }])
+  // Any Jordan place can be remembered; places outside Jordan cannot.
+  const irbid = planPlaceFor({ latitude: 32.55, longitude: 35.85 }, "Irbid", "area")!;
+  assert.deepEqual(parsePlanPlace(irbid), irbid);
+  assert.equal(planPlaceFor({ latitude: 32.6189, longitude: 36.1021 }, "Daraa", "area"), null);
+  for (const bad of [null, [], "x", { ...area, extra: 1 }, { ...area, kind: "home" }, { ...area, name: "" }, { ...area, latitude: "31" }, { ...area, latitude: 32.6189, longitude: 36.1021 }])
     assert.equal(parsePlanPlace(bad), null);
 });
