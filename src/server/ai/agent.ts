@@ -9,7 +9,7 @@ import type { createDashboardPipeline, DashboardRequest } from "../recommendatio
 const clarificationText = {
   "missing-activity": "Specify running or walking.", ambiguous: "Specify an unambiguous day (today or tomorrow) and time.",
   contradictory: "The constraints conflict; submit a consistent time window and preferences.",
-  "unsupported-activity": "Only running and walking are supported.", "unsupported-date": "Only today and tomorrow in Amman are supported.",
+  "unsupported-activity": "Only running and walking are supported.", "unsupported-date": "Only today and tomorrow (Jordan time) are supported.",
   "unsupported-constraint": "A requested constraint cannot be verified by VAELORA; submit a request using supported area and weather preferences.",
   "route-distance": "VAELORA recommends activity areas, not verified routes or distances such as 5K. Submit an area request without a route-distance requirement.",
   "fractional-time": "Only whole-hour forecast windows and durations are supported; submit explicit whole-hour bounds.",
@@ -24,7 +24,7 @@ export function renderRecommendation(result: RecommendationResponse, assumptions
     terrain: m.area.terrain, surfaces: m.area.surfaces, environment: m.area.environment, windows: m.bestWindows,
     caveat: m.area.description, evidence: m.area.evidence }));
   const text = matches.length
-    ? matches.map(m => `${m.name}: ${m.fit} for ${result.request.activity}; weather category ${m.weatherSeverity} under ${result.policy.id}. Best windows (Amman): ${m.windows.map(w => `${w.start}–${w.end}`).join(", ")}. Terrain: ${m.terrain}; surfaces: ${m.surfaces.join(", ")}; environment: ${m.environment}. ${m.caveat}`).join("\n\n")
+    ? matches.map(m => `${m.name}: ${m.fit} for ${result.request.activity}; weather category ${m.weatherSeverity} under ${result.policy.id}. Best windows (Jordan time): ${m.windows.map(w => `${w.start}–${w.end}`).join(", ")}. Terrain: ${m.terrain}; surfaces: ${m.surfaces.join(", ")}; environment: ${m.environment}. ${m.caveat}`).join("\n\n")
     : result.status === "weather-unavailable" ? "Weather is unavailable; VAELORA cannot provide a recommendation." : "No matches satisfy this request with the available area evidence and forecasts.";
   if (locale === "ar") {
     const localized = result.topMatches.map(m => ({ ...matches.find(x => x.areaId === m.area.id)!, name: areaName(locale, m.area), caveat: areaDescription(locale, m.area) }));
