@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { IconDelete, IconOpen, IconRetry } from "./icons";
-import { weatherAreas } from "../data/weather-areas";
+import { regionalReferenceIds, weatherAreas } from "../data/weather-areas";
 import { distanceKm, type Coordinates } from "../lib/geography";
 import { numberText, translator, type Locale } from "../lib/i18n";
 import { toolsCopy } from "../lib/copy/tools";
@@ -53,7 +53,7 @@ export function PlanningTools({
   }, []);
   const key = JSON.stringify(
     mode === "map"
-      ? weatherAreas.map((a) => a.id)
+      ? [...regionalReferenceIds]
       : mode === "outlook"
         ? [areaId]
         : ids,

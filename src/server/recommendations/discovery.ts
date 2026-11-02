@@ -1,4 +1,4 @@
-import { activityAreas } from "../../data/activity-areas.ts";
+import { outdoorPlaces } from "../../data/outdoor-places.ts";
 import { parseCell } from "../../lib/dynamic-location.ts";
 import { distanceKm } from "../../lib/geography.ts";
 import { filterEligibleAreas } from "../../domain/recommendation/eligibility.ts";
@@ -17,6 +17,10 @@ import { dashboardPreferences, preferenceLimits } from "./dashboard.ts";
 import { v1WeatherPolicy } from "./policy.ts";
 import { InvalidRecommendationRequest } from "./request.ts";
 
+/** Near Me radii in km: city blocks to a regional drive. */
+export const discoveryRadii = [3, 5, 10, 25, 50];
+/** Each candidate costs one forecast; only the nearest few are evaluated. */
+const maxCandidates = 8;
 export function parseDiscovery(input: unknown) {
   const x = input as Record<string, unknown>;
   if (
@@ -29,7 +33,7 @@ export function parseDiscovery(input: unknown) {
     ) ||
     !["walking", "running"].includes(x.activity as string) ||
     ![30, 60, 90].includes(x.minutes as number) ||
-    ![3, 5, 10].includes(x.radius as number) ||
+    !discoveryRadii.includes(x.radius as number) ||
     !Array.isArray(x.preferences) ||
     x.preferences.length > 5 ||
     x.preferences.some((p) => !dashboardPreferences.includes(p))
@@ -73,7 +77,7 @@ export function createDiscovery(
     const todayDone = plan.status === "poor" || (forecast.ok && outlook.hours.length === 0);
     const next = todayDone && forecast.ok ? outlookFor(forecast.hourly, dates.tomorrow).bestWindow : null;
     const tomorrow = next ? { date: dates.tomorrow, window: next } : null;
-    const eligible = filterEligibleAreas(activityAreas, {
+    const eligible = filterEligibleAreas(outdoorPlaces, {
       activity,
       date,
       startHour: 0,
@@ -84,9 +88,10 @@ export function createDiscovery(
       ...(preferences.includes("park") ? { environment: "park" as const } : {}),
     }).eligible;
     // 1.6 km margin admits candidates close to the cell boundary. Exact radius is applied locally.
-    const candidates = eligible.filter(
-      (a) => distanceKm(context, a) <= radius + 1.6,
-    );
+    const candidates = eligible
+      .filter((a) => distanceKm(context, a) <= radius + 1.6)
+      .sort((a, b) => distanceKm(context, a) - distanceKm(context, b) || a.id.localeCompare(b.id))
+      .slice(0, maxCandidates);
     const rows = [];
     for (let i = 0; i < candidates.length; i += 3)
       rows.push(

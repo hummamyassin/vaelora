@@ -51,7 +51,7 @@ export const forecastCopy = {
   tomorrow: ["Tomorrow", "غدًا"],
   clearLocation: ["Clear location", "مسح الموقع"],
   denied: ["Location unavailable. Choose an area to continue.", "تعذّر تحديد موقعك. اختر منطقة للمتابعة."],
-  outside: ["You’re outside current coverage. Choose a supported area.", "أنت خارج نطاق التغطية الحالي. اختر منطقة مدعومة."],
+  outside: ["VAELORA currently supports outdoor planning inside Jordan. Choose an area in Jordan.", "تغطي VAELORA حاليًا التخطيط للأنشطة الخارجية داخل الأردن. اختر منطقة في الأردن."],
   thisHour: ["This hour", "هذه الساعة"],
   bestWindow: ["Best window", "أفضل فترة"],
   checking: ["Checking conditions", "نفحص الظروف"],

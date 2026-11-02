@@ -84,7 +84,8 @@ try {
           getCurrentPosition(ok, fail) {
             if (window.__gps.mode === "denied") fail({ code: 1 });
             else if (window.__gps.mode === "outside")
-              ok({ coords: { latitude: 32.55, longitude: 35.85, accuracy: 5 } });
+              // Outside Jordan (Damascus); Irbid is inside coverage since Jordan-wide planning.
+              ok({ coords: { latitude: 33.51, longitude: 36.29, accuracy: 5 } });
             else
               ok({ coords: { latitude: 31.981234, longitude: 35.901234, accuracy: 5 } });
           },
@@ -268,6 +269,8 @@ try {
     assert.equal(await p.locator(".share-preview").getAttribute("data-route"), "metrics");
     assert.equal(await p.locator(".share-preview polyline").count(), 0);
     const shareImages = [];
+    // The classic cards live under the Share Studio, behind a disclosure.
+    await p.locator(".classic-share summary").click();
     for (let i = 0; i < 3; i++) {
       await p.locator(".activity-share .seg button").nth(i).click();
       const download = p.waitForEvent("download");

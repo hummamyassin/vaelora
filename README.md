@@ -1,12 +1,12 @@
 # VAELORA
 
-**Outdoor activity intelligence for Greater Amman: plan with live conditions, track walks and runs, analyze local progress, and share privacy-aware recaps.**
+**Outdoor planning and activity tracking across Jordan: plan with live conditions, discover places and trails, track walks and runs, analyze local progress, and share privacy-aware stories.**
 
 VAELORA is a bilingual web application and installable PWA for deciding when and where to be active outdoors. It combines deterministic weather-aware recommendations, reviewed activity places, location-aware discovery, GPS activity recording, local analysis, mapping, and a grounded AI assistant.
 
-**Plan → Track → Analyze → Share**
+**Plan → Discover → Track → Analyze → Share → Return**
 
-[Open the live application](https://vaelora-chi.vercel.app) · Current release: **v2.5.0** ([changelog](CHANGELOG.md)) · Current geographic focus: **Greater Amman, Jordan**
+[Open the live application](https://vaelora-chi.vercel.app) · Current release: **v2.6.0** ([changelog](CHANGELOG.md)) · Coverage: **Jordan** (planning, weather, search and discovery; recording works anywhere)
 
 ## What is VAELORA?
 
@@ -21,19 +21,23 @@ Weather primarily helps determine **when** conditions are suitable and secondari
 | **Plan** | Choose walking or running, duration, day, preferences, and an optional location. Review the VAELORA Score, live conditions, complete outing windows, nearby places, and alternatives. |
 | **Track** | Record a foreground activity with browser geolocation, a live route, timer, distance, pace, speed, and explicit pause, resume, and finish controls. |
 | **Analyze** | Review the saved route, activity metrics, available start-weather context, history, weekly progress, and separate walking/running pace statistics when valid. |
-| **Share** | Generate one of three local 1080×1440 activity cards with endpoint privacy zones, or explicitly export the precise route as GPX. |
+| **Discover** | Explore 30 curated places and trails across Jordan, with Near Me Now ranked by conditions, simple filters, route details, elevation profiles and saved places. |
+| **Share** | Compose a 9:16 story over your own photo in the Share Studio (processed on the device), use the classic 1080×1440 cards, or explicitly export the precise route as GPX. |
 
 ## Key features
 
 ### Planning and discovery
 
-- Deterministic walking and running recommendations for Greater Amman
+- Deterministic walking and running recommendations anywhere in Jordan, with one boundary module for coverage (`src/lib/jordan.ts`)
 - Live Open-Meteo conditions and hourly weather-aware VAELORA Scores
 - Complete 30, 60, and 90-minute outing windows
 - Today, tomorrow, and three-day planning views, with a fallback to tomorrow's next good window when today has none left
 - Home reopens on the last planned area; a GPS location is remembered only as a coarse ~2 km forecast cell
 - Location-aware nearby discovery with approximate straight-line distance
-- Reviewed activity places with explicit terrain, surface, fit, evidence, and uncertainty
+- 30 curated places in 10 governorates: 11 VAELORA-reviewed Amman places and 19 open-data parks, reserves and trails, with sources and caveats ([provenance](docs/jordan-places.md))
+- Near Me Now, location-aware Featured, filters (time I have, type, difficulty, distance, governorate, saved, reviewed) and honest empty states
+- Route details with verified figures only, weather fit and best window, route sketch and elevation profile from open data
+- Saved places on the device, and Follow Route with on/off-route context while the screen is on
 - Interactive MapLibre maps with OpenStreetMap tiles, marker clustering, and selected-place behavior
 - Compare Areas, Saved Areas, optional preferences, and bilingual place search
 - Clear no-location, unavailable-weather, no-window, and unsupported-constraint states
@@ -46,7 +50,8 @@ Weather primarily helps determine **when** conditions are suitable and secondari
 - Keep Awake on by default while recording, and a clear resume prompt if the app was backgrounded or the screen locked
 - Device-local activity history, summaries, profile statistics, and weekly progress
 - Local GPX 1.1 generation with an explicit precise-location confirmation
-- Three locally generated activity-card layouts with English and Arabic output
+- Share Studio: a 9:16 story over the user's own photo, with luminous platinum (run) or olive (walk) route, compact metrics and the V signature, drawn locally
+- Three locally generated classic card layouts with English and Arabic output
 - Privacy-aware share rendering that removes route geometry around both endpoints
 
 ### Product experience
@@ -109,7 +114,7 @@ VAELORA keeps product presentation, external data, deterministic decisions, loca
 1. The **UI layer** collects intent and presents plans, maps, tracking, recaps, and local progress.
 2. The **recommendation domain** filters eligible reviewed places, applies activity fit and hard constraints, scores environmental conditions, finds complete time windows, and returns leading matches.
 3. The **weather pipeline** validates, retrieves, normalizes, and caches hourly Open-Meteo data on the server.
-4. The **location and map layer** handles reviewed place data, approximate nearby ordering, dynamic Greater Amman weather cells, search references, and MapLibre rendering.
+4. The **location and map layer** handles Jordan coverage, curated place and route data, approximate nearby ordering, dynamic Jordan weather cells, search references, and MapLibre rendering.
 5. The **tracking layer** filters browser GPS points, calculates metrics, and persists drafts and completed activities locally.
 6. The **AI layer** extracts structured intent and invokes VAELORA's existing tools; it does not calculate or invent places, weather, scores, or best-time windows.
 
@@ -156,7 +161,7 @@ See the [v2.5.0 release notes](docs/releases/v2.5.0.md), [V2.3 verification](doc
 
 ## Current limitations
 
-- Production coverage is limited to VAELORA's defined urban Greater Amman service area and its reviewed places.
+- Planning coverage is Jordan. Curated places are uneven: Mafraq has none yet, and the 19 open-data entries are built from open sources and are not field-checked. Outside Jordan, VAELORA says so and does not substitute a location.
 - Browser/PWA tracking is designed for foreground use. Continuous GPS while backgrounded or screen-locked is not guaranteed, particularly on iOS. VAELORA keeps the screen awake while recording, pauses when it is backgrounded and asks to resume, rather than recording a silent gap.
 - Weather is regional forecast data rather than street-level or park-microclimate certainty. AQI is not currently assessed.
 - Place facts follow the evidence dataset. Unknown terrain, surface, access, opening conditions, shade, or accessibility are not inferred.
@@ -167,6 +172,8 @@ See the [v2.5.0 release notes](docs/releases/v2.5.0.md), [V2.3 verification](doc
 
 ## Documentation
 
+- [Jordan-wide platform: coverage, discovery, Follow Route, Share Studio](docs/jordan-platform.md)
+- [Jordan places and trails: sources, method and limits](docs/jordan-places.md)
 - [Changelog](CHANGELOG.md) and [v2.5.0 release notes](docs/releases/v2.5.0.md)
 - [V2.4 and V2.5 redesign, navigation, backup and CI](docs/v24-redesign.md)
 - [Product context](PRODUCT.md) and [design system](DESIGN.md)

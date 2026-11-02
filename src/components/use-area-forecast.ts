@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { activityAreas } from "../data/activity-areas";
+import { outdoorPlaces } from "../data/outdoor-places";
 import { distanceKm, type Coordinates } from "../lib/geography";
 import { isRefreshDue } from "../lib/refresh-policy";
 import type { DashboardResponse } from "../server/recommendations/dashboard";
@@ -96,7 +96,7 @@ export function useAreaForecast({
             preferences,
             ...(origin
               ? {
-                  placeIds: activityAreas
+                  placeIds: outdoorPlaces
                     .filter(
                       (a) =>
                         a.verificationStatus !== "unverified" &&

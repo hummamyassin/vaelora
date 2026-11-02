@@ -4,6 +4,39 @@ All notable changes to VAELORA are recorded here. The format follows [Keep a Cha
 
 Earlier milestones (V1 to V2.4) are documented in [`docs/`](docs/); this file starts with the first tagged release.
 
+## [2.6.0] - 2026-11-02
+
+The Jordan-wide outdoor platform release: planning, discovery and sharing beyond Greater Amman. Release notes: [docs/releases/v2.6.0.md](docs/releases/v2.6.0.md).
+
+### Added
+
+- Jordan-wide planning coverage from one boundary module, with governorate labels; weather reference points in every governorate.
+- 19 open-data places and trails (RSCN reserves, town parks, Dana and Mujib trails, Wadi al-Hasa, four Jordan Trail sections), with validated provenance; 30 curated places in total.
+- Explore: Near Me Now ranked by conditions, the library with simple filters, saved places and honest empty states.
+- Route details: labelled distance, time, climb and difficulty estimates, route shape, weather fit with best window or tomorrow, route sketch and elevation profile.
+- Follow Route: planned line, on/off-route context and distance left while the screen is on.
+- Share Studio: a 9:16 story over the user's own photo with platinum (run) or olive (walk) route light, compact metrics and the V signature, processed locally.
+
+### Changed
+
+- Home, search, Featured, maps, onboarding and copy describe and serve all of Jordan; Featured follows the planned area.
+- Ask VAELORA grounds on Jordan coverage and refuses unsupported claims about trails.
+- Activities may record GPS altitude and the followed route (optional fields; existing history and backups stay valid).
+
+### Security / Privacy
+
+- Share Studio photos are decoded and drawn in the browser and never uploaded; exports keep the 300 m endpoint trimming.
+- Only ~2 km forecast cells reach the server; routes, history and photos never reach the AI provider. No new secrets or environment variables.
+
+### Known limitations
+
+- Foreground-only web GPS, including route following; locking the screen or switching apps pauses recording.
+- Uneven curated coverage: none yet in Mafraq or filed under Madaba; the 19 open-data entries are not field-checked.
+- Elevation is approximate (90 m DEM for trails); story climb appears only when the phone recorded altitude.
+- Web Share with files depends on the device and browser; elsewhere the image downloads.
+
+[2.6.0]: https://github.com/hummamyassin/vaelora/releases/tag/v2.6.0
+
 ## [2.5.0] - 2026-10-26
 
 The modern fitness experience release. VAELORA moves from a planning website to a fitness product built around the VAELORA V icon, and becomes more dependable while you are actually outdoors.

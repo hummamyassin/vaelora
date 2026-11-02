@@ -63,8 +63,8 @@ export function resolveIntent(intent: Intent, now: Date) {
   const startHour = intent.startHour ?? 6, endHour = intent.endHour ?? 22, durationHours = intent.durationMinutes != null ? forecastHours(intent.durationMinutes) : intent.durationHours ?? 1;
   if (intent.durationMinutes != null && intent.durationHours != null && intent.durationHours !== durationHours) return { kind: "clarification" as const, issues: ["contradictory" as const] };
   if (intent.durationMinutes != null) assumptions.push(`For a ${intent.durationMinutes}-minute outing, checking ${durationHours} whole forecast hour(s); not a route-duration guarantee.`);
-  if (intent.startHour === null) assumptions.push("Search starts at 06:00 Amman time by default.");
-  if (intent.endHour === null) assumptions.push("Search ends at 22:00 Amman time by default.");
+  if (intent.startHour === null) assumptions.push("Search starts at 06:00 Jordan time by default.");
+  if (intent.endHour === null) assumptions.push("Search ends at 22:00 Jordan time by default.");
   if (intent.durationHours === null && intent.durationMinutes == null) assumptions.push("Using one-hour forecast windows; this is not a route-duration guarantee.");
   if (startHour >= endHour || durationHours > endHour - startHour) return { kind: "clarification" as const, issues: ["contradictory" as const] };
   const policy = v1WeatherPolicy.activities[intent.activity!];

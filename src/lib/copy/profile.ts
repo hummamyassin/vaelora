@@ -6,7 +6,7 @@ export const progressCopy = {
   dayDistance: ["{day}: {km} km", "{day}: {km} كم"],
   activeDays: ["{n} of 7 days active", "{n} من 7 أيام نشطة"],
   split: ["Walk and run", "المشي والجري"],
-  weekNote: ["Monday to Sunday, Amman time", "من الاثنين إلى الأحد بتوقيت عمّان"],
+  weekNote: ["Monday to Sunday, Jordan time", "من الاثنين إلى الأحد بتوقيت الأردن"],
   activities: ["Activities", "الأنشطة"],
   distance: ["Distance", "المسافة"],
   activeTime: ["Active time", "الوقت النشط"],
@@ -149,8 +149,8 @@ export const profileCopy = {
   clearFailed: ["Data couldn’t be cleared. Try again.", "تعذّر مسح البيانات. حاول مجددًا."],
   about: ["About VAELORA", "عن VAELORA"],
   aboutBody: [
-    "Weather-aware walking and running for Greater Amman. Forecasts by Open-Meteo, map data by OpenStreetMap contributors.",
-    "مشي وجري وفق الطقس في عمّان الكبرى. التوقعات من Open-Meteo، وبيانات الخرائط من مساهمي OpenStreetMap.",
+    "Weather-aware walking and running across Jordan. Forecasts by Open-Meteo, map and trail data by OpenStreetMap contributors, boundaries by geoBoundaries, elevation from Copernicus DEM.",
+    "مشي وجري وفق الطقس في أنحاء الأردن. التوقعات من Open-Meteo، وبيانات الخرائط والمسارات من مساهمي OpenStreetMap، والحدود من geoBoundaries، والارتفاعات من نموذج Copernicus.",
   ],
   install: ["Add to home screen", "أضف إلى الشاشة الرئيسية"],
   installHelp: [
@@ -162,8 +162,8 @@ export const profileCopy = {
 export const onboardingCopy = {
   welcome: ["Know when to go.", "اعرف متى تنطلق."],
   welcomeBody: [
-    "VAELORA reads Amman’s forecast hour by hour, points you to reviewed places, and records your walk or run on this device.",
-    "يقرأ VAELORA توقعات عمّان ساعة بساعة، ويرشدك إلى أماكن مراجعة، ويسجّل مشيك أو جريك على هذا الجهاز.",
+    "VAELORA reads the forecast hour by hour anywhere in Jordan, points you to curated places and trails, and records your walk or run on this device.",
+    "يقرأ VAELORA التوقعات ساعة بساعة في أي مكان في الأردن، ويرشدك إلى أماكن ومسارات مختارة، ويسجّل مشيك أو جريك على هذا الجهاز.",
   ],
   nameTitle: ["What should we call you?", "بماذا نناديك؟"],
   nameBody: ["Just a name, kept on this device. No account.", "اسم فقط يبقى على هذا الجهاز، دون حساب."],

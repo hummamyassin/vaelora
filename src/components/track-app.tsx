@@ -6,8 +6,11 @@ import {
   useImperativeHandle,
   type Ref,
 } from "react";
-import { IconGps, IconNext, IconPause, IconPlay, IconRun, IconStop, IconWalk } from "./icons";
+import { IconFollow, IconGps, IconNext, IconPause, IconPlay, IconRun, IconStop, IconWalk } from "./icons";
 import { ActivityShare } from "./activity-share";
+import { ShareStudio } from "./share-studio";
+import { routeProgress, type RouteLine } from "../domain/tracking/follow";
+import { followCopy, studioCopy } from "../lib/copy/explore";
 import { ProgressRing, ScoreRing } from "./score-ring";
 import dynamic from "next/dynamic";
 import {
@@ -29,7 +32,8 @@ import {
   saveDraft,
 } from "../lib/activity-store";
 import { requestPersistence } from "../lib/storage-persistence";
-import { shown, translator, type Locale } from "../lib/i18n";
+import { areaName, shown, translator, type Locale } from "../lib/i18n";
+import { placeById } from "../data/outdoor-places";
 import { gpsQualityCopy, trackCopy } from "../lib/copy/track";
 const shownPace = (seconds: number | null) => shown(paceLabel(seconds));
 const RouteMap = dynamic(
@@ -54,6 +58,8 @@ export function TrackApp({
   recapId = null,
   onRecapChange,
   startRef,
+  follow = null,
+  onStopFollow,
 }: {
   locale: Locale;
   snapshot: (activity: ActivityKind) => ConditionsSnapshot | null;
@@ -66,9 +72,39 @@ export function TrackApp({
   /** Reports the recap on screen so the route can follow it. */
   onRecapChange?: (id: string | null) => void;
   startRef?: Ref<() => void>;
+  /** A curated route to follow: its public ID and display name. */
+  follow?: { id: string; name: string } | null;
+  onStopFollow?: () => void;
 }) {
   const ar = locale === "ar",
-    c = translator(trackCopy, locale);
+    c = translator(trackCopy, locale),
+    fc = translator(followCopy, locale);
+  const [planned, setPlanned] = useState<RouteLine | null>(null),
+    [plannedState, setPlannedState] = useState<"idle" | "loading" | "ready" | "failed">("idle");
+  const followId = follow?.id ?? null;
+  // Loads once per followed route, not per render.
+  useEffect(() => {
+    if (!followId) {
+      queueMicrotask(() => {
+        setPlanned(null);
+        setPlannedState("idle");
+      });
+      return;
+    }
+    const controller = new AbortController();
+    queueMicrotask(() => setPlannedState("loading"));
+    void fetch(`/routes/${followId}.json`, { signal: controller.signal })
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error("missing"))))
+      .then((x) => {
+        if (controller.signal.aborted) return;
+        setPlanned(x.geometry as RouteLine);
+        setPlannedState("ready");
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) setPlannedState("failed");
+      });
+    return () => controller.abort();
+  }, [followId]);
   const engine = useRef<ActivityRecorder | null>(null),
     watch = useRef<number | null>(null),
     writes = useRef(Promise.resolve()),
@@ -167,6 +203,7 @@ export function TrackApp({
               accuracy: p.coords.accuracy,
               timestamp: p.timestamp,
               speed: p.coords.speed,
+              altitude: p.coords.altitude,
             },
             Date.now(),
           );
@@ -334,7 +371,7 @@ export function TrackApp({
     )
       return;
     const r = new ActivityRecorder(kind, crypto.randomUUID(), Date.now());
-    r.start(Date.now(), snapshot(kind));
+    r.start(Date.now(), snapshot(kind), follow?.id ?? null);
     engine.current = r;
     setSummary(null);
     setNotice(null);
@@ -385,6 +422,7 @@ export function TrackApp({
     const data = structuredClone(r.data);
     setSummary(data);
     refresh();
+    if (follow) onStopFollow?.();
     await persist(data);
   }
   useImperativeHandle(startRef, () => () => {
@@ -413,6 +451,9 @@ export function TrackApp({
       ? display.currentSpeedMps * 3.6
       : null;
   const live = !summary && (active || state === "paused");
+  // Route context from the latest accepted fix; never turn-by-turn directions.
+  const lastPoint = current?.points.at(-1) ?? null;
+  const progress = live && planned && lastPoint ? routeProgress(planned, lastPoint) : null;
   const kindLabel = (k: ActivityKind) => (k === "walking" ? c("walking") : c("running"));
   const dateTime = (ms: number) =>
     new Date(ms).toLocaleString(ar ? "ar-JO-u-nu-latn" : "en-GB", {
@@ -534,6 +575,17 @@ export function TrackApp({
             )}
           </div>
           <p className="track-ready-body">{c("readyBody")}</p>
+          {follow && (
+            <div className="track-follow-ready">
+              <p>
+                <IconFollow aria-hidden weight="fill" /> {fc("following", { name: follow.name })}
+              </p>
+              <p className="fine">{plannedState === "failed" ? fc("unavailable") : plannedState === "loading" ? fc("loading") : fc("limit")}</p>
+              <button className="btn btn-ghost btn-sm" onClick={onStopFollow}>
+                {fc("stop")}
+              </button>
+            </div>
+          )}
           <div className="seg seg-band track-kind-seg" role="group" aria-label={c("label")}>
             {(["walking", "running"] as const).map((k) => (
               <button key={k} aria-pressed={kind === k} data-activity={k} onClick={() => setKind(k)}>
@@ -718,11 +770,29 @@ export function TrackApp({
               </span>
             </p>
           </section>
+          {follow && (
+            <div className="track-follow-status" role="status" aria-live="polite" data-off={progress?.offRoute || undefined}>
+              <strong>
+                <IconFollow aria-hidden weight="fill" /> {fc("following", { name: follow.name })}
+              </strong>
+              {progress ? (
+                <span className="num">
+                  {progress.offRoute ? fc("offRoute", { m: progress.offRouteM }) : fc("onRoute")}
+                  {" · "}
+                  <bdi>{fc("remaining", { km: (progress.remainingM / 1000).toFixed(1) })}</bdi>
+                </span>
+              ) : (
+                <span>{plannedState === "failed" ? fc("unavailable") : plannedState === "loading" ? fc("loading") : fc("limit")}</span>
+              )}
+            </div>
+          )}
           <RouteMap
             points={current.points}
             revision={revision}
             finished={false}
             locale={locale}
+            planned={follow ? planned : null}
+            plannedLabel={fc("plannedLine")}
           />
           <div className="track-controls">
             <button
@@ -744,6 +814,11 @@ export function TrackApp({
           <p className="recap-title">
             {c("recapTitle")} · {dateTime(current.startedAt)}
           </p>
+          {summary.routeId && placeById(summary.routeId) && (
+            <p className="recap-route">
+              <IconFollow aria-hidden weight="fill" /> {fc("following", { name: areaName(locale, placeById(summary.routeId)!) })}
+            </p>
+          )}
           <RouteMap
             points={current.points}
             revision={revision}
@@ -904,7 +979,11 @@ export function TrackApp({
               </button>
             </div>
           )}
-          <ActivityShare activity={summary} locale={locale} />
+          <ShareStudio activity={summary} locale={locale} />
+          <details className="disclosure classic-share">
+            <summary>{translator(studioCopy, locale)("classic")}</summary>
+            <ActivityShare activity={summary} locale={locale} />
+          </details>
         </div>
       )}
       {!summary && <p className="fine track-limit">{c("limits")}</p>}

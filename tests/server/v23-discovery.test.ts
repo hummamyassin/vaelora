@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   locationContext,
-  supportedCity,
+  supportedRegion,
   parseCell,
 } from "../../src/lib/dynamic-location.ts";
 import {
@@ -93,36 +93,56 @@ test("Nearby ranks a usable window and reviewed fit before straight-line proximi
     ["best", "limited", "nearest"],
   );
 });
-test("Every supported sampled boundary point resolves to an accepted weather cell", () => {
-  for (const [longitude, latitude] of [
-    [35.76, 31.86],
-    [35.84, 31.78],
-    [36.04, 31.93],
-    [35.82, 32.1],
-  ])
-    assert.equal(supportedCity({ latitude, longitude })?.id, "amman");
-  for (let latitude = 31.781; latitude < 32.101; latitude += 0.0037)
-    for (let longitude = 35.761; longitude < 36.041; longitude += 0.0037) {
+test("Every sampled Jordan point resolves to an accepted weather cell", () => {
+  // A coarse sweep of the whole country, plus a dense one along the Aqaba border.
+  for (let latitude = 29.2; latitude < 33.4; latitude += 0.137)
+    for (let longitude = 34.9; longitude < 39.3; longitude += 0.141) {
+      const c = locationContext({ latitude, longitude });
+      if (c) assert.equal(parseCell(c.cellId).cellId, c.cellId);
+    }
+  for (let latitude = 29.36; latitude < 29.6; latitude += 0.0041)
+    for (let longitude = 34.9; longitude < 35.1; longitude += 0.0043) {
       const c = locationContext({ latitude, longitude });
       if (c) assert.equal(parseCell(c.cellId).cellId, c.cellId);
     }
 });
-test("Dynamic Amman contexts are coarse, stable, unverified and reject other cities", () => {
+test("Dynamic contexts are coarse, stable, unverified and cover Jordan, not its neighbours", () => {
   const c = locationContext({ latitude: 31.981, longitude: 35.901 })!;
   assert.equal(
     c.cellId,
     locationContext({ latitude: 31.982, longitude: 35.902 })!.cellId,
   );
   assert.equal(c.characteristics, "unverified");
+  assert.equal(c.governorate, "amman");
   assert.deepEqual(parseCell(c.cellId), c);
+  // Towns across Jordan, each with its governorate.
+  for (const [latitude, longitude, governorate] of [
+    [32.5556, 35.85, "irbid"],
+    [32.3325, 35.7517, "ajloun"],
+    [32.0833, 36.1, "zarqa"],
+    [32.0392, 35.7272, "balqa"],
+    [31.1844, 35.705, "karak"],
+    [32.3428, 36.205, "mafraq"],
+    [29.5322, 35.0061, "aqaba"],
+    [32.559, 36.0069, "irbid"], // Ar-Ramtha, close to the Syrian border
+  ] as const) {
+    const cell = locationContext({ latitude, longitude });
+    assert.ok(cell, `${governorate} is covered`);
+    assert.equal(cell.governorate, governorate);
+  }
+  // Neighbouring places are never treated as Jordan.
   for (const p of [
-    { latitude: 32.55, longitude: 35.85 },
-    { latitude: 32.07, longitude: 36.09 },
-    { latitude: 29.53, longitude: 35 },
+    { latitude: 29.5577, longitude: 34.9519 }, // Eilat
+    { latitude: 32.6189, longitude: 36.1021 }, // Daraa
+    { latitude: 31.857, longitude: 35.444 }, // Jericho
+    { latitude: 28.383, longitude: 36.566 }, // Tabuk
     { latitude: NaN, longitude: 35 },
   ])
-    assert.equal(supportedCity(p), null);
-  assert.throws(() => parseCell("amman:9999:9999"));
+    assert.equal(supportedRegion(p), null);
+  assert.throws(() => parseCell("jo:9999:9999"));
+  assert.throws(() => parseCell("jo:1428:1747")); // Eilat's cell
+  // Cells issued before Jordan-wide coverage still parse to the same cell.
+  assert.equal(parseCell(c.cellId.replace("jo:", "amman:")).cellId, c.cellId);
 });
 test("Discovery rejects precise coordinates, extra arguments and invalid cells", () => {
   for (const x of [
@@ -202,14 +222,16 @@ test("Search validates bilingual input and filters unsafe or outside results", (
     parseSearchResults({
       features: [
         feature("Test area", [35.9, 31.98]),
-        feature("Outside", [36.1, 32.1]),
+        feature("Ajloun", [35.7517, 32.3325]),
+        feature("Eilat", [34.9519, 29.5577]),
         feature("<script>", [35.9, 31.98]),
       ],
-    }),
-    [{ name: "Test area", longitude: 35.9, latitude: 31.98 }],
+    }).map((p) => [p.name, p.governorate?.id]),
+    [["Test area", "amman"], ["Ajloun", "ajloun"]],
   );
+  assert.deepEqual(parseSearchResults({ features: [feature("Ajloun", [35.7517, 32.3325])] })[0].governorate, { id: "ajloun", en: "Ajloun", ar: "عجلون" });
   assert.deepEqual(
-    parseSearchOutcome({ features: [feature("Outside", [36.1, 32.1])] }),
+    parseSearchOutcome({ features: [feature("Daraa", [36.1021, 32.6189])] }),
     { places: [], status: "outside" },
   );
 });

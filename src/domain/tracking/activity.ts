@@ -9,6 +9,8 @@ export interface GPSPoint {
   timestamp: number;
   speed: number | null;
   segment: number;
+  /** GPS altitude in metres when the device reports one; approximate, often missing. */
+  altitude?: number | null;
 }
 export interface ConditionsSnapshot {
   areaId: string;
@@ -31,6 +33,8 @@ export interface RecordedActivity {
   points: GPSPoint[];
   segment: number;
   conditions: ConditionsSnapshot | null;
+  /** Curated route followed during this activity, when started from one. */
+  routeId?: string | null;
 }
 // Conservative consumer GPS policy, not survey accuracy. Never interpolate or snap.
 export const gpsPolicy = {
@@ -112,8 +116,9 @@ export class ActivityRecorder {
       this.quality = "interrupted";
     }
   }
-  start(now: number, conditions: ConditionsSnapshot | null = null) {
+  start(now: number, conditions: ConditionsSnapshot | null = null, routeId: string | null = null) {
     if (this.data.state !== "idle") return false;
+    if (routeId) this.data.routeId = routeId;
     this.data.startedAt = now;
     this.recordingStart = now;
     this.data.updatedAt = now;
@@ -206,6 +211,7 @@ export class ActivityRecorder {
       this.data.segment++;
     }
     const p: GPSPoint = { ...input, speed: null, segment: this.data.segment };
+    if ("altitude" in input) p.altitude = plausibleAltitude(input.altitude);
     if (this.anchor) {
       const distance = distanceKm(this.anchor, p) * 1000,
         dt = (p.timestamp - this.anchor.timestamp) / 1000;
@@ -243,6 +249,11 @@ export class ActivityRecorder {
   }
 }
 
+/** Jordan spans the Dead Sea shore (about -430 m) to about 1,850 m; GPS outside a wide margin is noise. */
+export function plausibleAltitude(value: unknown): number | null {
+  return typeof value === "number" && Number.isFinite(value) && value >= -600 && value <= 4000 ? value : null;
+}
+const idPattern = /^[a-zA-Z0-9-]{1,80}$/;
 /** Reject unknown/corrupt local schemas instead of silently treating them as valid activities. */
 export function validateActivity(value: unknown): RecordedActivity {
   const a = value as RecordedActivity;
@@ -269,7 +280,8 @@ export function validateActivity(value: unknown): RecordedActivity {
     a.points.length > gpsPolicy.maxPoints ||
     (a.state === "finished" &&
       (a.endedAt !== a.updatedAt || !Number.isFinite(a.endedAt))) ||
-    (a.state !== "finished" && a.endedAt !== null)
+    (a.state !== "finished" && a.endedAt !== null) ||
+    (a.routeId !== undefined && a.routeId !== null && (typeof a.routeId !== "string" || !idPattern.test(a.routeId)))
   )
     throw new Error("Unsupported or damaged activity");
   let total = 0;
@@ -290,7 +302,8 @@ export function validateActivity(value: unknown): RecordedActivity {
       (p.speed !== null &&
         (!Number.isFinite(p.speed) ||
           p.speed < 0 ||
-          p.speed > gpsPolicy.maxSpeedMps[a.activity]))
+          p.speed > gpsPolicy.maxSpeedMps[a.activity])) ||
+      (p.altitude !== undefined && p.altitude !== null && plausibleAltitude(p.altitude) === null)
     )
       throw new Error("Invalid route point");
     if (previous) {

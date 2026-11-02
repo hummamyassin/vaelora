@@ -1,5 +1,5 @@
 import { weatherAreas } from "../../data/weather-areas.ts";
-import { activityAreas } from "../../data/activity-areas.ts";
+import { outdoorPlaces } from "../../data/outdoor-places.ts";
 import { distanceKm } from "../../lib/geography.ts";
 import { filterEligibleAreas } from "../../domain/recommendation/eligibility.ts";
 import {
@@ -58,11 +58,11 @@ export function parseDashboardRequest(input: unknown): DashboardRequest {
   if (
     x.placeIds !== undefined &&
     (!Array.isArray(x.placeIds) ||
-      x.placeIds.length > activityAreas.length ||
+      x.placeIds.length > outdoorPlaces.length ||
       new Set(x.placeIds).size !== x.placeIds.length ||
       x.placeIds.some(
         (id) =>
-          !activityAreas.some(
+          !outdoorPlaces.some(
             (a) => a.id === id && a.verificationStatus !== "unverified",
           ),
       ))
@@ -131,11 +131,12 @@ export function createDashboardPipeline(
       },
     };
     // Radius is a transparent nearby search, never a claim of neighborhood membership.
-    const nearby = activityAreas.filter((p) =>
-      request.placeIds
-        ? request.placeIds.includes(p.id)
-        : distanceKm(area, p) <= 5,
-    );
+    // Amman reference points are neighbourhoods; a town's reference point stands for a wider area.
+    const reach = area.city === "amman" ? 5 : 20;
+    const nearby = outdoorPlaces
+      .filter((p) => (request.placeIds ? request.placeIds.includes(p.id) : distanceKm(area, p) <= reach))
+      .sort((a, b) => distanceKm(area, a) - distanceKm(area, b) || a.id.localeCompare(b.id))
+      .slice(0, 12);
     const eligible = filterEligibleAreas(nearby, constraints).eligible;
     const forecast = await provider.getForecast(area, now);
     const walking = activityOutlook(

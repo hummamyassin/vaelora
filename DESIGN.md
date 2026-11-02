@@ -1,6 +1,6 @@
 ---
 name: VAELORA
-description: A wearable activity instrument on a clean field. Weather-aware walking and running for Greater Amman, anchored by the VAELORA V icon.
+description: A wearable activity instrument on a clean field. Weather-aware walking and running across Jordan, anchored by the VAELORA V icon.
 colors:
   field-light: "#F6F6F3"
   surface-light: "#FFFFFF"

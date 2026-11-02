@@ -1,4 +1,4 @@
-import { activityAreas } from "../../data/activity-areas.ts";
+import { outdoorPlaces } from "../../data/outdoor-places.ts";
 import type { ActivityArea } from "../../domain/activity-area.ts";
 import { filterEligibleAreas } from "../../domain/recommendation/eligibility.ts";
 import { recommend } from "../../domain/recommendation/recommend.ts";
@@ -11,7 +11,7 @@ import { v1WeatherPolicy, v1RecommendationPolicy } from "./policy.ts";
 export function createRecommendationPipeline(options: { provider?: WeatherProvider; clock?: () => Date; areas?: readonly ActivityArea[] } = {}) {
   const provider = options.provider ?? createOpenMeteoAdapter();
   const clock = options.clock ?? (() => new Date());
-  const areas = options.areas ?? activityAreas;
+  const areas = options.areas ?? outdoorPlaces;
   const scorer = createSixInputScorer(v1WeatherPolicy);
   return async (input: unknown) => {
     const now = clock();
