@@ -6,7 +6,7 @@ VAELORA is a bilingual web application and installable PWA for deciding when and
 
 **Plan → Discover → Track → Analyze → Share → Return**
 
-[Open the live application](https://vaelora-chi.vercel.app) · Current release: **v2.5.0** ([changelog](CHANGELOG.md)) · Coverage: **Jordan** (planning, weather, search and discovery; recording works anywhere)
+[Open the live application](https://vaelora-chi.vercel.app) · Current release: **v2.6.0** ([changelog](CHANGELOG.md)) · Coverage: **Jordan** (planning, weather, search and discovery; recording works anywhere)
 
 ## What is VAELORA?
 
