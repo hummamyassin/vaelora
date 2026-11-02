@@ -173,11 +173,15 @@ export function drawStory(c: CanvasRenderingContext2D, model: StoryModel, assets
   if (startAnchor) {
     const gap = 14 * L.scale;
     const side = startAnchor.dx < 0 ? -1 : 1;
-    iconX = side < 0 ? startAnchor.x - gap - icon : startAnchor.x + gap;
-    if (iconX < edge || iconX + icon > STORY.width - edge) iconX = side < 0 ? startAnchor.x + gap : startAnchor.x - gap - icon;
-    iconX = Math.min(STORY.width - edge - icon, Math.max(edge, iconX));
     const textTop = L.distance.baseline - L.distance.size * 0.8 - 8 * L.scale;
+    iconX = side < 0 ? startAnchor.x - gap - icon : startAnchor.x + gap;
     iconY = Math.max(edge, Math.min(startAnchor.y - icon / 2, textTop - icon));
+    // No room on the outer side (a route starting at the edge): sit above the start
+    // instead of flipping inward onto the line.
+    if (iconX < edge || iconX + icon > STORY.width - edge) {
+      iconX = Math.min(STORY.width - edge - icon, Math.max(edge, startAnchor.x - icon / 2));
+      iconY = Math.max(edge, startAnchor.y - gap - icon);
+    }
   }
   if (assets.icons.activity) shadowed(() => c.drawImage(assets.icons.activity!, iconX, iconY, icon, icon));
 
